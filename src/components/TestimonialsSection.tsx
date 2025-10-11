@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import BackgroundPattern from "./BackgroundPattern";
+import BackgroundDotPattern from "./BackgroundDotPattern";
 
 const testimonials = [
   {
@@ -31,7 +31,7 @@ export const TestimonialsSection = () => {
   return (
     <section className="py-16 md:py-24 bg-background relative">
       <div className="absolute inset-0 z-0">
-        <BackgroundPattern />
+        <BackgroundDotPattern />
       </div>
       <div className="relative w-full px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
