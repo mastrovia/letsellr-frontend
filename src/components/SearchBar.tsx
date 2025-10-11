@@ -38,7 +38,7 @@ export const SearchBar = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-card rounded-[2rem] shadow-lg p-4 flex flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-hover">
+      <div className="bg-card rounded-[2rem] shadow-md border border-border p-4 flex flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg">
         {/* Search Input */}
         <div className="flex-1 relative">
           <div className="relative">
@@ -55,7 +55,7 @@ export const SearchBar = () => {
           
           {/* Search Suggestions Dropdown */}
           {showSearchSuggestions && searchQuery && filteredSearchSuggestions.length > 0 && (
-            <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-lg border border-border z-50 overflow-hidden animate-fade-in">
+            <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
               {filteredSearchSuggestions.map((suggestion, idx) => (
                 <button
                   key={idx}
@@ -89,7 +89,7 @@ export const SearchBar = () => {
 
           {/* Location Suggestions Dropdown */}
           {showLocationSuggestions && filteredLocations.length > 0 && (
-            <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-lg border border-border z-50 overflow-hidden animate-fade-in">
+            <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
               {filteredLocations.map((loc, idx) => (
                 <button
                   key={idx}

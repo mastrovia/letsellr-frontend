@@ -28,22 +28,23 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-            What Our Users Say
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Real stories from people who found their perfect home through our platform
-          </p>
-        </div>
+    <section className="py-16 md:py-24 bg-background">
+      <div className="w-full px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 md:mb-16 space-y-4 px-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+              What Our Users Say
+            </h2>
+            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
+              Real stories from people who found their perfect home through our platform
+            </p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((testimonial, idx) => (
             <Card
               key={idx}
-              className="p-8 border-0 bg-gradient-card shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in"
+              className="p-6 md:p-8 border border-border bg-card shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
               <div className="space-y-6">
@@ -71,6 +72,7 @@ export const TestimonialsSection = () => {
               </div>
             </Card>
           ))}
+          </div>
         </div>
       </div>
     </section>

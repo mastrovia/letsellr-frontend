@@ -3,10 +3,11 @@ import { Home, Mail, Phone, MapPin } from "lucide-react";
 export const Footer = () => {
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+      <div className="w-full px-6 md:px-12 lg:px-16 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-10 md:gap-12">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
                 <Home className="h-6 w-6 text-primary-foreground" />
@@ -22,8 +23,8 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold text-foreground mb-5">Quick Links</h3>
+            <ul className="space-y-3.5">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   About Us
@@ -49,8 +50,8 @@ export const Footer = () => {
 
           {/* Categories */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Categories</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold text-foreground mb-5">Categories</h3>
+            <ul className="space-y-3.5">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   PG Accommodation
@@ -76,8 +77,8 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Contact Us</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold text-foreground mb-5">Contact Us</h3>
+            <ul className="space-y-4">
               <li className="flex items-start gap-3 text-muted-foreground text-sm">
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <span>support@stayfinder.com</span>
@@ -92,10 +93,11 @@ export const Footer = () => {
               </li>
             </ul>
           </div>
-        </div>
+          </div>
 
-        <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 StayFinder. All rights reserved.</p>
+          <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; 2024 StayFinder. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>
