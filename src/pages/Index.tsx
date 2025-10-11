@@ -5,6 +5,7 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { Footer } from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
 import { BackgroundGridPattern } from "@/components/BackgroundGridPattern";
+import Navbar from "@/components/Navbar";
 
 const categories = [
   {
@@ -47,22 +48,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Search and Categories */}
-      <nav className="fixed z-50 top-0 w-full bg-white/50 backdrop-blur-md  p-2 py-2 md:p-10 md:py-5 border-b">
-        <div className="container w-full flex justify-center md:justify-start">
-          <div className="flex items-center">
-            <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
-            <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
-      <section className="relative min-h-screen bg-white flex items-center justify-center overflow-hidden py-16 md:py-24">
+      <section className="relative min-h-screen bg-white flex items-center justify-center overflow-hidden pb-16 md:pb-24">
         {/* Hero Content */}
         <div className="relative z-10 w-full px-6 md:px-12 lg:px-16">
           <div className="relative">
-            <div className="absolute inset-0 z-0">
-              {/* <BackgroundGridPattern /> */}
-            </div>
+            <div className="absolute inset-0 z-0">{/* <BackgroundGridPattern /> */}</div>
 
             <div className="max-w-7xl mx-auto space-y-12 md:space-y-16 animate-fade-in relative">
               {/* Header */}

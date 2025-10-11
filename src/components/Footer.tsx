@@ -1,4 +1,5 @@
 import { Home, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -9,10 +10,12 @@ export const Footer = () => {
             {/* Brand */}
             <div className="space-y-5">
               <div className="flex items-center gap-2">
-                <div className="flex items-center">
-                  <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
-                  <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
-                </div>
+                <Link to={"/"}>
+                  <div className="flex items-center">
+                    <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
+                    <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
+                  </div>
+                </Link>
               </div>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Connecting you with the perfect accommodation for your work or study needs.
