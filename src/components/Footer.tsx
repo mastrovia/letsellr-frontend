@@ -13,7 +13,7 @@ export const Footer = () => {
                 <Home className="h-6 w-6 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                StayFinder
+                Letsellr
               </span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
@@ -81,7 +81,7 @@ export const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-muted-foreground text-sm">
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>support@stayfinder.com</span>
+                <span>support@letsellr.com</span>
               </li>
               <li className="flex items-start gap-3 text-muted-foreground text-sm">
                 <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
@@ -96,7 +96,7 @@ export const Footer = () => {
           </div>
 
           <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 StayFinder. All rights reserved.</p>
+            <p>&copy; 2024 Letsellr. All rights reserved.</p>
           </div>
         </div>
       </div>
