@@ -35,7 +35,7 @@ export const SearchBar = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowSearchSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-              className="pl-12 h-14 border-0 bg-secondary/50 rounded-3xl text-base focus-visible:ring-2 focus-visible:ring-primary"
+              className="pl-12 h-14 border-0 bg-secondary/50 rounded-2xl text-base focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
 
@@ -69,7 +69,7 @@ export const SearchBar = () => {
               onChange={(e) => setLocation(e.target.value)}
               onFocus={() => setShowLocationSuggestions(true)}
               onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
-              className="pl-12 h-14 border-0 bg-secondary/50 rounded-3xl text-base focus-visible:ring-2 focus-visible:ring-primary"
+              className="pl-12 h-14 border-0 bg-secondary/50 rounded-2xl text-base focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
 
@@ -96,7 +96,7 @@ export const SearchBar = () => {
         {/* Search Button */}
         <Button
           size="lg"
-          className="h-14 px-8 rounded-3xl bg-gradient-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
+          className="h-14 px-8 rounded-2xl bg-gradient-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
         >
           Search
         </Button>
