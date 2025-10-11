@@ -5,6 +5,7 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { Footer } from "@/components/Footer";
 import { Home, Building2, Hotel, Users } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
+import BackgroundPattern from "./BackgroundPattern";
 
 const categories = [
   {
@@ -48,10 +49,11 @@ const Index = () => {
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 md:py-24">
         {/* Background Image with Gradient Overlay */}
-        {/* <div className="absolute inset-0 z-0">
-          <img src={heroImage} alt="Hero background" className="w-full h-full object-cover opacity-15" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/90 to-background/95 backdrop-blur-sm"></div>
-        </div> */}
+        <div className="absolute inset-0 z-0">
+          <BackgroundPattern />
+          {/* <img src={heroImage} alt="Hero background" className="w-full h-full object-cover opacity-15" /> */}
+          {/* <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/90 to-background/95 backdrop-blur-sm"></div> */}
+        </div>
 
         {/* Hero Content */}
         <div className="relative z-10 w-full px-6 md:px-12 lg:px-16">

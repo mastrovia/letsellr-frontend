@@ -29,26 +29,16 @@ export const StatsSection = () => {
       <div className="w-full px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={idx}
-                className="text-center space-y-5 animate-fade-in"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-card shadow-sm border border-border flex items-center justify-center">
-                  <Icon className="h-8 w-8 text-primary" />
-                </div>
-                <div className="space-y-2">
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                    {stat.value}
+            {stats.map((stat, idx) => {
+              return (
+                <div key={idx} className="text-center space-y-5 animate-fade-in" style={{ animationDelay: `${idx * 100}ms` }}>
+                  <div className="space-y-2">
+                    <div className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">{stat.value}</div>
+                    <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
                   </div>
-                  <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
           </div>
         </div>
       </div>
