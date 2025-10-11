@@ -29,7 +29,7 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-16 md:py-24 bg-background relative">
+    <section className="py-16 md:py-24 bg-background relative border-y">
       <div className="absolute inset-0 z-0">
         <BackgroundDotPattern />
       </div>

@@ -26,7 +26,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="w-full bg-white" id="faq">
+    <section className="w-full bg-white md:py-10" id="faq">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-5 w-full ">
         <div className="md:w-full md:text-start text-center col-span-2 px-5 md:px-0 mb-8 flex flex-col gap-3">
           <h2 className="text-3xl font-bold text-gray-800 ">Frequently Asked Questions</h2>
