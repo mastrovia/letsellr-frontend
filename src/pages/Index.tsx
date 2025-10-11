@@ -66,12 +66,10 @@ const Index = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="px-4">
-              <SearchBar />
-            </div>
+            <SearchBar />
 
             {/* Categories - Directly under search */}
-            <div className="px-4 md:px-8 lg:px-12">
+            <div className="md:px-8 lg:px-12">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
                 {categories.map((category, idx) => (
                   <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 100}ms` }}>
