@@ -10,20 +10,20 @@ interface CategoryCardProps {
 
 export const CategoryCard = ({ title, description, icon: Icon, count }: CategoryCardProps) => {
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-card shadow-md hover:shadow-hover transition-all duration-300 hover:-translate-y-2">
-      <div className="p-8 space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-          <Icon className="h-8 w-8 text-primary-foreground" />
+    <Card className="group cursor-pointer overflow-hidden border border-border bg-card shadow-sm hover:shadow-hover transition-all duration-300 hover:-translate-y-1 h-full">
+      <div className="p-6 space-y-4 flex flex-col h-full">
+        <div className="w-14 h-14 rounded-xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <Icon className="h-7 w-7 text-primary-foreground" />
         </div>
         
-        <div>
-          <h3 className="text-2xl font-semibold text-foreground mb-2">{title}</h3>
-          <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+        <div className="flex-grow">
+          <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{description}</p>
         </div>
 
-        <div className="pt-4 border-t border-border">
-          <p className="text-sm text-muted-foreground">
-            <span className="text-2xl font-bold text-primary">{count}</span> Available
+        <div className="pt-3 border-t border-border">
+          <p className="text-xs text-muted-foreground">
+            <span className="text-xl font-bold text-primary">{count}</span> Available
           </p>
         </div>
       </div>

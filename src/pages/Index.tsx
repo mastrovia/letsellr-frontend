@@ -36,8 +36,8 @@ const categories = [
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* Hero Section with Search and Categories */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 z-0">
           <img
@@ -45,52 +45,44 @@ const Index = () => {
             alt="Hero background"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/80 to-background"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/85 to-background"></div>
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-4 py-20">
-          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
-              Find Your Perfect{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Home Away From Home
-              </span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Discover quality PGs, apartments, and hostels tailored for your work or study needs.
-            </p>
+        <div className="relative z-10 container mx-auto px-6 lg:px-12">
+          <div className="max-w-6xl mx-auto space-y-12 animate-fade-in">
+            {/* Header */}
+            <div className="text-center space-y-6">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
+                Find Your Perfect{" "}
+                <span className="bg-gradient-primary bg-clip-text text-transparent">
+                  Home Away From Home
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Discover quality PGs, apartments, and hostels tailored for your work or study needs.
+              </p>
+            </div>
 
             {/* Search Bar */}
-            <div className="pt-8">
+            <div>
               <SearchBar />
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Categories Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-              Explore By Category
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Choose from our wide range of accommodation options
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category, idx) => (
-              <div
-                key={idx}
-                className="animate-scale-in"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                <CategoryCard {...category} />
+            {/* Categories - Directly under search */}
+            <div className="pt-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-8">
+                {categories.map((category, idx) => (
+                  <div
+                    key={idx}
+                    className="animate-scale-in"
+                    style={{ animationDelay: `${idx * 100}ms` }}
+                  >
+                    <CategoryCard {...category} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
