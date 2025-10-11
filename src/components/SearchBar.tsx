@@ -3,16 +3,7 @@ import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const POPULAR_LOCATIONS = [
-  "Bangalore",
-  "Mumbai",
-  "Delhi",
-  "Pune",
-  "Hyderabad",
-  "Chennai",
-  "Kolkata",
-  "Ahmedabad",
-];
+const POPULAR_LOCATIONS = ["Bangalore", "Mumbai", "Delhi", "Pune", "Hyderabad", "Chennai", "Kolkata", "Ahmedabad"];
 
 const SEARCH_SUGGESTIONS = [
   "PG near HSR Layout, Bangalore",
@@ -28,13 +19,8 @@ export const SearchBar = () => {
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
-  const filteredSearchSuggestions = SEARCH_SUGGESTIONS.filter((suggestion) =>
-    suggestion.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredLocations = POPULAR_LOCATIONS.filter((loc) =>
-    loc.toLowerCase().includes(location.toLowerCase())
-  );
+  const filteredSearchSuggestions = SEARCH_SUGGESTIONS.filter((suggestion) => suggestion.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredLocations = POPULAR_LOCATIONS.filter((loc) => loc.toLowerCase().includes(location.toLowerCase()));
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -52,7 +38,7 @@ export const SearchBar = () => {
               className="pl-12 h-14 border-0 bg-secondary/50 rounded-3xl text-base focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
-          
+
           {/* Search Suggestions Dropdown */}
           {showSearchSuggestions && searchQuery && filteredSearchSuggestions.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
@@ -108,7 +94,7 @@ export const SearchBar = () => {
         </div>
 
         {/* Search Button */}
-        <Button 
+        <Button
           size="lg"
           className="h-14 px-8 rounded-3xl bg-gradient-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
         >
