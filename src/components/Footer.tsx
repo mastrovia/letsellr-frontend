@@ -1,7 +1,14 @@
-import { Home, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export const Footer = () => {
+interface Category {
+  title: string;
+  description: string;
+  count: string;
+  action: string;
+}
+
+export const Footer = ({ categories }: { categories: Category[] }) => {
   return (
     <footer className="bg-card border-t border-border">
       <div className="w-full px-6 md:px-12 lg:px-16 py-12 md:py-16">
@@ -53,26 +60,15 @@ export const Footer = () => {
             <div>
               <h3 className="font-semibold text-foreground mb-5">Categories</h3>
               <ul className="space-y-3.5">
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    PG Accommodation
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    Apartments
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    Hostels
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    Houses
-                  </a>
-                </li>
+                {categories.map((category) => {
+                  return (
+                    <li>
+                      <Link to={category?.action || "#"} className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                        {category?.title}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
@@ -90,7 +86,7 @@ export const Footer = () => {
                 </li>
                 <li className="flex items-start gap-3 text-muted-foreground text-sm">
                   <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                  <span>Bangalore, India</span>
+                  <span>Calicut, Kerala, India</span>
                 </li>
               </ul>
             </div>

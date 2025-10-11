@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { categories } from "@/db";
 import { useParams } from "react-router-dom";
 
 export default function CategoryPage() {
@@ -9,7 +10,7 @@ export default function CategoryPage() {
     <div>
       <Navbar />
       <div className="p-10">category name : {category}</div>
-      <Footer />
+      <Footer categories={categories} />
     </div>
   );
 }
