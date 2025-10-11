@@ -6,93 +6,91 @@ export const Footer = () => {
       <div className="w-full px-6 md:px-12 lg:px-16 py-12 md:py-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-10 md:gap-12">
-          {/* Brand */}
-          <div className="space-y-5">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Home className="h-6 w-6 text-primary-foreground" />
+            {/* Brand */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
+                  <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
+                </div>
               </div>
-              <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Letsellr
-              </span>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Connecting you with the perfect accommodation for your work or study needs.
+              </p>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Connecting you with the perfect accommodation for your work or study needs.
-            </p>
-          </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-5">Quick Links</h3>
-            <ul className="space-y-3.5">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  List Your Property
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  FAQ
-                </a>
-              </li>
-            </ul>
-          </div>
+            {/* Quick Links */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-5">Quick Links</h3>
+              <ul className="space-y-3.5">
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    List Your Property
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          {/* Categories */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-5">Categories</h3>
-            <ul className="space-y-3.5">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  PG Accommodation
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Apartments
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Hostels
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Houses
-                </a>
-              </li>
-            </ul>
-          </div>
+            {/* Categories */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-5">Categories</h3>
+              <ul className="space-y-3.5">
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    PG Accommodation
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    Apartments
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    Hostels
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    Houses
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-5">Contact Us</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3 text-muted-foreground text-sm">
-                <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>support@letsellr.com</span>
-              </li>
-              <li className="flex items-start gap-3 text-muted-foreground text-sm">
-                <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>+91 12345 67890</span>
-              </li>
-              <li className="flex items-start gap-3 text-muted-foreground text-sm">
-                <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>Bangalore, India</span>
-              </li>
-            </ul>
-          </div>
+            {/* Contact */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-5">Contact Us</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                  <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                  <span>support@letsellr.com</span>
+                </li>
+                <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                  <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                  <span>+91 12345 67890</span>
+                </li>
+                <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                  <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                  <span>Bangalore, India</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">

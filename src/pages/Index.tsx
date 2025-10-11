@@ -5,7 +5,7 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { Footer } from "@/components/Footer";
 import { Home, Building2, Hotel, Users } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
-import BackgroundPattern from "./BackgroundPattern";
+import BackgroundPattern from "../components/BackgroundPattern";
 
 const categories = [
   {
@@ -39,8 +39,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section with Search and Categories */}
       <nav className="fixed z-50 top-0 w-full bg-white/50 backdrop-blur-md  p-2 py-2 md:p-10 md:py-5 border-b">
-        <div className="container">
-          <div className="flex gap-4 items-center">
+        <div className="container w-full flex justify-center md:justify-start">
+          <div className="flex items-center">
             <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
             <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
           </div>
@@ -48,13 +48,6 @@ const Index = () => {
       </nav>
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 md:py-24">
-        {/* Background Image with Gradient Overlay */}
-        <div className="absolute inset-0 z-0">
-          <BackgroundPattern />
-          {/* <img src={heroImage} alt="Hero background" className="w-full h-full object-cover opacity-15" /> */}
-          {/* <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/90 to-background/95 backdrop-blur-sm"></div> */}
-        </div>
-
         {/* Hero Content */}
         <div className="relative z-10 w-full px-6 md:px-12 lg:px-16">
           <div className="max-w-7xl mx-auto space-y-12 md:space-y-16 animate-fade-in">

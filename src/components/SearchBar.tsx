@@ -96,7 +96,7 @@ export const SearchBar = () => {
         {/* Search Button */}
         <Button
           size="lg"
-          className="h-14 px-8 rounded-2xl bg-gradient-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
+          className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
         >
           Search
         </Button>

@@ -33,7 +33,7 @@ export const StatsSection = () => {
               return (
                 <div key={idx} className="text-center space-y-5 animate-fade-in" style={{ animationDelay: `${idx * 100}ms` }}>
                   <div className="space-y-2">
-                    <div className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">{stat.value}</div>
+                    <div className="text-3xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">{stat.value}</div>
                     <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
                   </div>
                 </div>
