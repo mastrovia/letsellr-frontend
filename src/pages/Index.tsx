@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Home, Building2, Hotel, Users } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import BackgroundPattern from "../components/BackgroundPattern";
+import FaqSection from "@/components/FaqSection";
 
 const categories = [
   {
@@ -87,6 +88,8 @@ const Index = () => {
 
       {/* Testimonials Section */}
       <TestimonialsSection />
+
+      <FaqSection />
 
       {/* Footer */}
       <Footer />
