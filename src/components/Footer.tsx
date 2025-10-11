@@ -1,0 +1,103 @@
+import { Home, Mail, Phone, MapPin } from "lucide-react";
+
+export const Footer = () => {
+  return (
+    <footer className="bg-card border-t border-border">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
+                <Home className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                StayFinder
+              </span>
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Connecting you with the perfect accommodation for your work or study needs.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  List Your Property
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  FAQ
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Categories */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Categories</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  PG Accommodation
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Apartments
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Hostels
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Houses
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Contact Us</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <span>support@stayfinder.com</span>
+              </li>
+              <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <span>+91 12345 67890</span>
+              </li>
+              <li className="flex items-start gap-3 text-muted-foreground text-sm">
+                <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <span>Bangalore, India</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
+          <p>&copy; 2024 StayFinder. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
