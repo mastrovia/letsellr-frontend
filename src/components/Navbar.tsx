@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
   return (
     <>
-      <nav className="fixed z-50 top-0 w-full h-20 bg-white/50 backdrop-blur-md  p-2 py-2 md:p-10 md:py-5 border-b">
+      <nav className="fixed z-50 flex items-center top-0 w-full h-16 md:h-20 bg-white/50 backdrop-blur-md  p-2 py-2 md:p-10 md:py-5 border-b">
         <div className="container w-full flex justify-center md:justify-start">
           <Link to={"/"}>
             <div className="flex items-center">
@@ -13,7 +13,7 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
-      <div className="relative h-20"></div>
+      <div className="relative h-16 md:h-20"></div>
     </>
   );
 }
