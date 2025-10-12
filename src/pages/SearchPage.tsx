@@ -95,16 +95,42 @@ export default function SearchPage() {
   // Fetch properties when filters change
   useEffect(() => {
     fetchProperties();
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [searchQuery, selectedLocation, selectedCategory]);
 
-  // Sync filters with URL
+  // Fetch properties when filters change (with debounce)
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (searchQuery) params.set("query", searchQuery);
-    if (selectedLocation) params.set("location", selectedLocation);
-    if (selectedCategory) params.set("category", selectedCategory);
-    setSearchParams(params, { replace: true });
+    const timer = setTimeout(() => {
+      fetchProperties();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedLocation, selectedCategory]);
+
+  // Sync filters with URL (with debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set("query", searchQuery);
+      if (selectedLocation) params.set("location", selectedLocation);
+      if (selectedCategory) params.set("category", selectedCategory);
+      setSearchParams(params, { replace: true });
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [searchQuery, selectedLocation, selectedCategory, setSearchParams]);
+
+  useEffect(() => {
+    const query = searchParams.get("query") || "";
+    const location = searchParams.get("location") || "";
+    const category = searchParams.get("category") || "";
+
+    setSearchQuery(query);
+    setSelectedLocation(location);
+    setSelectedCategory(category);
+
+    fetchProperties();
+  }, [searchParams]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -142,7 +168,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
-                  disabled={isLoading}
+                  // disabled={isLoading}
                 />
               </div>
 
