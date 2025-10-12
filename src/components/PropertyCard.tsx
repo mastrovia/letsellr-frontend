@@ -29,14 +29,14 @@ export default function PropertyCard(data: Property) {
         <img
           src={data?.images[0]}
           alt="Front of men&#039;s Artwork Tee in peach with white and brown dots forming an isometric cube."
-          className="col-span-2 h-full max-h-52 aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-72"
+          className="col-span-2 h-full md:max-h-52 aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-72"
         />
-        <div className="col-span-3 p-5 flex flex-col gap-3">
+        <div className="col-span-3 p-5 flex flex-col gap-2">
           <div className="flex flex-col md:flex-row md:justify-between gap-2">
             {data?.price && (
               <p className="text-md font-medium text-gray-900">
                 ₹{data?.price}/<span className="text-sm text-black/50">Month</span>{" "}
-                {data?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
+                {data?.priceOptions?.length && <span className="text-xs text-primary">(+Others)</span>}
               </p>
             )}
             {data?.price && (
@@ -58,7 +58,7 @@ export default function PropertyCard(data: Property) {
               <span>{data?.location?.name}</span>
             </p>
           )}
-          <p className="text-sm text-gray-500 flex flex-wrap gap-1">
+          <p className="text-sm text-gray-500 sm:flex flex-wrap gap-1 hidden">
             {data?.amenity?.split(",")?.map((value) => {
               const title = value?.trim();
               return (
