@@ -5,7 +5,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { categories, sampleProperties } from "@/db";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export default function CategoryPage() {
   const { category } = useParams();
@@ -20,11 +20,13 @@ export default function CategoryPage() {
         <BackgroundDotPattern />
       </div>
       <Navbar />
-      <section className="max-w-7xl mx-auto py-7 flex flex-col gap-5 relative">
+      <section className="max-w-7xl mx-auto py-7 px-5 flex flex-col gap-5 relative">
         <div className="capitalize">Category name : {category}</div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {sampleProperties.map((data) => (
-            <PropertyCard {...data} />
+            <Link key={data?._id} to={`/property/${data?._id}`}>
+              <PropertyCard {...data} />
+            </Link>
           ))}
         </div>
         <div className="text-center">

@@ -12,7 +12,7 @@ export default function Navbar() {
               <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
             </div>
           </Link>
-          <Button>Get in touch with our team</Button>
+          <Button className="hidden md:flex">Get in touch with our team</Button>
         </div>
       </nav>
       <div className="relative h-16 md:h-20"></div>
