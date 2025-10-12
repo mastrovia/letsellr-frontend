@@ -279,7 +279,7 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
-                disabled={isLoading}
+                // disabled={isLoading}
               />
             </div>
 
