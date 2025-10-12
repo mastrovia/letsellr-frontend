@@ -47,18 +47,16 @@ export default function PropertyPage() {
       </div>
       <Navbar />
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
-        <h1 className="text-4xl font-semibold">
-          {propertyId} - {product?.title}
-        </h1>
+        <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
 
         {/* Image Grid & Preview */}
         <ImageGrid images={product?.images || []} />
 
         <div className="grid grid-cols-10 gap-5">
-          <div className="col-span-10 md:col-span-6 flex flex-col gap-5">
+          <div className="col-span-10 md:col-span-6 flex flex-col gap-4 md:gap-5">
             {/* Description */}
-            <div className="border rounded-md p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
-              <h1 className="text-3xl">About this Place</h1>
+            <div className="border rounded-md p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
+              <h1 className="text-xl md:text-3xl">About this Place</h1>
               <p className="text-md font-medium text-gray-900 flex items-center gap-2">
                 Rating :
                 <div className="flex gap-1">
@@ -71,8 +69,8 @@ export default function PropertyPage() {
             </div>
 
             {/* Amenities */}
-            <div className="overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
-              <h1 className="text-3xl flex items-center gap-1">What this place offers</h1>
+            <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
+              <h1 className="text-xl md:text-3xl flex items-center gap-1">What this place offers</h1>
               <div className="grid md:grid-cols-2 gap-3">
                 {product.amenity?.split(",")?.map((value, i) => {
                   const amenity = value?.trim();
@@ -81,7 +79,7 @@ export default function PropertyPage() {
                   return (
                     <div
                       key={i}
-                      className="group flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
+                      className="group flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
                     >
                       <div className="p-1.5 bg-gray-800 rounded-md group-hover:bg-gray-900 transition-all duration-300">
                         <Icon className="w-4 h-4 text-white" />
@@ -97,8 +95,8 @@ export default function PropertyPage() {
 
             {/* Maps */}
             {product?.location?.url && (
-              <div className="overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
-                <h1 className="text-3xl flex items-center gap-1">Location</h1>
+              <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2 md:gap-3">
+                <h1 className="text-xl md:text-3xl flex items-center gap-1">Location</h1>
                 <p className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" /> {product?.location?.name}
                 </p>
@@ -106,12 +104,10 @@ export default function PropertyPage() {
                   src={product?.location?.url}
                   width="100%"
                   height="450"
-                  // style="border:0;"
-                  // allowfullscreen=""
+                  allowFullScreen
                   loading="lazy"
-                  className="overflow-hidden rounded-sm h-[300px] md:h-[450px]"
-                  // referrerpolicy="no-referrer-when-downgrade"
-                ></iframe>
+                  className="overflow-hidden rounded-sm h-[300px] md:h-[450px] border"
+                />
               </div>
             )}
           </div>
