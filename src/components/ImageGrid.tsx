@@ -1,7 +1,7 @@
 export default function ImageGrid({ images }: { images: string[] }) {
   return (
     <div className="overflow-hidden sm:rounded-md">
-      <div className="grid grid-cols-10 gap-2 h-full max-h-[400px] lg:min-h-[600px]">
+      <div className="grid sm:grid-cols-10 gap-2 sm:h-[400px] md:h-[500px] lg:min-h-[600px]">
         <div className="col-span-10 sm:col-span-5 overflow-hidden">
           <img
             src={images?.[0] || "/images/placeholder.svg"}
