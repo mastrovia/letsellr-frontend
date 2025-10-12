@@ -2,10 +2,27 @@ import BackgroundDotPattern from "@/components/BackgroundDotPattern";
 import { Footer } from "@/components/Footer";
 import ImageGrid from "@/components/ImageGrid";
 import Navbar from "@/components/Navbar";
+import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { categories, sampleProperties } from "@/db";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { categories, letsellr, sampleProperties } from "@/db";
 import { cn } from "@/lib/utils";
-import { AirVent, Camera, CheckCircle, Coffee, Droplet, MapPin, ParkingCircle, Shirt, Star, WashingMachine, Wifi } from "lucide-react";
+import {
+  AirVent,
+  Camera,
+  CheckCircle,
+  Coffee,
+  Droplet,
+  MapPin,
+  MessageSquare,
+  ParkingCircle,
+  Phone,
+  Shirt,
+  Star,
+  WashingMachine,
+  Wifi,
+} from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
@@ -35,6 +52,29 @@ const getAmenityIcon = (amenity: string) => {
 export default function PropertyPage() {
   const { propertyId } = useParams();
   const product = sampleProperties[Number(propertyId) - 1];
+
+  function ContactComp() {
+    return (
+      <>
+        <a
+          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
+        >
+          <MessageSquare className="w-5 h-5" />
+          WhatsApp Chat
+        </a>
+        <a
+          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber}`}
+          className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
+        >
+          <Phone className="w-5 h-5" />
+          Call Host Directly
+        </a>
+      </>
+    );
+  }
 
   useEffect(() => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
@@ -110,6 +150,11 @@ export default function PropertyPage() {
                 />
               </div>
             )}
+
+            {/* Rating section */}
+            {/* <section className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
+              rating
+            </section> */}
           </div>
           <div className="relative hidden md:block col-span-4 h-full">
             <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
@@ -153,7 +198,20 @@ export default function PropertyPage() {
                 </>
               )}
               <div className="">
-                <Button className="w-full py-6">Contact now</Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="w-full py-6">Contact now</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
+                    <AlertDialogHeader>
+                      <DialogTitle className="text-center">Contact now</DialogTitle>
+                    </AlertDialogHeader>
+                    <div className="flex flex-col gap-2">
+                      <ContactComp />
+                    </div>
+                    <DialogDescription className="text-center">Contact the and book your slot now</DialogDescription>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>
@@ -169,7 +227,17 @@ export default function PropertyPage() {
           </h1>
         </div>
         <div className="">
-          <Button className="w-full py-6">Contact now</Button>
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button className="w-full py-6">Contact now</Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="flex flex-col gap-3 p-5 pb-10">
+                <DrawerTitle className="text-center pb-4">Contact now</DrawerTitle>
+                <ContactComp />
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
       <Footer categories={categories} />

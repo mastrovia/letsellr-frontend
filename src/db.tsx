@@ -1,3 +1,7 @@
+export const letsellr = {
+  contactNumber: "9402384",
+};
+
 export const categories = [
   {
     title: "PGs/Hostels",
@@ -61,6 +65,7 @@ export const sampleProperties = [
         description: "with food",
       },
     ],
+    contactNumber: "23234927349",
   },
   {
     _id: "2",

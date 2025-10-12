@@ -20,6 +20,7 @@ export interface Property {
   };
   priceOptions?: { price: number; description: string }[];
   rating?: number;
+  contactNumber?: string;
 }
 
 export default function PropertyCard(data: Property) {
