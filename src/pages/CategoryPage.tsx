@@ -21,7 +21,7 @@ export default function CategoryPage() {
       </div>
       <Navbar />
       <section className="max-w-7xl mx-auto py-7 px-5 flex flex-col gap-5 relative">
-        <div className="capitalize">Category name : {category}</div>
+        {/* <div className="capitalize">Category name : {category}</div> */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {sampleProperties.map((data) => (
             <Link key={data?._id} to={`/property/${data?._id}`}>

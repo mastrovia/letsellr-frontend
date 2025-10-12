@@ -163,6 +163,19 @@ export default function PropertyPage() {
           </div>
         </div>
       </div>
+      <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
+        <div>
+          <p className="flex items-center gap-1 text-sm">Starting Price</p>
+          <h1 className="text-2xl flex items-end gap-1">
+            ₹{product?.price || 0}
+            <span className="text-sm text-black/50">/Month</span>{" "}
+            {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
+          </h1>
+        </div>
+        <div className="">
+          <Button className="w-full py-6">Contact now</Button>
+        </div>
+      </div>
       <Footer categories={categories} />
     </div>
   );
