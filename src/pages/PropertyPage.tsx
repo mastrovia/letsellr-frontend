@@ -109,7 +109,7 @@ export default function PropertyPage() {
                   // style="border:0;"
                   // allowfullscreen=""
                   loading="lazy"
-                  className="overflow-hidden rounded-sm"
+                  className="overflow-hidden rounded-sm h-[300px] md:h-[450px]"
                   // referrerpolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
