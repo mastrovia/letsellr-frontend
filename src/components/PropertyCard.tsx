@@ -25,14 +25,14 @@ export interface Property {
 export default function PropertyCard(data: Property) {
   return (
     <div className="md:max-w-96 bg-primary/ border border-primary/20 overflow-hidden rounded-md bg-white/5 backdrop-blur-sm">
-      <div className="group relative ">
+      <div className="group relative grid-cols-5 grid sm:grid-cols-1">
         <img
           src={data?.images[0]}
           alt="Front of men&#039;s Artwork Tee in peach with white and brown dots forming an isometric cube."
-          className="aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-72"
+          className="col-span-2 h-full max-h-52 aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-72"
         />
-        <div className="p-5 flex flex-col gap-3">
-          <div className="flex justify-between">
+        <div className="col-span-3 p-5 flex flex-col gap-3">
+          <div className="flex flex-col md:flex-row md:justify-between gap-2">
             {data?.price && (
               <p className="text-md font-medium text-gray-900">
                 ₹{data?.price}/<span className="text-sm text-black/50">Month</span>{" "}
@@ -40,7 +40,7 @@ export default function PropertyCard(data: Property) {
               </p>
             )}
             {data?.price && (
-              <p className="text-md font-medium text-gray-900 pl-2">
+              <p className="text-md font-medium text-gray-900">
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className={cn("h-3 w-3 text-accent", i < data?.rating ? "fill-accent" : "")} />
