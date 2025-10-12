@@ -39,13 +39,11 @@ const iconMappings = [
 
 const getAmenityIcon = (amenity: string) => {
   const normalized = amenity.toLowerCase().trim();
-
   for (const mapping of iconMappings) {
     if (mapping.keywords.some((k) => normalized.includes(k))) {
       return mapping.icon;
     }
   }
-
   return CheckCircle;
 };
 
@@ -57,10 +55,134 @@ interface Review {
   date: string;
 }
 
+// Skeleton Components
+function ImageGridSkeleton() {
+  return (
+    <div className="grid grid-cols-4 gap-2 animate-pulse">
+      {/* Mobile: Single large image */}
+      <div className="col-span-4 md:hidden h-[300px] bg-gray-200 rounded-lg" />
+
+      {/* Desktop: Grid layout */}
+      <div className="hidden md:block col-span-2 row-span-2 h-[500px] bg-gray-200 rounded-lg" />
+      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
+      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
+      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
+      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
+    </div>
+  );
+}
+
+function DescriptionSkeleton() {
+  return (
+    <div className="border rounded-md p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3 animate-pulse">
+      <div className="h-7 bg-gray-200 rounded w-48" />
+      <div className="flex items-center gap-2">
+        <div className="h-4 bg-gray-200 rounded w-16" />
+        <div className="flex gap-1">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-3 w-3 bg-gray-200 rounded" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded w-full" />
+        <div className="h-4 bg-gray-200 rounded w-full" />
+        <div className="h-4 bg-gray-200 rounded w-3/4" />
+      </div>
+    </div>
+  );
+}
+
+function AmenitiesSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3 animate-pulse">
+      <div className="h-7 bg-gray-200 rounded w-56" />
+      <div className="grid md:grid-cols-2 gap-3">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200">
+            <div className="p-1.5 bg-gray-200 rounded-md h-8 w-8" />
+            <div className="h-4 bg-gray-200 rounded w-24" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReviewsSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-4 animate-pulse">
+      <div className="flex items-center justify-between">
+        <div className="h-7 bg-gray-200 rounded w-40" />
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-5 bg-gray-200 rounded" />
+          <div className="h-6 bg-gray-200 rounded w-12" />
+          <div className="h-4 bg-gray-200 rounded w-20" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="p-4 md:p-5 bg-white border border-gray-200 rounded-xl">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200" />
+                <div className="flex flex-col gap-2">
+                  <div className="h-4 bg-gray-200 rounded w-24" />
+                  <div className="h-3 bg-gray-200 rounded w-32" />
+                </div>
+              </div>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, j) => (
+                  <div key={j} className="h-4 w-4 bg-gray-200 rounded" />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-2/3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SidebarSkeleton() {
+  return (
+    <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3 animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-28" />
+      <div className="h-9 bg-gray-200 rounded w-48" />
+      <div className="flex items-center gap-2">
+        <div className="h-4 bg-gray-200 rounded w-16" />
+        <div className="flex gap-1">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-3 w-3 bg-gray-200 rounded" />
+          ))}
+        </div>
+      </div>
+      <hr />
+      <div className="flex flex-col gap-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200">
+            <div className="h-6 w-6 bg-gray-200 rounded-md" />
+            <div className="flex items-center justify-between w-full">
+              <div className="h-4 bg-gray-200 rounded w-24" />
+              <div className="h-5 bg-gray-200 rounded w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="h-14 bg-gray-200 rounded-xl w-full" />
+    </div>
+  );
+}
+
 export default function PropertyPage() {
   const { propertyId } = useParams();
-  const product = sampleProperties[Number(propertyId) - 1];
-
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewForm, setReviewForm] = useState({
@@ -74,19 +196,43 @@ export default function PropertyPage() {
 
   const displayedReviews = showAllReviews ? sampleReviews : sampleReviews.slice(0, 3);
 
-  // Function to toggle show all reviews
+  // Fetch property data
+  const fetchProperty = async () => {
+    setIsLoading(true);
+    try {
+      // TODO: Replace with your actual API endpoint
+      // const response = await fetch(`/api/properties/${propertyId}`);
+      // const data = await response.json();
+      // setProduct(data.property);
+
+      // Simulating API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // For now, set null (replace with actual API response)
+      setProduct(sampleProperties[Number(propertyId)]);
+    } catch (error) {
+      console.error("Error fetching property:", error);
+      setProduct(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+    fetchProperty();
+  }, [propertyId]);
+
   const handleToggleReviews = () => {
     setShowAllReviews(!showAllReviews);
   };
 
-  // Function to calculate average rating
   const calculateAverageRating = (reviews: Review[]) => {
     if (reviews.length === 0) return "0.0";
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
     return (sum / reviews.length).toFixed(1);
   };
 
-  // Function to format date
   const formatReviewDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -95,24 +241,12 @@ export default function PropertyPage() {
     });
   };
 
-  // Function to get initials from name
   const getInitials = (name: string) => {
     return name
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase())
       .slice(0, 2)
       .join("");
-  };
-
-  // Function to get rating distribution (optional for future use)
-  const getRatingDistribution = (reviews: Review[]) => {
-    const distribution: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach((review) => {
-      if (review.rating >= 1 && review.rating <= 5) {
-        distribution[review.rating]++;
-      }
-    });
-    return distribution;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -126,7 +260,6 @@ export default function PropertyPage() {
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (selectedRating === 0) {
       setSubmitMessage("Please select a rating");
       return;
@@ -142,7 +275,6 @@ export default function PropertyPage() {
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(reviewForm.email)) {
       setSubmitMessage("Please enter a valid email address");
@@ -158,10 +290,8 @@ export default function PropertyPage() {
     setSubmitMessage("");
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Here you would normally send data to your backend
       const reviewData = {
         propertyId,
         rating: selectedRating,
@@ -172,11 +302,8 @@ export default function PropertyPage() {
       };
 
       console.log("Review submitted:", reviewData);
-
-      // Success message
       setSubmitMessage("Thank you for your review!");
 
-      // Reset form
       setSelectedRating(0);
       setReviewForm({
         name: "",
@@ -184,7 +311,6 @@ export default function PropertyPage() {
         description: "",
       });
 
-      // Clear success message after 3 seconds
       setTimeout(() => setSubmitMessage(""), 3000);
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -217,10 +343,84 @@ export default function PropertyPage() {
     );
   }
 
-  useEffect(() => {
-    document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
-  }, [propertyId]);
+  // Loading State
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen">
+        <div className="absolute hidden md:flex inset-0 z-0">
+          <BackgroundDotPattern />
+        </div>
+        <Navbar />
+        <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5 z-10">
+          {/* Title Skeleton */}
+          <div className="h-8 md:h-10 bg-gray-200 rounded w-2/3 animate-pulse" />
 
+          {/* Image Grid Skeleton */}
+          <ImageGridSkeleton />
+
+          <div className="grid grid-cols-10 gap-5">
+            <div className="col-span-10 md:col-span-6 flex flex-col gap-4 md:gap-5">
+              {/* Description Skeleton */}
+              <DescriptionSkeleton />
+
+              {/* Amenities Skeleton */}
+              <AmenitiesSkeleton />
+
+              {/* Map Skeleton */}
+              <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3 animate-pulse">
+                <div className="h-7 bg-gray-200 rounded w-32" />
+                <div className="h-4 bg-gray-200 rounded w-40" />
+                <div className="h-[300px] md:h-[450px] bg-gray-200 rounded" />
+              </div>
+
+              {/* Reviews Skeleton */}
+              <ReviewsSkeleton />
+            </div>
+
+            {/* Sidebar Skeleton - Desktop */}
+            <div className="relative hidden md:block col-span-4 h-full">
+              <SidebarSkeleton />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Bottom Bar Skeleton */}
+        <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center animate-pulse">
+          <div className="flex flex-col gap-2">
+            <div className="h-4 bg-gray-200 rounded w-24" />
+            <div className="h-6 bg-gray-200 rounded w-32" />
+          </div>
+          <div className="h-12 bg-gray-200 rounded-xl w-32" />
+        </div>
+
+        <Footer categories={categories} />
+      </div>
+    );
+  }
+
+  // Error State - Property Not Found
+  if (!product) {
+    return (
+      <div className="relative min-h-screen">
+        <div className="absolute hidden md:flex inset-0 z-0">
+          <BackgroundDotPattern />
+        </div>
+        <Navbar />
+        <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col items-center justify-center gap-5 z-10 min-h-[60vh]">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Property Not Found</h1>
+            <p className="text-gray-600 mb-6">The property you're looking for doesn't exist or has been removed.</p>
+            <Button onClick={() => window.history.back()} className="rounded-2xl">
+              Go Back
+            </Button>
+          </div>
+        </div>
+        <Footer categories={categories} />
+      </div>
+    );
+  }
+
+  // Main Content (when data is loaded)
   return (
     <div className="relative">
       <div className="absolute hidden md:flex inset-0 z-0">
@@ -230,7 +430,6 @@ export default function PropertyPage() {
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
         <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
 
-        {/* Image Grid & Preview */}
         <ImageGrid images={product?.images || []} />
 
         <div className="grid grid-cols-10 gap-5">
@@ -309,34 +508,27 @@ export default function PropertyPage() {
                     key={review.id}
                     className="group p-4 md:p-5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-md transition-all duration-300"
                   >
-                    {/* Review Header */}
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        {/* Avatar */}
                         <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <span className="text-primary font-semibold text-sm md:text-base">{getInitials(review.name)}</span>
                         </div>
-                        {/* Name and Date */}
                         <div className="flex flex-col">
                           <h3 className="font-semibold text-gray-900 text-sm md:text-base">{review.name}</h3>
                           <span className="text-xs md:text-sm text-gray-500">{formatReviewDate(review.date)}</span>
                         </div>
                       </div>
-                      {/* Rating Stars */}
                       <div className="flex gap-0.5 flex-shrink-0">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={cn("h-3 w-3 md:h-4 md:w-4 text-accent", i < review.rating ? "fill-accent" : "")} />
                         ))}
                       </div>
                     </div>
-
-                    {/* Review Description */}
                     <p className="text-sm md:text-base text-gray-700 leading-relaxed">{review.description}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Show More/Less Button */}
               {sampleReviews.length > 3 && (
                 <Button
                   variant="outline"
@@ -352,7 +544,6 @@ export default function PropertyPage() {
             <section className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-4">
               <h1 className="text-xl md:text-3xl">Leave a Review</h1>
 
-              {/* Success/Error Message */}
               {submitMessage && (
                 <div
                   className={cn(
@@ -367,7 +558,6 @@ export default function PropertyPage() {
               )}
 
               <form onSubmit={handleSubmitReview} className="flex flex-col gap-4">
-                {/* Star Rating Input */}
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-gray-700">
                     Your Rating <span className="text-red-500">*</span>
@@ -398,7 +588,6 @@ export default function PropertyPage() {
                   )}
                 </div>
 
-                {/* Name Input */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="name" className="text-sm font-medium text-gray-700">
                     Name <span className="text-red-500">*</span>
@@ -415,7 +604,6 @@ export default function PropertyPage() {
                   />
                 </div>
 
-                {/* Email Input */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-sm font-medium text-gray-700">
                     Email <span className="text-red-500">*</span>
@@ -432,7 +620,6 @@ export default function PropertyPage() {
                   />
                 </div>
 
-                {/* Description Textarea */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="description" className="text-sm font-medium text-gray-700">
                     Review <span className="text-red-500">*</span>
@@ -449,13 +636,13 @@ export default function PropertyPage() {
                   />
                 </div>
 
-                {/* Submit Button */}
                 <Button type="submit" className="w-full md:w-auto py-6" disabled={isSubmitting}>
                   {isSubmitting ? "Submitting..." : "Submit Review"}
                 </Button>
               </form>
             </section>
           </div>
+
           <div className="relative hidden md:block col-span-4 h-full">
             <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <p className="flex items-center gap-1">Starting Price</p>
@@ -507,7 +694,7 @@ export default function PropertyPage() {
                     <div className="flex flex-col gap-2">
                       <ContactComp />
                     </div>
-                    <DialogDescription className="text-center">Contact the and book your slot now</DialogDescription>
+                    <DialogDescription className="text-center">Contact the host and book your slot now</DialogDescription>
                   </DialogContent>
                 </Dialog>
               </div>
@@ -515,10 +702,12 @@ export default function PropertyPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Bar */}
       <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
         <div>
           <p className="flex items-center gap-1 text-sm">Starting Price</p>
-          <h1 className="text-2xl flex items-end gap-1 ">
+          <h1 className="text-2xl flex items-end gap-1">
             ₹{product?.price || 0}
             <span className="text-sm text-black/50">/ Month</span>{" "}
             {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others)</span>}
@@ -538,6 +727,7 @@ export default function PropertyPage() {
           </Drawer>
         </div>
       </div>
+
       <Footer categories={categories} />
     </div>
   );
