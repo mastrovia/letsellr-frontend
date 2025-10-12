@@ -1,12 +1,12 @@
 export default function ImageGrid({ images }: { images: string[] }) {
   return (
     <div className="overflow-hidden sm:rounded-md">
-      <div className="grid sm:grid-cols-10 gap-2 sm:h-[400px] md:h-[500px] lg:min-h-[600px]">
-        <div className="col-span-10 sm:col-span-5 overflow-hidden">
+      <div className="sm:grid sm:grid-cols-10 gap-2 h-[300px] w-full sm:h-[400px] md:h-[500px] lg:min-h-[600px]">
+        <div className="col-span-10 sm:col-span-5 overflow-hidden h-full">
           <img
             src={images?.[0] || "/images/placeholder.svg"}
             alt=""
-            className="rounded-md sm:rounded-none hover:opacity-80 duration-300 h-full object-cover"
+            className="rounded-md sm:rounded-none hover:opacity-80 duration-300 h-full w-full object-cover"
           />
         </div>
         <div className="col-span-5 overflow-hidden grid lg:grid-cols-2 gap-2">
