@@ -11,27 +11,91 @@ import { Link, useSearchParams } from "react-router-dom";
 
 const LOCATIONS = ["Kanayannur", "Kochi", "Ernakulam", "Thrippunithura", "Kakkanad", "Edappally"];
 
+// Skeleton loader component matching PropertyCard design
+function PropertyCardSkeleton() {
+  return (
+    <div className="md:max-w-96 bg-primary/ border border-primary/20 overflow-hidden rounded-md bg-white/5 backdrop-blur-sm animate-pulse">
+      <div className="group relative grid-cols-5 grid sm:grid-cols-1">
+        {/* Image Skeleton */}
+        <div className="col-span-2 h-full md:max-h-52 aspect-square w-full bg-gray-200 lg:aspect-auto lg:h-72" />
+
+        {/* Content Skeleton */}
+        <div className="col-span-3 p-5 flex flex-col gap-2">
+          {/* Price and Rating Row */}
+          <div className="flex flex-col md:flex-row md:justify-between gap-2">
+            <div className="h-5 bg-gray-200 rounded w-32" />
+            <div className="flex gap-1">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-3 w-3 bg-gray-200 rounded" />
+              ))}
+            </div>
+          </div>
+
+          {/* Title Skeleton */}
+          <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+          {/* Location Skeleton */}
+          <div className="flex items-center gap-1">
+            <div className="h-3 w-3 bg-gray-200 rounded" />
+            <div className="h-4 bg-gray-200 rounded w-24" />
+          </div>
+
+          {/* Amenities Skeleton - Desktop Only */}
+          <div className="sm:flex flex-wrap gap-1 hidden">
+            <div className="h-6 bg-gray-200 rounded w-16" />
+            <div className="h-6 bg-gray-200 rounded w-20" />
+            <div className="h-6 bg-gray-200 rounded w-14" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Initialize state from URL params
+  // State
   const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
   const [selectedLocation, setSelectedLocation] = useState(searchParams.get("location") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [properties, setProperties] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter properties
-  const filteredProperties = sampleProperties.filter((property) => {
-    const matchesSearch =
-      !searchQuery ||
-      property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (property.description?.toLowerCase() || "").includes(searchQuery.toLowerCase());
+  // Fetch properties from API
+  const fetchProperties = async () => {
+    setIsLoading(true);
 
-    const matchesLocation = !selectedLocation || property.location?.name === selectedLocation;
-    const matchesCategory = !selectedCategory || property.category.name === selectedCategory;
+    try {
+      // Build query params for API
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("query", searchQuery);
+      if (selectedLocation) params.append("location", selectedLocation);
+      if (selectedCategory) params.append("category", selectedCategory);
 
-    return matchesSearch && matchesLocation && matchesCategory;
-  });
+      // TODO: Replace with your actual API endpoint
+      // const response = await fetch(`/api/properties?${params.toString()}`);
+      // const data = await response.json();
+      // setProperties(data.properties);
+
+      // Simulating API call with timeout
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // For now, set empty array (replace with actual API response)
+      setProperties(sampleProperties);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+      setProperties([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch properties when filters change
+  useEffect(() => {
+    fetchProperties();
+  }, [searchQuery, selectedLocation, selectedCategory]);
 
   // Sync filters with URL
   useEffect(() => {
@@ -40,7 +104,7 @@ export default function SearchPage() {
     if (selectedLocation) params.set("location", selectedLocation);
     if (selectedCategory) params.set("category", selectedCategory);
     setSearchParams(params, { replace: true });
-  }, [searchQuery, selectedLocation, selectedCategory]);
+  }, [searchQuery, selectedLocation, selectedCategory, setSearchParams]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -78,6 +142,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -87,7 +152,8 @@ export default function SearchPage() {
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  disabled={isLoading}
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">All Locations</option>
                   {LOCATIONS.map((loc) => (
@@ -104,7 +170,8 @@ export default function SearchPage() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  disabled={isLoading}
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">All Categories</option>
                   {categories.map((category) => (
@@ -121,6 +188,7 @@ export default function SearchPage() {
                   variant="ghost"
                   size="icon"
                   onClick={clearFilters}
+                  disabled={isLoading}
                   className="h-14 w-14 rounded-2xl hover:bg-red-50 hover:text-red-600"
                   title="Clear all filters"
                 >
@@ -136,7 +204,11 @@ export default function SearchPage() {
                 {searchQuery && (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
                     Search: {searchQuery}
-                    <button onClick={() => setSearchQuery("")} className="hover:bg-primary/20 rounded-full p-0.5">
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      disabled={isLoading}
+                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
@@ -145,15 +217,23 @@ export default function SearchPage() {
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
                     <MapPin className="w-3 h-3" />
                     {selectedLocation}
-                    <button onClick={() => setSelectedLocation("")} className="hover:bg-primary/20 rounded-full p-0.5">
+                    <button
+                      onClick={() => setSelectedLocation("")}
+                      disabled={isLoading}
+                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
                 )}
                 {selectedCategory && (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                    {categories.find((c) => c.value === selectedCategory)?.value}
-                    <button onClick={() => setSelectedCategory("")} className="hover:bg-primary/20 rounded-full p-0.5">
+                    {categories.find((c) => c.value === selectedCategory)?.title}
+                    <button
+                      onClick={() => setSelectedCategory("")}
+                      disabled={isLoading}
+                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
@@ -173,13 +253,15 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
+                disabled={isLoading}
               />
             </div>
 
             {/* Filter Toggle */}
             <button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="flex items-center justify-center gap-2 h-12 border border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition-colors"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 h-12 border border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <Filter className="w-5 h-5" />
               <span className="font-medium">{hasActiveFilters ? `Filters (${activeFilterCount})` : "Show Filters"}</span>
@@ -196,7 +278,8 @@ export default function SearchPage() {
                     <select
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      disabled={isLoading}
+                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                     >
                       <option value="">All Locations</option>
                       {LOCATIONS.map((loc) => (
@@ -216,7 +299,8 @@ export default function SearchPage() {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      disabled={isLoading}
+                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                     >
                       <option value="">All Categories</option>
                       {categories.map((category) => (
@@ -233,6 +317,7 @@ export default function SearchPage() {
                   <Button
                     variant="outline"
                     onClick={clearFilters}
+                    disabled={isLoading}
                     className="w-full rounded-2xl text-red-600 border-red-200 hover:bg-red-50"
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -244,39 +329,55 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Results Count */}
-        <p className="text-gray-600">
-          Found <span className="font-semibold text-gray-900">{filteredProperties.length}</span>{" "}
-          {filteredProperties.length === 1 ? "property" : "properties"}
-        </p>
-
-        {/* Property Grid or Empty State */}
-        {filteredProperties.length > 0 ? (
+        {/* Loading State */}
+        {isLoading ? (
           <>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredProperties.map((property) => (
-                <Link key={property._id} to={`/property/${property._id}`}>
-                  <PropertyCard {...property} />
-                </Link>
-              ))}
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
             </div>
-            <div className="text-center">
-              <Button className="rounded-2xl">Load more</Button>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => (
+                <PropertyCardSkeleton key={i} />
+              ))}
             </div>
           </>
         ) : (
-          <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-              <Search className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your search or filters</p>
-            {hasActiveFilters && (
-              <Button onClick={clearFilters} className="rounded-2xl">
-                Clear all filters
-              </Button>
+          <>
+            {/* Results Count */}
+            <p className="text-gray-600">
+              Found <span className="font-semibold text-gray-900">{properties.length}</span>{" "}
+              {properties.length === 1 ? "property" : "properties"}
+            </p>
+
+            {/* Property Grid or Empty State */}
+            {properties.length > 0 ? (
+              <>
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {properties.map((property) => (
+                    <Link key={property._id} to={`/property/${property._id}`}>
+                      <PropertyCard {...property} />
+                    </Link>
+                  ))}
+                </div>
+                <div className="text-center">
+                  <Button className="rounded-2xl">Load more</Button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                  <Search className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
+                <p className="text-gray-600 mb-4">Try adjusting your search or filters</p>
+                {hasActiveFilters && (
+                  <Button onClick={clearFilters} className="rounded-2xl">
+                    Clear all filters
+                  </Button>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
       </section>
 
