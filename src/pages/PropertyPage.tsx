@@ -120,7 +120,7 @@ export default function PropertyPage() {
               <p className="flex items-center gap-1">Starting Price</p>
               <h1 className="text-3xl flex items-end gap-1">
                 ₹{product?.price || 0}
-                <span className="text-sm text-black/50">/Month</span>{" "}
+                <span className="text-sm text-black/50">/ Month</span>{" "}
                 {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
               </h1>
               <p className="text-md font-medium text-gray-900 flex items-center gap-2">
@@ -166,10 +166,10 @@ export default function PropertyPage() {
       <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
         <div>
           <p className="flex items-center gap-1 text-sm">Starting Price</p>
-          <h1 className="text-2xl flex items-end gap-1">
+          <h1 className="text-2xl flex items-end gap-1 ">
             ₹{product?.price || 0}
-            <span className="text-sm text-black/50">/Month</span>{" "}
-            {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
+            <span className="text-sm text-black/50">/ Month</span>{" "}
+            {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others)</span>}
           </h1>
         </div>
         <div className="">
