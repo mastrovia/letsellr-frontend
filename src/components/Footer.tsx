@@ -10,7 +10,7 @@ interface Category {
 
 export const Footer = ({ categories }: { categories: Category[] }) => {
   return (
-    <footer className="bg-card border-t border-border">
+    <footer className="bg-card border-t border-border relative">
       <div className="w-full px-6 md:px-12 lg:px-16 py-12 md:py-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-10 md:gap-12">
