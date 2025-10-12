@@ -16,7 +16,7 @@ export default function CategoryPage() {
 
   return (
     <div className="relative">
-      <div className="absolute inset-0 z-0">
+      <div className="absolute hidden md:flex inset-0 z-0">
         <BackgroundDotPattern />
       </div>
       <Navbar />
