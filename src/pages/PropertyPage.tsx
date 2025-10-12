@@ -73,7 +73,7 @@ export default function PropertyPage() {
             {/* Amenities */}
             <div className="overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <h1 className="text-3xl flex items-center gap-1">What this place offers</h1>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid md:grid-cols-2 gap-3">
                 {product.amenity?.split(",")?.map((value, i) => {
                   const amenity = value?.trim();
                   const Icon = getAmenityIcon(amenity);
