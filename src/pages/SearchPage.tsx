@@ -5,10 +5,13 @@ import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { categories, sampleProperties } from "@/db";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
-export default function CategoryPage() {
-  const { category } = useParams();
+export default function SearchPage() {
+  const [search] = useSearchParams();
+  const category = search.get("category");
+  const location = search.get("location");
+  const query = search.get("query");
 
   useEffect(() => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });

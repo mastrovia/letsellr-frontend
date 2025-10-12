@@ -6,8 +6,13 @@ import { Footer } from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
 import { categories } from "@/db";
+import { useEffect } from "react";
 
 const Index = () => {
+  useEffect(() => {
+    document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Search and Categories */}
@@ -34,10 +39,10 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Search Bar */}
+              {/* Search Bar - Independent module with built-in navigation */}
               <SearchBar />
 
-              {/* Categories - Directly under search */}
+              {/* Categories - Independent modules with built-in navigation */}
               <div className="md:px-8 lg:px-12 relative">
                 <div className="grid gap-6 md:grid-cols-5">
                   <div className="md:flex relative w-full hidden md:col-span-2">
@@ -68,6 +73,7 @@ const Index = () => {
       {/* Testimonials Section */}
       <TestimonialsSection />
 
+      {/* Faq Section */}
       <FaqSection />
 
       {/* Footer */}

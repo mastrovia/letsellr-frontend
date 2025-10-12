@@ -5,7 +5,7 @@ interface Category {
   title: string;
   description: string;
   count: string;
-  action: string;
+  value: string;
 }
 
 export const Footer = ({ categories }: { categories: Category[] }) => {
@@ -61,9 +61,12 @@ export const Footer = ({ categories }: { categories: Category[] }) => {
               <h3 className="font-semibold text-foreground mb-5">Categories</h3>
               <ul className="space-y-3.5">
                 {categories.map((category) => {
+                  // Build search URL with category parameter
+                  const categoryValue = category?.value;
+                  const searchUrl = `/search?category=${encodeURIComponent(categoryValue)}`;
                   return (
                     <li>
-                      <Link to={category?.action || "#"} className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                      <Link to={searchUrl || "#"} className="text-muted-foreground hover:text-primary transition-colors text-sm">
                         {category?.title}
                       </Link>
                     </li>

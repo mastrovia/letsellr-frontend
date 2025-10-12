@@ -8,34 +8,82 @@ export const categories = [
     description: "Affordable paying guest accommodations with all amenities for students and working professionals.",
     count: "1,200+",
     image: "/images/category-card-big-sm.png",
-    action: "/category/pg-hotels",
+    value: "pg-hostels",
   },
   {
     title: "House/Villa's",
     description: "Fully furnished and semi-furnished apartments for individuals and families.",
     count: "850+",
-    action: "/category/house-villas",
+    value: "house-villas",
   },
   {
     title: "Flat/Apartments",
     description: "Budget-friendly hostel stays near educational institutions and IT hubs.",
     image: "/images/category-card-room-1.png",
     count: "320+",
-    action: "/category/flat-apartments",
+    value: "flat-apartments",
   },
   {
     title: "Commercial",
     description: "Independent houses with complete privacy and flexibility.",
     image: "/images/category-card-room-2.png",
     count: "180+",
-    action: "/category/commercial",
+    value: "commercial",
   },
   {
     title: "Land",
     description: "Independent houses with complete privacy and flexibility.",
     image: "/images/category-card-land.png",
     count: "180+",
-    action: "/category/land",
+    value: "land",
+  },
+];
+
+// Sample reviews data - replace with actual data from your backend
+export const sampleReviews = [
+  {
+    id: 1,
+    name: "Rajesh Kumar",
+    rating: 5,
+    description:
+      "Excellent property! Very clean and well-maintained. The location is perfect and the host was very responsive. Highly recommended!",
+    date: "2025-09-15",
+  },
+  {
+    id: 2,
+    name: "Priya Sharma",
+    rating: 4,
+    description: "Good place to stay. All amenities were available as mentioned. Only minor issue was the parking space was a bit tight.",
+    date: "2025-09-10",
+  },
+  {
+    id: 3,
+    name: "Arun Menon",
+    rating: 5,
+    description:
+      "Amazing experience! The property exceeded my expectations. Everything was as shown in the pictures. Will definitely come back.",
+    date: "2025-09-05",
+  },
+  {
+    id: 4,
+    name: "Divya Nair",
+    rating: 4,
+    description: "Nice and comfortable stay. The host was friendly and accommodating. Good value for money.",
+    date: "2025-08-28",
+  },
+  {
+    id: 5,
+    name: "Karthik Pillai",
+    rating: 5,
+    description: "Perfect location with great amenities. The WiFi was fast and reliable. Couldn't ask for more!",
+    date: "2025-08-20",
+  },
+  {
+    id: 6,
+    name: "Sneha Varghese",
+    rating: 3,
+    description: "Decent property but could use some updates. The AC wasn't cooling properly in one room.",
+    date: "2025-08-15",
   },
 ];
 

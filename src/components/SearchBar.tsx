@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const POPULAR_LOCATIONS = ["Bangalore", "Mumbai", "Delhi", "Pune", "Hyderabad", "Chennai", "Kolkata", "Ahmedabad"];
 
@@ -14,6 +15,7 @@ const SEARCH_SUGGESTIONS = [
 ];
 
 export const SearchBar = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
@@ -21,6 +23,34 @@ export const SearchBar = () => {
 
   const filteredSearchSuggestions = SEARCH_SUGGESTIONS.filter((suggestion) => suggestion.toLowerCase().includes(searchQuery.toLowerCase()));
   const filteredLocations = POPULAR_LOCATIONS.filter((loc) => loc.toLowerCase().includes(location.toLowerCase()));
+
+  // Show all locations when input is focused and empty
+  const locationsToShow = location ? filteredLocations : POPULAR_LOCATIONS;
+
+  // Handle search - builds URL and navigates
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+
+    if (searchQuery.trim()) {
+      params.append("query", searchQuery.trim());
+    }
+
+    if (location.trim()) {
+      params.append("location", location.trim());
+    }
+
+    // Only navigate if there's at least one parameter
+    if (params.toString()) {
+      navigate(`/search?${params.toString()}`);
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -35,6 +65,7 @@ export const SearchBar = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowSearchSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+              onKeyPress={handleKeyPress}
               className="pl-12 h-14 border-0 bg-secondary/50 rounded-2xl text-base focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
@@ -45,7 +76,8 @@ export const SearchBar = () => {
               {filteredSearchSuggestions.map((suggestion, idx) => (
                 <button
                   key={idx}
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent blur event
                     setSearchQuery(suggestion);
                     setShowSearchSuggestions(false);
                   }}
@@ -69,17 +101,19 @@ export const SearchBar = () => {
               onChange={(e) => setLocation(e.target.value)}
               onFocus={() => setShowLocationSuggestions(true)}
               onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
+              onKeyPress={handleKeyPress}
               className="pl-12 h-14 border-0 bg-secondary/50 rounded-2xl text-base focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
 
           {/* Location Suggestions Dropdown */}
-          {showLocationSuggestions && filteredLocations.length > 0 && (
+          {showLocationSuggestions && location && filteredLocations.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
               {filteredLocations.map((loc, idx) => (
                 <button
                   key={idx}
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent blur event
                     setLocation(loc);
                     setShowLocationSuggestions(false);
                   }}
@@ -96,7 +130,9 @@ export const SearchBar = () => {
         {/* Search Button */}
         <Button
           size="lg"
-          className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
+          onClick={handleSearch}
+          disabled={!searchQuery.trim() && !location.trim()}
+          className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Search
         </Button>
