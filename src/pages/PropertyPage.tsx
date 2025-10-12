@@ -2,6 +2,7 @@ import BackgroundDotPattern from "@/components/BackgroundDotPattern";
 import { Footer } from "@/components/Footer";
 import ImageGrid from "@/components/ImageGrid";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
 import { categories, sampleProperties } from "@/db";
 import { cn } from "@/lib/utils";
 import { AirVent, Camera, CheckCircle, Coffee, Droplet, MapPin, ParkingCircle, Shirt, Star, WashingMachine, Wifi } from "lucide-react";
@@ -54,7 +55,7 @@ export default function PropertyPage() {
         <ImageGrid images={product?.images || []} />
 
         <div className="grid grid-cols-10 gap-5">
-          <div className="col-span-6 flex flex-col gap-5">
+          <div className="col-span-10 md:col-span-6 flex flex-col gap-5">
             {/* Description */}
             <div className="border rounded-md p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
               <h1 className="text-3xl">About this Place</h1>
@@ -114,7 +115,52 @@ export default function PropertyPage() {
               </div>
             )}
           </div>
-          <div className="col-span-4">hai</div>
+          <div className="relative hidden md:block col-span-4 h-full">
+            <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
+              <p className="flex items-center gap-1">Starting Price</p>
+              <h1 className="text-3xl flex items-end gap-1">
+                ₹{product?.price || 0}
+                <span className="text-sm text-black/50">/Month</span>{" "}
+                {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
+              </h1>
+              <p className="text-md font-medium text-gray-900 flex items-center gap-2">
+                Rating :
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={cn("h-3 w-3 text-accent", i < product?.rating ? "fill-accent" : "")} />
+                  ))}
+                </div>
+              </p>
+              {product?.priceOptions?.length > 0 && (
+                <>
+                  <hr />
+                  <div className="flex flex-col gap-3 mt-1">
+                    {product?.priceOptions?.map((priceOption, i) => {
+                      return (
+                        <div
+                          key={i}
+                          className="group flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
+                        >
+                          <div className="p-1.5 bg-gray-800/70 rounded-md group-hover:bg-gray-900 transition-all duration-300">
+                            {/* <Icon className="w-4 h-4 text-white" /> */}
+                          </div>
+                          <div className="flex items-center justify-between w-full">
+                            <div className="font-medium text-gray-700 text-sm group-hover:text-gray-900 transition-colors duration-300 capitalize">
+                              {priceOption?.description}
+                            </div>
+                            <div className="font-bold text-md">₹{priceOption?.price}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+              <div className="">
+                <Button className="w-full py-6">Contact now</Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <Footer categories={categories} />

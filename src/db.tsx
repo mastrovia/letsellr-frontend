@@ -55,6 +55,12 @@ export const sampleProperties = [
       url: "https://www.google.com/maps?q=Kakkanad,+Kochi&output=embed",
     },
     rating: 3,
+    priceOptions: [
+      {
+        price: 8000,
+        description: "with food",
+      },
+    ],
   },
   {
     _id: "2",
