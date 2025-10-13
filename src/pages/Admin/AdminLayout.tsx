@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-import { Home, Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search } from "lucide-react";
+import { Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+export const menuItems = [
+  // { id: "overview", path: "/admin", icon: Home, label: "Overview" },
+  { id: "properties", path: "/admin/properties", icon: Building2, label: "Properties" },
+  { id: "reviews", path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
+  // { id: "users", path: "/admin/users", icon: Users, label: "Users" },
+];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -21,13 +28,6 @@ const AdminLayout = () => {
     localStorage.removeItem("adminToken");
     navigate("/admin/login");
   };
-
-  const menuItems = [
-    { id: "overview", path: "/admin", icon: Home, label: "Overview" },
-    { id: "properties", path: "/admin/properties", icon: Building2, label: "Properties" },
-    { id: "users", path: "/admin/users", icon: Users, label: "Users" },
-    { id: "reviews", path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
-  ];
 
   // Get current active menu item based on path
   const currentMenuItem = menuItems.find((item) => location.pathname === item.path);
@@ -49,7 +49,7 @@ const AdminLayout = () => {
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-border px-6">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/admin/dashboard")}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(menuItems?.[0]?.path)}>
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Building2 className="h-5 w-5 text-primary-foreground" />
             </div>
