@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import instance from "@/lib/axios";
 
 const iconMappings = [
   { keywords: ["wifi", "wi-fi"], icon: Wifi },
