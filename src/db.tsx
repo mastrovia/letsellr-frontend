@@ -93,7 +93,7 @@ export const sampleProperties = [
     title: "Modern 2BHK Apartment in Kochi",
     description: "A stylish 2-bedroom apartment with balcony views of the city, located near Infopark.",
     images: [
-      "https://picsum.photos/seed/kochi1/800/500",
+      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800",
       "https://picsum.photos/seed/kochi2/800/500",
       "https://picsum.photos/seed/kochi3/800/500",
       "https://picsum.photos/seed/kochi4/800/500",
@@ -122,7 +122,7 @@ export const sampleProperties = [
     title: "Cozy Studio Flat near Marine Drive",
     description: "Compact studio apartment ideal for bachelors or working professionals.",
     images: [
-      "https://picsum.photos/seed/marine1/800/500",
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800",
       "https://picsum.photos/seed/marine2/800/500",
       "https://picsum.photos/seed/marine3/800/500",
       "https://picsum.photos/seed/marine4/800/500",
@@ -142,7 +142,7 @@ export const sampleProperties = [
     title: "Luxury Villa with Private Garden",
     description: "Spacious 4BHK villa featuring a private garden and modern kitchen, perfect for families.",
     images: [
-      "https://picsum.photos/seed/villa1/800/500",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
       "https://picsum.photos/seed/villa2/800/500",
       "https://picsum.photos/seed/villa3/800/500",
       "https://picsum.photos/seed/villa4/800/500",

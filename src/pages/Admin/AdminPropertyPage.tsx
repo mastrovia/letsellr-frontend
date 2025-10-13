@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { sampleProperties } from "@/db";
 
 // Types
 interface Property {
@@ -62,50 +63,7 @@ const mockAPI = {
   fetchProperties: (): Promise<Property[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve([
-          {
-            _id: "1",
-            title: "Luxury 2BHK Apartment",
-            description: "Spacious apartment with modern amenities",
-            images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400"],
-            category: { _id: "2", name: "Apartment" },
-            amenity: "WiFi, AC, Parking, Kitchen",
-            price: 25000,
-            location: { name: "HSR Layout, Bangalore", url: "https://maps.google.com" },
-            rating: 4.5,
-            contactNumber: "9876543210",
-            status: "active",
-            views: 1234,
-          },
-          {
-            _id: "2",
-            title: "Cozy PG for Students",
-            description: "Affordable PG with all basic amenities",
-            images: ["https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400"],
-            category: { _id: "1", name: "PG" },
-            amenity: "WiFi, Food, Laundry",
-            price: 8000,
-            location: { name: "Koramangala, Bangalore", url: "https://maps.google.com" },
-            rating: 4.2,
-            contactNumber: "9876543211",
-            status: "active",
-            views: 856,
-          },
-          {
-            _id: "3",
-            title: "Premium Villa with Pool",
-            description: "Luxurious villa in prime location",
-            images: ["https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400"],
-            category: { _id: "4", name: "Villa" },
-            amenity: "Pool, Garden, Gym, Parking",
-            price: 75000,
-            location: { name: "Whitefield, Bangalore", url: "https://maps.google.com" },
-            rating: 4.8,
-            contactNumber: "9876543212",
-            status: "inactive",
-            views: 2341,
-          },
-        ]);
+        resolve(sampleProperties);
       }, 1000);
     });
   },
@@ -504,7 +462,7 @@ const AdminPropertiesPage = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
+    <div className="space-y-6 ">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
