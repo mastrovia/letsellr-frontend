@@ -7,6 +7,12 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SearchPage from "./pages/SearchPage";
 import PropertyPage from "./pages/PropertyPage";
+import AdminDashboardPage from "./pages/Admin/AdminDashboardPage";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminUsersPage from "./pages/Admin/AdminUsersPage";
+import AdminPropertiesPage from "./pages/Admin/AdminPropertyPage";
+import AdminReviewsPage from "./pages/Admin/AdminReviewsPage";
 
 const queryClient = new QueryClient();
 
@@ -17,9 +23,22 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/property/:propertyId" element={<PropertyPage />} />
+
+          {/* Admin Layout with Nested Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="properties" element={<AdminPropertiesPage />} />
+            <Route path="reviews" element={<AdminReviewsPage />} />
+            {/* <Route path="categories" element={<AdminCategory />} /> */}
+          </Route>
+
+          {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
