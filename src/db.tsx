@@ -40,52 +40,52 @@ export const categories = [
 ];
 
 // Sample reviews data - replace with actual data from your backend
-export const sampleReviews = [
-  {
-    id: 1,
-    name: "Rajesh Kumar",
-    rating: 5,
-    description:
-      "Excellent property! Very clean and well-maintained. The location is perfect and the host was very responsive. Highly recommended!",
-    date: "2025-09-15",
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    rating: 4,
-    description: "Good place to stay. All amenities were available as mentioned. Only minor issue was the parking space was a bit tight.",
-    date: "2025-09-10",
-  },
-  {
-    id: 3,
-    name: "Arun Menon",
-    rating: 5,
-    description:
-      "Amazing experience! The property exceeded my expectations. Everything was as shown in the pictures. Will definitely come back.",
-    date: "2025-09-05",
-  },
-  {
-    id: 4,
-    name: "Divya Nair",
-    rating: 4,
-    description: "Nice and comfortable stay. The host was friendly and accommodating. Good value for money.",
-    date: "2025-08-28",
-  },
-  {
-    id: 5,
-    name: "Karthik Pillai",
-    rating: 5,
-    description: "Perfect location with great amenities. The WiFi was fast and reliable. Couldn't ask for more!",
-    date: "2025-08-20",
-  },
-  {
-    id: 6,
-    name: "Sneha Varghese",
-    rating: 3,
-    description: "Decent property but could use some updates. The AC wasn't cooling properly in one room.",
-    date: "2025-08-15",
-  },
-];
+// export const sampleReviews = [
+//   {
+//     id: 1,
+//     name: "Rajesh Kumar",
+//     rating: 5,
+//     description:
+//       "Excellent property! Very clean and well-maintained. The location is perfect and the host was very responsive. Highly recommended!",
+//     date: "2025-09-15",
+//   },
+//   {
+//     id: 2,
+//     name: "Priya Sharma",
+//     rating: 4,
+//     description: "Good place to stay. All amenities were available as mentioned. Only minor issue was the parking space was a bit tight.",
+//     date: "2025-09-10",
+//   },
+//   {
+//     id: 3,
+//     name: "Arun Menon",
+//     rating: 5,
+//     description:
+//       "Amazing experience! The property exceeded my expectations. Everything was as shown in the pictures. Will definitely come back.",
+//     date: "2025-09-05",
+//   },
+//   {
+//     id: 4,
+//     name: "Divya Nair",
+//     rating: 4,
+//     description: "Nice and comfortable stay. The host was friendly and accommodating. Good value for money.",
+//     date: "2025-08-28",
+//   },
+//   {
+//     id: 5,
+//     name: "Karthik Pillai",
+//     rating: 5,
+//     description: "Perfect location with great amenities. The WiFi was fast and reliable. Couldn't ask for more!",
+//     date: "2025-08-20",
+//   },
+//   {
+//     id: 6,
+//     name: "Sneha Varghese",
+//     rating: 3,
+//     description: "Decent property but could use some updates. The AC wasn't cooling properly in one room.",
+//     date: "2025-08-15",
+//   },
+// ];
 
 export const sampleProperties = [
   {
@@ -93,7 +93,7 @@ export const sampleProperties = [
     title: "Modern 2BHK Apartment in Kochi",
     description: "A stylish 2-bedroom apartment with balcony views of the city, located near Infopark.",
     images: [
-      "https://picsum.photos/seed/kochi1/800/500",
+      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800",
       "https://picsum.photos/seed/kochi2/800/500",
       "https://picsum.photos/seed/kochi3/800/500",
       "https://picsum.photos/seed/kochi4/800/500",
@@ -114,13 +114,15 @@ export const sampleProperties = [
       },
     ],
     contactNumber: "23234927349",
+    status: "active",
+    views: 234,
   },
   {
     _id: "2",
     title: "Cozy Studio Flat near Marine Drive",
     description: "Compact studio apartment ideal for bachelors or working professionals.",
     images: [
-      "https://picsum.photos/seed/marine1/800/500",
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800",
       "https://picsum.photos/seed/marine2/800/500",
       "https://picsum.photos/seed/marine3/800/500",
       "https://picsum.photos/seed/marine4/800/500",
@@ -140,7 +142,7 @@ export const sampleProperties = [
     title: "Luxury Villa with Private Garden",
     description: "Spacious 4BHK villa featuring a private garden and modern kitchen, perfect for families.",
     images: [
-      "https://picsum.photos/seed/villa1/800/500",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
       "https://picsum.photos/seed/villa2/800/500",
       "https://picsum.photos/seed/villa3/800/500",
       "https://picsum.photos/seed/villa4/800/500",

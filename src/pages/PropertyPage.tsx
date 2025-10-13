@@ -6,7 +6,7 @@ import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { categories, letsellr, sampleProperties, sampleReviews } from "@/db";
+import { categories, letsellr, sampleProperties } from "@/db";
 import { cn } from "@/lib/utils";
 import {
   AirVent,
@@ -26,7 +26,7 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import instance from "@/lib/axios";
-
+import ImageGallery from "@/components/Imageswiper";
 const iconMappings = [
   { keywords: ["wifi", "wi-fi"], icon: Wifi },
   { keywords: ["kettle", "coffee"], icon: Coffee },
@@ -59,16 +59,22 @@ interface Review {
 // Skeleton Components
 function ImageGridSkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-2 animate-pulse">
-      {/* Mobile: Single large image */}
-      <div className="col-span-4 md:hidden h-[300px] bg-gray-200 rounded-lg" />
+    <div className="animate-pulse">
+      {/* Mobile Swiper Skeleton */}
+      <div className="md:hidden mb-8">
+        <div className="rounded-xl overflow-hidden shadow-lg h-80 bg-gray-200" />
+      </div>
 
-      {/* Desktop: Grid layout */}
-      <div className="hidden md:block col-span-2 row-span-2 h-[500px] bg-gray-200 rounded-lg" />
-      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
-      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
-      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
-      <div className="hidden md:block col-span-1 h-[245px] bg-gray-200 rounded-lg" />
+      {/* Desktop Grid Skeleton */}
+      <div className="hidden md:block mb-12">
+        <div className="grid grid-cols-4 grid-rows-2 gap-4 h-[550px] rounded-2xl overflow-hidden">
+          <div className="col-span-2 row-span-2 bg-gray-200" />
+          <div className="bg-gray-200" />
+          <div className="bg-gray-200" />
+          <div className="bg-gray-200" />
+          <div className="bg-gray-200" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -193,28 +199,26 @@ export default function PropertyPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
-  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState([]);
 
-  const displayedReviews = showAllReviews ? sampleReviews : sampleReviews.slice(0, 3);
+  const displayedReviews = showAllReviews
 
   // Fetch property data
   const fetchProperty = async () => {
     setIsLoading(true);
     try {
       // TODO: Replace with your actual API endpoint
-      console.log("reached fetch prop");
+      // const response = await fetch(/api/properties/${propertyId});
       const response = await instance.get(`/property/findproperty/${propertyId}`)
-      console.log(response.data.property);
-      
-      // const response = await fetch(`/api/properties/${propertyId}`);
+      // console.log(response.data.property)
       // const data = await response.json();
-      // setProduct(data.property);
       setProduct(response.data.property);
 
       // Simulating API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // For now, set null (replace with actual API response)
+      // setProduct(sampleProperties[Number(propertyId)]);
       // setProduct(sampleProperties[Number(propertyId)]);
     } catch (error) {
       console.error("Error fetching property:", error);
@@ -222,16 +226,28 @@ export default function PropertyPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  const fetchreviews = async () => {
+    try {
+      const response = await instance.get(`/feedback/getfeedbacks/${propertyId}`);
+      setShowAllReviews(response.data.data)
+      console.log(response.data.data);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     fetchProperty();
+    fetchreviews();
   }, [propertyId]);
 
-  const handleToggleReviews = () => {
-    setShowAllReviews(!showAllReviews);
-  };
+  // const handleToggleReviews = () => {
+  //   setShowAllReviews(!showAllReviews);
+  // }
 
   const calculateAverageRating = (reviews: Review[]) => {
     if (reviews.length === 0) return "0.0";
@@ -247,13 +263,13 @@ export default function PropertyPage() {
     });
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join("");
-  };
+  // const getInitials = (name: string) => {
+  //   return name
+  //     .split(" ")
+  //     .map((word) => word.charAt(0).toUpperCase())
+  //     .slice(0, 2)
+  //     .join("");
+  // };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -330,7 +346,7 @@ export default function PropertyPage() {
     return (
       <>
         <a
-          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber}`}
+          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber || 9999999999}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
@@ -339,7 +355,7 @@ export default function PropertyPage() {
           WhatsApp Chat
         </a>
         <a
-          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber}`}
+          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber || 9999999999}`}
           className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
         >
           <Phone className="w-5 h-5" />
@@ -436,7 +452,7 @@ export default function PropertyPage() {
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
         <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
 
-        <ImageGrid images={product?.images || []} />
+        <ImageGallery images={product?.images || []} />
 
         <div className="grid grid-cols-10 gap-5">
           <div className="col-span-10 md:col-span-6 flex flex-col gap-4 md:gap-5">
@@ -503,45 +519,65 @@ export default function PropertyPage() {
                 <h1 className="text-xl md:text-3xl">Guest Reviews</h1>
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-accent fill-accent" />
-                  <span className="text-lg font-semibold">{calculateAverageRating(sampleReviews)}</span>
-                  <span className="text-sm text-gray-600">({sampleReviews.length} reviews)</span>
+                  <span className="text-lg font-semibold">{calculateAverageRating(showAllReviews)}</span>
+                  <span className="text-sm text-gray-600">({showAllReviews.length} reviews)</span>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 {displayedReviews.map((review) => (
                   <div
                     key={review.id}
                     className="group p-4 md:p-5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-md transition-all duration-300"
                   >
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-3 mb-3">
+                      {/* Left side: Avatar and reviewer info */}
+                      <div className="flex items-start gap-3">
                         <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary font-semibold text-sm md:text-base">{getInitials(review.name)}</span>
+                          <span className="text-primary font-semibold text-sm md:text-base">
+                            {review.email?.charAt(0).toUpperCase()}
+                          </span>
                         </div>
                         <div className="flex flex-col">
-                          <h3 className="font-semibold text-gray-900 text-sm md:text-base">{review.name}</h3>
-                          <span className="text-xs md:text-sm text-gray-500">{formatReviewDate(review.date)}</span>
+                          <h3 className="font-semibold text-green-700 text-sm md:text-base">
+                            {review.email}
+                          </h3>
+                          <span className="text-xs md:text-sm text-gray-500">
+                            {formatReviewDate(review.createdAt)}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex gap-0.5 flex-shrink-0">
+
+                      {/* Right side: Rating stars */}
+                      <div className="flex gap-0.5 mt-2 md:mt-0">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={cn("h-3 w-3 md:h-4 md:w-4 text-accent", i < review.rating ? "fill-accent" : "")} />
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-3 w-3 md:h-4 md:w-4 text-accent",
+                              i < review.rating ? "fill-accent" : ""
+                            )}
+                          />
                         ))}
                       </div>
                     </div>
-                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">{review.description}</p>
+
+                    {/* Review comment */}
+                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+                      {review.comment}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              {sampleReviews.length > 3 && (
+
+              {showAllReviews.length > 3 && (
                 <Button
                   variant="outline"
-                  onClick={handleToggleReviews}
+                  // onClick={handleToggleReviews}
                   className="w-full md:w-auto py-6 hover:bg-primary/10 hover:text-black"
                 >
-                  {showAllReviews ? "Show Less Reviews" : `Show All ${sampleReviews.length} Reviews`}
+                  {showAllReviews ? "Show Less Reviews" : `Show All ${showAllReviews.length} Reviews`}
                 </Button>
               )}
             </section>
@@ -653,34 +689,40 @@ export default function PropertyPage() {
             <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <p className="flex items-center gap-1">Starting Price</p>
               <h1 className="text-3xl flex items-end gap-1">
-                ₹{product?.price || 0}
+                {/* Access the first price option's amount */}
+                ₹{product?.price?.[0]?.amount || 0}
                 <span className="text-sm text-black/50">/ Month</span>{" "}
-                {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others price options)</span>}
+                {product?.price?.length > 1 && <span className="text-xs text-primary">(+Others price options)</span>}
               </h1>
-              <p className="text-md font-medium text-gray-900 flex items-center gap-2">
+
+              {/* Fixed: Changed p to div to avoid nesting issues */}
+              <div className="text-md font-medium text-gray-900 flex items-center gap-2">
                 Rating :
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className={cn("h-3 w-3 text-accent", i < product?.rating ? "fill-accent" : "")} />
                   ))}
                 </div>
-              </p>
-              {product?.priceOptions?.length > 0 && (
+              </div>
+
+              {/* Map the price array instead of priceOptions */}
+              {product?.price?.length > 0 && (
                 <>
                   <hr />
                   <div className="flex flex-col gap-3 mt-1">
-                    {product?.priceOptions?.map((priceOption, i) => {
+                    {product.price.map((priceOption, i) => {
                       return (
                         <div
-                          key={i}
+                          key={priceOption._id || i}
                           className="group flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
                         >
                           <div className="p-1.5 bg-gray-800/70 rounded-md group-hover:bg-gray-900 transition-all duration-300"></div>
                           <div className="flex items-center justify-between w-full">
                             <div className="font-medium text-gray-700 text-sm group-hover:text-gray-900 transition-colors duration-300 capitalize">
-                              {priceOption?.description}
+                              {/* Use type instead of description */}
+                              {priceOption?.type}
                             </div>
-                            <div className="font-bold text-md">₹{priceOption?.price}</div>
+                            <div className="font-bold text-md">₹{priceOption?.amount}</div>
                           </div>
                         </div>
                       );
@@ -688,6 +730,7 @@ export default function PropertyPage() {
                   </div>
                 </>
               )}
+
               <div className="">
                 <Dialog>
                   <DialogTrigger asChild>
@@ -714,9 +757,9 @@ export default function PropertyPage() {
         <div>
           <p className="flex items-center gap-1 text-sm">Starting Price</p>
           <h1 className="text-2xl flex items-end gap-1">
-            ₹{product?.price || 0}
+            ₹{product?.price?.[0]?.amount || 0}
             <span className="text-sm text-black/50">/ Month</span>{" "}
-            {product?.priceOptions?.length && <span className="text-xs text-primary">(+Others)</span>}
+            {product?.price?.length > 1 && <span className="text-xs text-primary">(+Others)</span>}
           </h1>
         </div>
         <div className="">
