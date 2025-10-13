@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { useNavigate, Outlet, useLocation, Link } from "react-router-dom";
 import { Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,12 +49,14 @@ const AdminLayout = () => {
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-border px-6">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(menuItems?.[0]?.path)}>
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-primary-foreground" />
+          {/* <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(menuItems?.[0]?.path)}> */}
+          <Link to={menuItems?.[0]?.path}>
+            <div className="flex items-center">
+              <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
+              <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
             </div>
-            <span className="text-xl font-bold text-primary">Letsellr</span>
-          </div>
+          </Link>
+          {/* </div> */}
         </div>
 
         {/* Menu Items */}
@@ -103,14 +105,14 @@ const AdminLayout = () => {
           <div className="flex items-center gap-4 flex-1">
             <h2 className="text-xl font-semibold text-foreground hidden md:block">{currentMenuItem?.label || "Dashboard"}</h2>
             {/* Search Bar */}
-            <div className="relative max-w-md flex-1 ml-auto">
+            {/* <div className="relative max-w-md flex-1 ml-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
               <Input placeholder="Search..." className="pl-10 h-10 rounded-xl bg-muted/50 focus:border-primary" />
-            </div>
+            </div> */}
           </div>
-          <Button variant="ghost" size="icon" className="rounded-xl ml-4 hover:bg-primary/5 hover:text-primary">
+          {/* <Button variant="ghost" size="icon" className="rounded-xl ml-4 hover:bg-primary/5 hover:text-primary">
             <Bell className="h-5 w-5" />
-          </Button>
+          </Button> */}
         </header>
 
         {/* Page Content */}
