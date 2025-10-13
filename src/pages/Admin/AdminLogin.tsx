@@ -142,7 +142,7 @@ const AdminLogin = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-muted-foreground mt-6">© 2025 Your Company. All rights reserved.</p>
+        <p className="text-center text-sm text-muted-foreground mt-6">© {new Date().getFullYear()} Letsellr. All rights reserved.</p>
       </div>
     </div>
   );

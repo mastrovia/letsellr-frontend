@@ -219,6 +219,7 @@ export default function PropertyPage() {
 
       // For now, set null (replace with actual API response)
       // setProduct(sampleProperties[Number(propertyId)]);
+      // setProduct(sampleProperties[Number(propertyId)]);
     } catch (error) {
       console.error("Error fetching property:", error);
       setProduct(null);
