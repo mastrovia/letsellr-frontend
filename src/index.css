@@ -8,6 +8,37 @@
   All design tokens (colors, gradients, shadows, etc.) are defined here.
   All colors use HSL for easier theming and dynamic manipulation.
 */
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: transparent !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 24px !important;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: transparent !important;
+  color: #f0f0f0 !important;
+}
+
+/* Swiper Pagination Dots */
+.swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: white !important;
+  opacity: 1;
+}
 
 @layer base {
   :root {
