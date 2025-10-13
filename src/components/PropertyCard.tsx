@@ -13,7 +13,7 @@ export interface Property {
     name: string;
   };
   amenity: string;
-  price: number;
+  price: { amount: number, type: string }[];
   location: {
     name: string;
     url: string;
@@ -22,6 +22,13 @@ export interface Property {
   rating?: number;
   contactNumber?: string;
 }
+  // const getInitials = (name: string) => {
+  //   return name
+  //     .split(" ")
+  //     .map((word) => word.charAt(0).toUpperCase())
+  //     .slice(0, 2)
+  //     .join("");
+  // };
 
 export default function PropertyCard(data: Property) {
   return (
@@ -34,12 +41,16 @@ export default function PropertyCard(data: Property) {
         />
         <div className="col-span-3 p-5 flex flex-col gap-2">
           <div className="flex flex-col md:flex-row md:justify-between gap-2">
-            {data?.price && (
+            {data?.price && data.price.length > 0 && (
               <p className="text-md font-medium text-gray-900">
-                ₹{data?.price}/<span className="text-sm text-black/50">Month</span>{" "}
-                {data?.priceOptions?.length && <span className="text-xs text-primary">(+Others)</span>}
+                ₹{data.price[0].amount}
+                <span className="text-sm text-black/50"> /Month</span>{" "}
+                {data.price.length > 1 && (
+                  <span className="text-xs text-primary">(+Others)</span>
+                )}
               </p>
             )}
+
             {data?.price && (
               <p className="text-md font-medium text-gray-900">
                 <div className="flex gap-1">
@@ -60,7 +71,7 @@ export default function PropertyCard(data: Property) {
             </p>
           )}
           <p className="text-sm text-gray-500 sm:flex flex-wrap gap-1 hidden">
-            {data?.amenity?.split(",")?.map((value) => {
+            {data?.amenity?.split(",").slice(0, 3)  ?.map((value) => {
               const title = value?.trim();
               return (
                 <Badge variant="outline" key={title}>

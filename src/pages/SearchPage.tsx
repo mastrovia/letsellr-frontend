@@ -5,6 +5,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories, sampleProperties } from "@/db";
+import instance from "@/lib/axios";
 import { Search, MapPin, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -75,15 +76,15 @@ export default function SearchPage() {
       if (selectedCategory) params.append("category", selectedCategory);
 
       // TODO: Replace with your actual API endpoint
-      // const response = await fetch(`/api/properties?${params.toString()}`);
+      const response = await instance.get(`/show/allproperty?${params.toString()}`);
       // const data = await response.json();
-      // setProperties(data.properties);
+      setProperties(response.data.data);
 
       // Simulating API call with timeout
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // For now, set empty array (replace with actual API response)
-      setProperties(sampleProperties);
+      // setProperties(sampleProperties);
     } catch (error) {
       console.error("Error fetching properties:", error);
       setProperties([]);
@@ -145,6 +146,8 @@ export default function SearchPage() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
+  console.log(properties)
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute hidden md:flex inset-0 z-0">
@@ -168,7 +171,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
-                  // disabled={isLoading}
+                // disabled={isLoading}
                 />
               </div>
 
@@ -279,7 +282,7 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
-                // disabled={isLoading}
+              // disabled={isLoading}
               />
             </div>
 
