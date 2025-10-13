@@ -35,7 +35,7 @@ export const SearchBar = () => {
     try {
       const params = new URLSearchParams();
       console.log(params);
-      
+    
 
       if (searchQuery.trim()) params.append("query", searchQuery.trim());
       if (location.trim()) params.append("location", location.trim());
