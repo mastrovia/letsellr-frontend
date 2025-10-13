@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
+import { menuItems } from "./AdminLayout";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const AdminLogin = () => {
       if (email === "admin@example.com" && password === "admin123") {
         // Store auth token (use more secure method in production)
         localStorage.setItem("adminToken", "dummy-token");
-        navigate("/admin");
+        navigate(menuItems?.[0]?.path);
       } else {
         setError("Invalid email or password");
       }
@@ -112,7 +113,7 @@ const AdminLogin = () => {
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
                 <span className="text-muted-foreground">Remember me</span>
@@ -120,7 +121,7 @@ const AdminLogin = () => {
               <button type="button" className="text-primary hover:underline">
                 Forgot password?
               </button>
-            </div>
+            </div> */}
 
             {/* Login Button */}
             <Button type="submit" className="w-full h-12 text-base rounded-xl" disabled={isLoading}>

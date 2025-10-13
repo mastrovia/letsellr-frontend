@@ -114,6 +114,8 @@ export const sampleProperties = [
       },
     ],
     contactNumber: "23234927349",
+    status: "active",
+    views: 234,
   },
   {
     _id: "2",
