@@ -3,6 +3,7 @@ import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import instance from "@/lib/axios";
 
 const POPULAR_LOCATIONS = ["Bangalore", "Mumbai", "Delhi", "Pune", "Hyderabad", "Chennai", "Kolkata", "Ahmedabad"];
 
@@ -28,20 +29,27 @@ export const SearchBar = () => {
   const locationsToShow = location ? filteredLocations : POPULAR_LOCATIONS;
 
   // Handle search - builds URL and navigates
-  const handleSearch = () => {
-    const params = new URLSearchParams();
+  const handleSearch = async () => {
+    if (!searchQuery.trim() && !location.trim()) return;
 
-    if (searchQuery.trim()) {
-      params.append("query", searchQuery.trim());
-    }
+    try {
+      const params = new URLSearchParams();
+      console.log(params);
+      
 
-    if (location.trim()) {
-      params.append("location", location.trim());
-    }
+      if (searchQuery.trim()) params.append("query", searchQuery.trim());
+      if (location.trim()) params.append("location", location.trim());
 
-    // Only navigate if there's at least one parameter
-    if (params.toString()) {
-      navigate(`/search?${params.toString()}`);
+      const response = await instance.get(`/property/search/?${params.toString()}`);
+
+      // Here you can navigate to a results page or update state
+      console.log(response.data);
+
+      // Example: navigate to results page with query params
+      navigate(`/search/?${params.toString()}`);
+    } catch (err) {
+      console.error("Search failed", err);
+      alert("No properties found");
     }
   };
 
