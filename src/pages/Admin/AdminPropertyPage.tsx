@@ -1,4 +1,4 @@
-import { MapPin, Eye, Star, Edit, Trash2, Plus, X, Upload, Save } from "lucide-react";
+import { MapPin, Eye, Star, Edit, Trash2, Plus, X, Upload, Save, LinkIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { sampleProperties } from "@/db";
+import { Link } from "react-router-dom";
 
 interface Property {
   _id: string;
@@ -46,22 +48,7 @@ const CATEGORIES = [
 ];
 
 const AdminPropertiesPage = () => {
-  const [properties, setProperties] = useState<Property[]>([
-    {
-      _id: "1",
-      title: "Modern PG near Tech Park",
-      description: "Spacious PG with modern amenities",
-      images: ["/images/category-card-hotel.png"],
-      category: { _id: "1", name: "PG" },
-      amenity: "WiFi, AC, Parking",
-      price: 12000,
-      location: { name: "HSR Layout, Bangalore", url: "" },
-      rating: 4.5,
-      contactNumber: "9876543210",
-      status: "active",
-      views: 234,
-    },
-  ]);
+  const [properties, setProperties] = useState<Property[]>(sampleProperties);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isMobileFormOpen, setIsMobileFormOpen] = useState(false);
@@ -373,13 +360,15 @@ const AdminPropertiesPage = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title}</h3>
-                  <span
-                    className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${
-                      property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
-                    }`}
-                  >
-                    {property.status}
-                  </span>
+                  {property?.status && (
+                    <span
+                      className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${
+                        property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
+                      }`}
+                    >
+                      {property.status}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
@@ -387,38 +376,52 @@ const AdminPropertiesPage = () => {
                   <span className="truncate">{property.location.name}</span>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
+                <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-3">
+                  {property?.views && (
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span>{property.views}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
-                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>{property.views}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-500 text-yellow-500" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary fill-primary" />
                     <span>{property.rating}</span>
                   </div>
-                  <span className="font-semibold text-primary">₹{property.price}/mo</span>
+                  <span className="font-semibold text-primary">₹{property.price}/month</span>
                 </div>
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="hidden md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-                    onClick={() => handleEdit(property)}
-                  >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-                    <span className="hidden sm:inline">Edit</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="md:hidden rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-                    onClick={() => handleEdit(property, true)}
-                  >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-                    <span className="hidden sm:inline">Edit</span>
-                  </Button>
+                  <div className="w-full">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="hidden w-full md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+                      onClick={() => handleEdit(property)}
+                    >
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="md:hidden w-full rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+                      onClick={() => handleEdit(property, true)}
+                    >
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                  </div>
+                  <Link to={`/property/${property?._id}`} className="w-full">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="hidden  w-full md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+                    >
+                      <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">View</span>
+                    </Button>
+                  </Link>
                   <Button
                     size="sm"
                     variant="outline"
