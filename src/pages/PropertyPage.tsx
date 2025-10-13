@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import instance from "@/lib/axios";
 
 const iconMappings = [
   { keywords: ["wifi", "wi-fi"], icon: Wifi },
@@ -201,15 +202,20 @@ export default function PropertyPage() {
     setIsLoading(true);
     try {
       // TODO: Replace with your actual API endpoint
+      console.log("reached fetch prop");
+      const response = await instance.get(`/property/findproperty/${propertyId}`)
+      console.log(response.data.property);
+      
       // const response = await fetch(`/api/properties/${propertyId}`);
       // const data = await response.json();
       // setProduct(data.property);
+      setProduct(response.data.property);
 
       // Simulating API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // For now, set null (replace with actual API response)
-      setProduct(sampleProperties[Number(propertyId)]);
+      // setProduct(sampleProperties[Number(propertyId)]);
     } catch (error) {
       console.error("Error fetching property:", error);
       setProduct(null);
