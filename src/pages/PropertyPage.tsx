@@ -22,6 +22,8 @@ import {
   Star,
   WashingMachine,
   Wifi,
+  CookingPot,
+  BookOpenCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -36,6 +38,9 @@ const iconMappings = [
   { keywords: ["24 hours water", "water", "water purifier"], icon: Droplet },
   { keywords: ["ac", "air conditioner", "air conditioning"], icon: AirVent },
   { keywords: ["parking", "car parking", "bike parking"], icon: ParkingCircle },
+  { keywords: ["kitchen", "cooking", "bike parking"], icon: CookingPot },
+  { keywords: ["study", "study-room"], icon: CookingPot },
+
 ];
 
 const getAmenityIcon = (amenity: string) => {
