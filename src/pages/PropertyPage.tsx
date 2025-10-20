@@ -22,6 +22,8 @@ import {
   Star,
   WashingMachine,
   Wifi,
+  CookingPot,
+  BookOpenCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -36,6 +38,9 @@ const iconMappings = [
   { keywords: ["24 hours water", "water", "water purifier"], icon: Droplet },
   { keywords: ["ac", "air conditioner", "air conditioning"], icon: AirVent },
   { keywords: ["parking", "car parking", "bike parking"], icon: ParkingCircle },
+  { keywords: ["kitchen", "cooking", "bike parking"], icon: CookingPot },
+  { keywords: ["study", "study-room"], icon: CookingPot },
+
 ];
 
 const getAmenityIcon = (amenity: string) => {
@@ -49,11 +54,14 @@ const getAmenityIcon = (amenity: string) => {
 };
 
 interface Review {
+  propertyId: string | number,
   id: number;
   name: string;
   rating: number;
-  description: string;
+  email: string;
+  comment: string;
   date: string;
+  timestamp: string;
 }
 
 // Skeleton Components
@@ -195,7 +203,7 @@ export default function PropertyPage() {
   const [reviewForm, setReviewForm] = useState({
     name: "",
     email: "",
-    description: "",
+    comment: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
@@ -278,7 +286,6 @@ export default function PropertyPage() {
       [name]: value,
     }));
   };
-
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -303,7 +310,7 @@ export default function PropertyPage() {
       return;
     }
 
-    if (!reviewForm.description.trim()) {
+    if (!reviewForm.comment.trim()) {
       setSubmitMessage("Please write a review");
       return;
     }
@@ -312,25 +319,26 @@ export default function PropertyPage() {
     setSubmitMessage("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      const reviewData = {
+      const reviewData: any = {
         propertyId,
         rating: selectedRating,
-        name: reviewForm.name,
+        // name: reviewForm.name,
         email: reviewForm.email,
-        description: reviewForm.description,
+        comment: reviewForm.comment,
         timestamp: new Date().toISOString(),
       };
-
-      console.log("Review submitted:", reviewData);
+      const response = await instance.post("/feedback/addfeedback", { data: reviewData })
+      console.log(response.data)
+      // console.log("Review submitted:", reviewData);
       setSubmitMessage("Thank you for your review!");
 
       setSelectedRating(0);
       setReviewForm({
         name: "",
         email: "",
-        description: "",
+        comment: "",
       });
 
       setTimeout(() => setSubmitMessage(""), 3000);
@@ -346,7 +354,7 @@ export default function PropertyPage() {
     return (
       <>
         <a
-          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber || 9999999999}`}
+          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
@@ -355,7 +363,7 @@ export default function PropertyPage() {
           WhatsApp Chat
         </a>
         <a
-          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber || 9999999999}`}
+          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber}`}
           className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
         >
           <Phone className="w-5 h-5" />
@@ -667,9 +675,9 @@ export default function PropertyPage() {
                     Review <span className="text-red-500">*</span>
                   </label>
                   <textarea
-                    id="description"
-                    name="description"
-                    value={reviewForm.description}
+                    id="comment"
+                    name="comment"
+                    value={reviewForm.comment}
                     onChange={handleInputChange}
                     rows={4}
                     placeholder="Share your experience..."
