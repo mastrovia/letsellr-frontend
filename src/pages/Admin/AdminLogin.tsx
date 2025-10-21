@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
 import { menuItems } from "./AdminLayout";
+import instance from "@/lib/axios";
+
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -13,36 +15,61 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setIsLoading(true);
 
-    // Basic validation
-    if (!email || !password) {
-      setError("Please fill in all fields");
-      setIsLoading(false);
-      return;
-    }
+  // Basic validation
+  if (!email || !password) {
+    setError("Please fill in all fields");
+    setIsLoading(false);
+    return;
+  }
 
-    // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Simple authentication (replace with real API call)
-      if (email === "admin@example.com" && password === "admin123") {
-        // Store auth token (use more secure method in production)
-        localStorage.setItem("adminToken", "dummy-token");
-        navigate(menuItems?.[0]?.path);
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+  const dataToSend = {
+    email: email,
+    password: password
   };
+
+  try {
+    // Make actual API call to your backend
+    const response = await instance.post('/admin/login', dataToSend);
+    console.log("API Response:", response);
+
+
+    if (response.data.success === true) {
+      localStorage.setItem("adminToken", "dummy-token");
+      navigate(menuItems?.[0]?.path);
+    } else {
+      setError(response.data.message || "Login failed");
+    }
+    
+  } catch (err: any) {
+    console.error("Login error:", err);
+
+    if (err.response?.status === 401) {
+      setError("Invalid password. Please try again.");
+    } 
+    else if (err.response?.status === 404) {
+      setError("Admin not found. Please check your email.");
+    }
+    else if (err.response?.status === 400) {
+      setError(err.response.data.message || "Invalid input data");
+    }
+    else if (err.response?.data?.message) {
+      setError(err.response.data.message);
+    }
+    else if (err.request) {
+      setError("Cannot connect to server. Please try again.");
+    }
+    else {
+      setError("An error occurred. Please try again.");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
@@ -130,7 +157,7 @@ const AdminLogin = () => {
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-muted/50 rounded-xl">
+          {/* <div className="mt-6 p-4 bg-muted/50 rounded-xl">
             <p className="text-xs text-muted-foreground text-center mb-2">Demo Credentials:</p>
             <p className="text-xs text-center">
               <span className="font-medium">Email:</span> admin@example.com
@@ -138,7 +165,7 @@ const AdminLogin = () => {
             <p className="text-xs text-center">
               <span className="font-medium">Password:</span> admin123
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}
