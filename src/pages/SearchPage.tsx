@@ -73,12 +73,13 @@ export default function SearchPage() {
       const params = new URLSearchParams();
       if (searchQuery) params.append("query", searchQuery);
       if (selectedLocation) params.append("location", selectedLocation);
-      if (selectedCategory) params.append("category", selectedCategory);
+      if (selectedCategory) params.append("categoryname", selectedCategory);
 
       // TODO: Replace with your actual API endpoint
-      const response = await instance.get(`/show/allproperty?${params.toString()}`);
+      const response = await instance.get(`/property/search/?${params.toString()}`);
       // const data = await response.json();
-      setProperties(response.data.data);
+      setProperties(response.data.properties);
+      console.log(response.data.properties);
 
       // Simulating API call with timeout
       await new Promise((resolve) => setTimeout(resolve, 1500));

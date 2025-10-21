@@ -15,7 +15,7 @@ interface CategoryCardProps {
 export const CategoryCardBig = ({ title, description, count, action, value, name, onClick }: CategoryCardProps) => {
   // Build search URL with category parameter
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
-  const searchUrl = `/search?category=${encodeURIComponent(categoryValue)}`;
+  const searchUrl = `/search/?category=${encodeURIComponent(categoryValue)}`;
 
   // If onClick is provided, use a div instead of Link
   if (onClick) {
@@ -65,7 +65,7 @@ export const CategoryCardBig = ({ title, description, count, action, value, name
 export const CategoryCard = ({ title, description, image, count, action, value, name, onClick }: CategoryCardProps) => {
   // Build search URL with category parameter
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
-  const searchUrl = `/search?category=${encodeURIComponent(categoryValue)}`;
+  const searchUrl = `/search/?category=${encodeURIComponent(categoryValue)}`;
 
   // If onClick is provided, use a div instead of Link
   if (onClick) {

@@ -1,11 +1,26 @@
 import { Star, Filter, CheckCircle, XCircle, Eye, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import instance from "@/lib/axios";
 
 const AdminReviewsPage = () => {
-  const [reviews] = useState([
+  useEffect(() => {
+    reviewfind();
+}, []);
+
+  const reviewfind = async () => {
+    try {
+        const response = await instance.get('/feedback/getallfeedbacks');  
+        // setreviews(response.data.data); 
+        console.log(response.data.data);
+    } catch (error) { 
+        console.error("Error fetching reviews:", error);  
+    }
+};
+
+  const [reviews,setreviews] = useState([
     {
       id: 1,
       userName: "Rajesh Kumar",
