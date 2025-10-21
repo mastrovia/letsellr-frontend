@@ -1,6 +1,8 @@
 import { Building2, Users, MessageSquare, Eye, Star, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboardPage = () => {
   const stats = [
@@ -17,6 +19,12 @@ const AdminDashboardPage = () => {
     { action: "Property updated", time: "2 hours ago", icon: Building2 },
     { action: "New user inquiry", time: "3 hours ago", icon: MessageSquare },
   ];
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/admin/properties");
+  }, []);
 
   return (
     <div className="space-y-6">

@@ -79,7 +79,7 @@ export const SearchBar = () => {
           </div>
 
           {/* Search Suggestions Dropdown */}
-          {showSearchSuggestions && searchQuery && filteredSearchSuggestions.length > 0 && (
+          {/* {showSearchSuggestions && searchQuery && filteredSearchSuggestions.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
               {filteredSearchSuggestions.map((suggestion, idx) => (
                 <button
@@ -96,7 +96,7 @@ export const SearchBar = () => {
                 </button>
               ))}
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Location Filter */}
@@ -115,7 +115,7 @@ export const SearchBar = () => {
           </div>
 
           {/* Location Suggestions Dropdown */}
-          {showLocationSuggestions && location && filteredLocations.length > 0 && (
+          {/* {showLocationSuggestions && location && filteredLocations.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-card rounded-2xl shadow-md border border-border z-50 overflow-hidden animate-fade-in">
               {filteredLocations.map((loc, idx) => (
                 <button
@@ -132,7 +132,7 @@ export const SearchBar = () => {
                 </button>
               ))}
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Search Button */}

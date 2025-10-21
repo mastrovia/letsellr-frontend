@@ -10,7 +10,7 @@ import { Search, MapPin, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-const LOCATIONS = ["Kanayannur", "Kochi", "Ernakulam", "Thrippunithura", "Kakkanad", "Edappally"];
+const LOCATIONS = ["kozhikode"];
 
 // Skeleton loader component matching PropertyCard design
 function PropertyCardSkeleton() {
@@ -388,9 +388,9 @@ export default function SearchPage() {
                     </Link>
                   ))}
                 </div>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <Button className="rounded-2xl">Load more</Button>
-                </div>
+                </div> */}
               </>
             ) : (
               <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200">
