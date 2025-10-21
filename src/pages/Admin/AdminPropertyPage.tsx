@@ -43,10 +43,11 @@ interface PropertyFormData extends Partial<Property> { }
 
 // Constants
 const CATEGORIES = [
-  { _id: "1", name: "PG" },
-  { _id: "2", name: "Apartment" },
-  { _id: "3", name: "Hostel" },
-  { _id: "4", name: "Villa" },
+  { _id: "68de651e54859517744aa8f8", name: "PG" },
+  { _id: "68de658f54859517744aa90e", name: "Apartment" },
+  { _id: "68de57ee22d6206bc4564263", name: "Hostel" },
+  { _id: "68de1c35f11084356eafd988", name: "Villa" },
+  { _id: "68dcccd771afa460402c3651", name: "House" },
 ];
 
 const INITIAL_FORM_STATE: PropertyFormData = {
