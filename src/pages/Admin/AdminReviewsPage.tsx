@@ -1,6 +1,16 @@
 import { Star, Filter, CheckCircle, XCircle, Eye, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import instance from "@/lib/axios";
@@ -60,6 +70,10 @@ const AdminReviewsPage = () => {
     // },
   ]);
 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const reviewfind = async () => {
     try {
       const response = await instance.get("/feedback/getallfeedbacks");
@@ -70,12 +84,23 @@ const AdminReviewsPage = () => {
       console.error("Error fetching reviews:", error);
     }
   };
-  const handleDelete = async (id) => {
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    setIsSubmitting(true);
     try {
-      await instance.delete(`/feedback/deletefeedback/${id}`);
-      setreviews(reviews.filter((review) => review._id !== id));
+      await instance.delete(`/feedback/deletefeedback/${deletingId}`);
+      setreviews((prev) => prev.filter((review) => review._id !== deletingId));
+      setDeleteDialogOpen(false);
+      setDeletingId(null);
     } catch (error) {
       console.error("Error deleting review:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -221,6 +246,21 @@ const AdminReviewsPage = () => {
           </Card>
         ))}
       </div>
+      {/* Delete Alert */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this review?</AlertDialogTitle>
+            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={confirmDelete} disabled={isSubmitting}>
+              {isSubmitting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
