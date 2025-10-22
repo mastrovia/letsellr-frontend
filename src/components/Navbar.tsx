@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { AlertDialogHeader } from "./ui/alert-dialog";
 import { letsellr } from "@/db";
-import { MessageSquare, Phone } from "lucide-react";
+import { LucidePhoneMissed, MessageSquare, Phone, PhoneCall } from "lucide-react";
 
 function ContactComp() {
     return (
@@ -41,7 +41,7 @@ export default function Navbar() {
           </Link>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="hidden md:flex">Get in touch with our team</Button>
+              <div className="hidden md:flex items-center gap-2"><PhoneCall className="w-5 h-5"/>Contact Us</div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
               <AlertDialogHeader>

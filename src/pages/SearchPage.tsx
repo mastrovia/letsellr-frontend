@@ -119,8 +119,8 @@ export default function SearchPage() {
     }
   };
 
-  // Build URL params and search on demand
-  const handleSearch = () => {
+  // Sync URL params on any filter change to auto-trigger fetching
+  useEffect(() => {
     const params = new URLSearchParams();
     if (searchQuery) params.set("query", searchQuery);
     if (selectedLocation) params.set("location", selectedLocation);
@@ -132,9 +132,13 @@ export default function SearchPage() {
     if (selectedGender) params.set("gender", selectedGender);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
-    setSearchParams(params, { replace: true });
-    fetchProperties();
-  };
+
+    const next = params.toString();
+    const current = searchParams.toString();
+    if (next !== current) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
 
   useEffect(() => {
     const query = searchParams.get("query") || "";
@@ -152,7 +156,8 @@ export default function SearchPage() {
     setSelectedGender(gender);
     setMinPrice(min);
     setMaxPrice(max);
-  }, []);
+    fetchProperties();
+  }, [searchParams]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -169,7 +174,6 @@ export default function SearchPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
-    fetchProperties();
   }, []);
 
   return (
@@ -237,19 +241,26 @@ export default function SearchPage() {
                 </select>
               </div>
 
-              {/* Gender Select */}
-              <div className="w-44 relative">
-                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
-                <select
-                  value={selectedGender}
-                  onChange={(e) => setSelectedGender(e.target.value)}
+              {/* Gender Chips */}
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant={selectedGender === "men" ? "default" : "outline"}
                   disabled={isLoading}
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
+                  className="h-10 rounded-full"
                 >
-                  <option value="">All Genders</option>
-                  <option value="men">Men</option>
-                  <option value="women">Women</option>
-                </select>
+                  Men
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedGender === "women" ? "default" : "outline"}
+                  disabled={isLoading}
+                  onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
+                  className="h-10 rounded-full"
+                >
+                  Women
+                </Button>
               </div>
 
               {/* Category Select */}
@@ -306,14 +317,7 @@ export default function SearchPage() {
                 </Button>
               )}
 
-              {/* Search Button */}
-              <Button
-                onClick={handleSearch}
-                disabled={isLoading}
-                className="h-14 px-6 rounded-2xl bg-primary text-primary-foreground hover:opacity-90"
-              >
-                Search
-              </Button>
+              {/* Search Button removed: auto-fetch on change */}
 
               </div>
           </div>
@@ -407,21 +411,28 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Gender */}
+                {/* Gender Chips */}
                 <div>
                   <label className="block text-sm font-medium mb-2">Gender</label>
-                  <div className="relative">
-                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
-                    <select
-                      value={selectedGender}
-                      onChange={(e) => setSelectedGender(e.target.value)}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant={selectedGender === "men" ? "default" : "outline"}
                       disabled={isLoading}
-                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                      onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
+                      className="h-9 rounded-full"
                     >
-                      <option value="">All Genders</option>
-                      <option value="men">Men</option>
-                      <option value="women">Women</option>
-                    </select>
+                      Men
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={selectedGender === "women" ? "default" : "outline"}
+                      disabled={isLoading}
+                      onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
+                      className="h-9 rounded-full"
+                    >
+                      Women
+                    </Button>
                   </div>
                 </div>
 
@@ -459,13 +470,7 @@ export default function SearchPage() {
                     <X className="w-4 h-4 mr-2" />
                     Clear
                   </Button>
-                  <Button
-                    onClick={() => { handleSearch(); setShowMobileFilters(false); }}
-                    disabled={isLoading}
-                    className="w-full rounded-2xl"
-                  >
-                    Search
-                  </Button>
+                  {/* Search button removed on mobile: auto-fetch on change */}
                 </div>
               </div>
             )}
