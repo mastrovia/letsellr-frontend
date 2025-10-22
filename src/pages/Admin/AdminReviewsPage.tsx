@@ -6,13 +6,12 @@ import { cn } from "@/lib/utils";
 import instance from "@/lib/axios";
 import { useNavigate } from "react-router-dom";
 
-
 const AdminReviewsPage = () => {
   useEffect(() => {
     reviewfind();
   }, []);
   const navigate = useNavigate();
-  const [reviewcount,setreviewcount]=useState(0);
+  const [reviewcount, setreviewcount] = useState(0);
   var [reviews, setreviews] = useState([
     // {
     //   id: 1,
@@ -63,7 +62,7 @@ const AdminReviewsPage = () => {
 
   const reviewfind = async () => {
     try {
-      const response = await instance.get('/feedback/getallfeedbacks');
+      const response = await instance.get("/feedback/getallfeedbacks");
       setreviews(response.data.data);
       setreviewcount(response.data.count);
       console.log(response.data.data);
@@ -74,20 +73,20 @@ const AdminReviewsPage = () => {
   const handleDelete = async (id) => {
     try {
       await instance.delete(`/feedback/deletefeedback/${id}`);
-      setreviews(reviews.filter((review) => (review._id) !== id));
+      setreviews(reviews.filter((review) => review._id !== id));
     } catch (error) {
       console.error("Error deleting review:", error);
     }
   };
 
-
-
   const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join("");
+    return (
+      name
+        ?.split?.(" ")
+        ?.map((word) => word?.charAt?.(0)?.toUpperCase?.())
+        ?.slice?.(0, 2)
+        ?.join?.("") || "U"
+    );
   };
 
   const getStatusColor = (status: string) => {
@@ -136,7 +135,9 @@ const AdminReviewsPage = () => {
         </Card> */}
         <Card className="p-4 border-border">
           <p className="text-sm text-muted-foreground">Avg. Rating</p>
-          <p className="text-2xl font-bold text-purple-600 mt-1">{(reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)}</p>
+          <p className="text-2xl font-bold text-purple-600 mt-1">
+            {(reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)}
+          </p>
         </Card>
       </div>
 
@@ -197,11 +198,21 @@ const AdminReviewsPage = () => {
                       </Button>
                     </>
                   )}
-                  <Button onClick={() => showproperty(review.propertyId)} size="sm" variant="outline" className="rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary">
+                  <Button
+                    onClick={() => showproperty(review.propertyId)}
+                    size="sm"
+                    variant="outline"
+                    className="rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary"
+                  >
                     <Eye className="h-4 w-4 mr-1" />
                     View Property
                   </Button>
-                  <Button onClick={() => handleDelete(String(review._id))} size="sm" variant="outline" className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600">
+                  <Button
+                    onClick={() => handleDelete(String(review._id))}
+                    size="sm"
+                    variant="outline"
+                    className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
