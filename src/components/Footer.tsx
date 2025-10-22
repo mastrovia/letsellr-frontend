@@ -36,7 +36,7 @@ export const Footer = ({ categories }: { categories: Category[] }) => {
                         </div>
 
                         {/* Quick Links */}
-                        <div>
+                        {/* <div>
                             <h3 className="font-semibold text-foreground mb-5">Quick Links</h3>
                             <ul className="space-y-3.5">
                                 <li>
@@ -72,7 +72,7 @@ export const Footer = ({ categories }: { categories: Category[] }) => {
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> */}
 
                         {/* Categories */}
                         <div>
@@ -116,9 +116,10 @@ export const Footer = ({ categories }: { categories: Category[] }) => {
                                 </li>
                             </ul>
 
+                            </div>
                             {/* Social Media */}
                             <div>
-                                <h3 className="font-semibold text-foreground my-5">Follow Us</h3>
+                                <h3 className="font-semibold text-foreground mb-5">Follow Us</h3>
                                 <div className="flex gap-4">
                                     <a
                                         href="https://instagram.com/letsellr"
@@ -148,7 +149,6 @@ export const Footer = ({ categories }: { categories: Category[] }) => {
                                         <Youtube className="h-5 w-5" />
                                     </a>
                                 </div>
-                            </div>
                         </div>
                     </div>
 

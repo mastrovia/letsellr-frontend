@@ -41,7 +41,7 @@ export default function Navbar() {
           </Link>
           <Dialog>
             <DialogTrigger asChild>
-              <div className="hidden md:flex items-center gap-2"><PhoneCall className="w-5 h-5"/>Contact Us</div>
+              <div className="hidden md:flex items-center gap-2 cursor-pointer"><PhoneCall className="w-5 h-5"/>Contact Us</div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
               <AlertDialogHeader>
