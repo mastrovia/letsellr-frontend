@@ -449,7 +449,6 @@ const handleSubmit = async () => {
   setIsSubmitting(true);
   try {
 
-    console.log(formData)
 
     const payload = {
       ...formData,
@@ -464,7 +463,6 @@ const handleSubmit = async () => {
 
     let response;
     if (currentProperty) {
-        return console.log(payload)
       // Update
       response = await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, {
         withCredentials: true,

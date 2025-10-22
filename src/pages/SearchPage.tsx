@@ -60,9 +60,13 @@ export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
   const [selectedLocation, setSelectedLocation] = useState(searchParams.get("location") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [selectedPropertyType, setSelectedPropertyType] = useState(searchParams.get("propertyType") || searchParams.get("property_type") || "");
+  const [selectedGender, setSelectedGender] = useState(searchParams.get("gender") || "");
+  const [minPrice, setMinPrice] = useState<string>(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState<string>(searchParams.get("maxPrice") || "");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [properties, setProperties] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch properties from API
   const fetchProperties = async () => {
@@ -74,6 +78,27 @@ export default function SearchPage() {
       if (searchQuery) params.append("query", searchQuery);
       if (selectedLocation) params.append("location", selectedLocation);
       if (selectedCategory) params.append("category", selectedCategory);
+      if (selectedPropertyType) {
+        params.append("propertyType", selectedPropertyType);
+        // Backward compatibility with existing links
+        params.append("property_type", selectedPropertyType);
+      }
+      if (selectedGender) params.append("gender", selectedGender);
+      // Normalize price filters
+      const minV = Number(minPrice);
+      const maxV = Number(maxPrice);
+      const hasMin = !Number.isNaN(minV) && minPrice !== "";
+      const hasMax = !Number.isNaN(maxV) && maxPrice !== "";
+      if (hasMin && hasMax) {
+        if (minV <= maxV) {
+          params.append("minPrice", String(minV));
+          params.append("maxPrice", String(maxV));
+        }
+      } else if (hasMin) {
+        params.append("minPrice", String(minV));
+      } else if (hasMax) {
+        params.append("maxPrice", String(maxV));
+      }
 
       // TODO: Replace with your actual API endpoint
       const response = await instance.get(`/show/allproperty?${params.toString()}`);
@@ -93,60 +118,58 @@ export default function SearchPage() {
     }
   };
 
-  // Fetch properties when filters change
-  useEffect(() => {
+  // Build URL params and search on demand
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("query", searchQuery);
+    if (selectedLocation) params.set("location", selectedLocation);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedPropertyType) {
+      params.set("propertyType", selectedPropertyType);
+      params.set("property_type", selectedPropertyType);
+    }
+    if (selectedGender) params.set("gender", selectedGender);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    setSearchParams(params, { replace: true });
     fetchProperties();
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [searchQuery, selectedLocation, selectedCategory]);
-
-  // Fetch properties when filters change (with debounce)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchProperties();
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery, selectedLocation, selectedCategory]);
-
-  // Sync filters with URL (with debounce)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams();
-      if (searchQuery) params.set("query", searchQuery);
-      if (selectedLocation) params.set("location", selectedLocation);
-      if (selectedCategory) params.set("category", selectedCategory);
-      setSearchParams(params, { replace: true });
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery, selectedLocation, selectedCategory, setSearchParams]);
+  };
 
   useEffect(() => {
     const query = searchParams.get("query") || "";
     const location = searchParams.get("location") || "";
     const category = searchParams.get("category") || "";
+    const propertyType = searchParams.get("propertyType") || searchParams.get("property_type") || "";
+    const gender = searchParams.get("gender") || "";
+    const min = searchParams.get("minPrice") || "";
+    const max = searchParams.get("maxPrice") || "";
 
     setSearchQuery(query);
     setSelectedLocation(location);
     setSelectedCategory(category);
-
-    fetchProperties();
-  }, [searchParams]);
+    setSelectedPropertyType(propertyType);
+    setSelectedGender(gender);
+    setMinPrice(min);
+    setMaxPrice(max);
+  }, []);
 
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedLocation("");
     setSelectedCategory("");
+    setSelectedPropertyType("");
+    setSelectedGender("");
+    setMinPrice("");
+    setMaxPrice("");
   };
 
-  const hasActiveFilters = Boolean(searchQuery || selectedLocation || selectedCategory);
-  const activeFilterCount = [searchQuery, selectedLocation, selectedCategory].filter(Boolean).length;
+  const hasActiveFilters = Boolean(searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedGender || minPrice || maxPrice);
+  const activeFilterCount = [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice].filter(Boolean).length;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
+    fetchProperties();
   }, []);
-
-  console.log(properties)
 
   return (
     <div className="relative min-h-screen">
@@ -161,6 +184,7 @@ export default function SearchPage() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm">
           {/* Desktop Filters */}
           <div className="hidden md:flex flex-col gap-4">
+            {/* Top row: Search + Location */}
             <div className="flex gap-3">
               {/* Search Input */}
               <div className="flex-1 relative">
@@ -192,6 +216,40 @@ export default function SearchPage() {
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Bottom row: Other filters + Search button */}
+            <div className="flex gap-3 items-center flex-wrap">
+              {/* Property Type Select */}
+              <div className="w-48 relative">
+                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+                <select
+                  value={selectedPropertyType}
+                  onChange={(e) => setSelectedPropertyType(e.target.value)}
+                  disabled={isLoading}
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Types</option>
+                  <option value="buy">Buy</option>
+                  <option value="rent">Rent</option>
+                  <option value="lease">Lease</option>
+                </select>
+              </div>
+
+              {/* Gender Select */}
+              <div className="w-44 relative">
+                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+                <select
+                  value={selectedGender}
+                  onChange={(e) => setSelectedGender(e.target.value)}
+                  disabled={isLoading}
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Genders</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                </select>
+              </div>
 
               {/* Category Select */}
               <div className="w-64 relative">
@@ -211,6 +269,28 @@ export default function SearchPage() {
                 </select>
               </div>
 
+              {/* Price Min/Max */}
+              <div className="w-40">
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="Min Price"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="h-14 rounded-2xl border-gray-200"
+                />
+              </div>
+              <div className="w-40">
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="Max Price"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="h-14 rounded-2xl border-gray-200"
+                />
+              </div>
+
               {/* Clear Button */}
               {hasActiveFilters && (
                 <Button
@@ -224,51 +304,17 @@ export default function SearchPage() {
                   <X className="w-5 h-5" />
                 </Button>
               )}
-            </div>
 
-            {/* Active Filters Tags */}
-            {hasActiveFilters && (
-              <div className="flex items-center gap-2 flex-wrap pt-2 border-t">
-                <span className="text-sm text-gray-500">Active:</span>
-                {searchQuery && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                    Search: {searchQuery}
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      disabled={isLoading}
-                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                )}
-                {selectedLocation && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                    <MapPin className="w-3 h-3" />
-                    {selectedLocation}
-                    <button
-                      onClick={() => setSelectedLocation("")}
-                      disabled={isLoading}
-                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                )}
-                {selectedCategory && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                    {categories.find((c) => c.value === selectedCategory)?.title}
-                    <button
-                      onClick={() => setSelectedCategory("")}
-                      disabled={isLoading}
-                      className="hover:bg-primary/20 rounded-full p-0.5 disabled:opacity-50"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                )}
+              {/* Search Button */}
+              <Button
+                onClick={handleSearch}
+                disabled={isLoading}
+                className="h-14 px-6 rounded-2xl bg-primary text-primary-foreground hover:opacity-90"
+              >
+                Search
+              </Button>
+
               </div>
-            )}
           </div>
 
           {/* Mobile Filters */}
@@ -341,8 +387,68 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Clear Button */}
-                {hasActiveFilters && (
+                {/* Property Type */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Property Type</label>
+                  <div className="relative">
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+                    <select
+                      value={selectedPropertyType}
+                      onChange={(e) => setSelectedPropertyType(e.target.value)}
+                      disabled={isLoading}
+                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                    >
+                      <option value="">All Types</option>
+                      <option value="buy">Buy</option>
+                      <option value="rent">Rent</option>
+                      <option value="lease">Lease</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Gender</label>
+                  <div className="relative">
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+                    <select
+                      value={selectedGender}
+                      onChange={(e) => setSelectedGender(e.target.value)}
+                      disabled={isLoading}
+                      className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                    >
+                      <option value="">All Genders</option>
+                      <option value="men">Men</option>
+                      <option value="women">Women</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Price Range</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      type="number"
+                      min={0}
+                      placeholder="Min"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="rounded-2xl border-gray-200"
+                    />
+                    <Input
+                      type="number"
+                      min={0}
+                      placeholder="Max"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="rounded-2xl border-gray-200"
+                    />
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="outline"
                     onClick={clearFilters}
@@ -350,9 +456,16 @@ export default function SearchPage() {
                     className="w-full rounded-2xl text-red-600 border-red-200 hover:bg-red-50"
                   >
                     <X className="w-4 h-4 mr-2" />
-                    Clear filters
+                    Clear
                   </Button>
-                )}
+                  <Button
+                    onClick={() => { handleSearch(); setShowMobileFilters(false); }}
+                    disabled={isLoading}
+                    className="w-full rounded-2xl"
+                  >
+                    Search
+                  </Button>
+                </div>
               </div>
             )}
           </div>
