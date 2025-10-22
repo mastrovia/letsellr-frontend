@@ -52,10 +52,9 @@ export const SearchBar = () => {
             if (searchQuery.trim()) params.append('query', searchQuery.trim());
             if (location.trim()) params.append('location', location.trim());
 
-            const response = await instance.get(`/property/search/?${params.toString()}`);
 
-            // Here you can navigate to a results page or update state
-            console.log(response.data);
+      // Here you can navigate to a results page or update state
+      // console.log(response.data);
 
             // Example: navigate to results page with query params
             navigate(`/search/?${params.toString()}`);

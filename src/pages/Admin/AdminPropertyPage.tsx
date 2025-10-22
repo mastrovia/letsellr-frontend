@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import instance from "@/lib/axios";
 
@@ -41,16 +41,19 @@ interface Property {
   propertyType?: "buy" | "rent" | "lease";
 }
 
-interface PropertyFormData extends Partial<Property> { }
-
+interface PropertyFormData extends Partial<Property> {
+  newImages?: File[]; // 👈 for newly uploaded images
+}
 // Constants
 const CATEGORIES = [
-  { _id: "68de651e54859517744aa8f8", name: "PG" },
-  { _id: "68de658f54859517744aa90e", name: "Apartment" },
-  { _id: "68de57ee22d6206bc4564263", name: "Hostel" },
-  { _id: "68de1c35f11084356eafd988", name: "Villa" },
-  { _id: "68dcccd771afa460402c3651", name: "House" },
+  { _id: "68de651e54859517744aa8f8", name: "PG/Hostel" },
+  { _id: "68de658f54859517744aa90e", name: "Flat/Apartment" },
+  { _id: "68de57ee22d6206bc4564263", name: "Land" },
+  { _id: "68dcccd771afa460402c3651", name: "Villa/Houses" },
+  { _id: "68de1c35f11084356eafd988", name: "Commercial" }
 ];
+
+
 
 const INITIAL_FORM_STATE: PropertyFormData = {
   title: "",
@@ -73,10 +76,24 @@ const PropertyForm = ({
   onPriceChange,
   onAddPrice,
   onRemovePrice,
+  onFileChange,
   onSubmit,
   onCancel,
+  onRemoveImage,
+  onRemoveNewImage,
   isSubmitting,
   isEditing,
+  formErrors,
+  titleRef,
+  descriptionRef,
+  categoryRef,
+  priceRef,
+  locationRef,
+  amenityRef,
+  contactRef,
+  imagesRef,
+  setFormData,
+  notification
 }: {
   formData: PropertyFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
@@ -85,18 +102,35 @@ const PropertyForm = ({
   onRemovePrice: (index: number) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  onFileChange: (files: File[]) => void;
+  onRemoveImage: (index: number) => void;
+  onRemoveNewImage: (index: number) => void;
   isSubmitting: boolean;
   isEditing: boolean;
+  formErrors: { [key: string]: string };
+  titleRef: React.RefObject<HTMLInputElement>;
+  descriptionRef: React.RefObject<HTMLTextAreaElement>;
+  categoryRef: React.RefObject<HTMLSelectElement>;
+  priceRef: React.RefObject<HTMLDivElement>;
+  locationRef: React.RefObject<HTMLInputElement>;
+  amenityRef: React.RefObject<HTMLInputElement>;
+  contactRef: React.RefObject<HTMLInputElement>;
+  imagesRef: React.RefObject<HTMLInputElement>;
+  setFormData: React.Dispatch<React.SetStateAction<PropertyFormData>>
+  notification: string;
 }) => (
+
   <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
     <div>
       <label className="block text-sm font-medium mb-2">Title *</label>
-      <Input name="title" value={formData.title} onChange={onChange} placeholder="Property title" className="rounded-xl" />
+      <Input ref={titleRef} name="title" value={formData.title} onChange={onChange} placeholder="Property title" className="rounded-xl" />
+      {formErrors.title && <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>}
     </div>
 
     <div>
       <label className="block text-sm font-medium mb-2">Description *</label>
       <textarea
+        ref={descriptionRef}
         name="description"
         value={formData.description}
         onChange={onChange}
@@ -104,14 +138,19 @@ const PropertyForm = ({
         rows={3}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
       />
+      {formErrors.description && <p className="text-red-500 text-xs mt-1">{formErrors.description}</p>}
     </div>
 
     <div>
       <label className="block text-sm font-medium mb-2">Category *</label>
       <select
+        ref={categoryRef}
         name="category"
         value={formData.category?._id}
-        onChange={onChange}
+        onChange={(e) => {
+          const selected = CATEGORIES.find(c => c._id === e.target.value);
+          setFormData({ ...formData, category: selected || { _id: "", name: "" } });
+        }}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         <option value="">Select category</option>
@@ -121,9 +160,11 @@ const PropertyForm = ({
           </option>
         ))}
       </select>
+
+      {formErrors.category && <p className="text-red-500 text-xs mt-1">{formErrors.category}</p>}
     </div>
 
-    <div>
+    <div ref={priceRef}>
       <label className="block text-sm font-medium mb-2">Price Options *</label>
       {formData.price?.map((p, idx) => (
         <div key={idx} className="flex gap-2 mb-2 items-center">
@@ -136,10 +177,17 @@ const PropertyForm = ({
           <Input
             placeholder="Amount"
             type="number"
-            value={p.amount}
-            onChange={(e) => onPriceChange(idx, "amount", Number(e.target.value))}
+            value={p.amount === 0 ? "" : p.amount}
+            onChange={(e) =>
+              onPriceChange(
+                idx,
+                "amount",
+                e.target.value === "" ? "" : Number(e.target.value)
+              )
+            }
             className="rounded-xl w-24"
           />
+
           {formData.price.length > 1 && (
             <Button variant="outline" className="px-2" onClick={() => onRemovePrice(idx)}>
               -
@@ -147,6 +195,7 @@ const PropertyForm = ({
           )}
         </div>
       ))}
+      {formErrors.price && <p className="text-red-500 text-xs mt-1">{formErrors.price}</p>}
       <Button variant="outline" size="sm" onClick={onAddPrice}>
         Add Price Option
       </Button>
@@ -155,17 +204,20 @@ const PropertyForm = ({
     <div>
       <label className="block text-sm font-medium mb-2">Location Name *</label>
       <Input
+        ref={locationRef}
         name="location.name"
         value={formData.location?.name}
         onChange={onChange}
         placeholder="HSR Layout, Bangalore"
         className="rounded-xl"
       />
+      {formErrors.location && <p className="text-red-500 text-xs mt-1">{formErrors.location}</p>}
     </div>
 
     <div>
       <label className="block text-sm font-medium mb-2">Location URL (Google Maps)</label>
       <Input
+        ref={locationRef}
         name="location.url"
         value={formData.location?.url}
         onChange={onChange}
@@ -176,12 +228,28 @@ const PropertyForm = ({
 
     <div>
       <label className="block text-sm font-medium mb-2">Amenities (comma separated) *</label>
-      <Input name="amenity" value={formData.amenity} onChange={onChange} placeholder="WiFi, AC, Parking" className="rounded-xl" />
+      <Input
+        ref={amenityRef}
+        name="amenity"
+        value={formData.amenity}
+        onChange={onChange}
+        placeholder="WiFi, AC, Parking"
+        className="rounded-xl"
+      />
+      {formErrors.amenity && <p className="text-red-500 text-xs mt-1">{formErrors.amenity}</p>}
     </div>
 
     <div>
       <label className="block text-sm font-medium mb-2">Contact Number *</label>
-      <Input name="contactNumber" value={formData.contactNumber} onChange={onChange} placeholder="9876543210" className="rounded-xl" />
+      <Input
+        ref={contactRef}
+        name="contactNumber"
+        value={formData.contactNumber}
+        onChange={onChange}
+        placeholder="9876543210"
+        className="rounded-xl"
+      />
+      {formErrors.contactNumber && <p className="text-red-500 text-xs mt-1">{formErrors.contactNumber}</p>}
     </div>
 
     <div>
@@ -212,17 +280,70 @@ const PropertyForm = ({
     </div>
 
     <div>
-      <label className="block text-sm font-medium mb-2">Status *</label>
+      {/* <label className="block text-sm font-medium mb-2">Status *</label>
       <select
         name="status"
         value={formData.status || "active"}
         onChange={onChange}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
-      >
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-      </select>
+      /> */}
+
+       <label className="block text-sm font-medium mb-2">Property Images *</label>
+      <input
+        ref={imagesRef}
+        type="file"
+        name="newImages"
+        multiple
+        accept="image/*"
+        onChange={(e) => {
+          if (!e.target.files) return;
+          onFileChange(Array.from(e.target.files));
+          e.target.value = "";
+        }}
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
+      />
+      {formErrors.images && <p className="text-red-500 text-xs mt-1">{formErrors.images}</p>}
+
+      {/* Already uploaded images */}
+      {formData.images?.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {formData.images.map((url, index) => (
+            <div key={index} className="relative">
+              <img src={url} alt={`existing-${index}`} className="w-20 h-20 object-cover rounded-lg border" />
+              <button
+                type="button"
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold hover:bg-red-600"
+                onClick={() => onRemoveImage(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Newly selected images */}
+      {formData.newImages?.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {formData.newImages.map((file, index) => (
+            <div key={index} className="relative">
+              <img src={URL.createObjectURL(file)} alt={`new-${index}`} className="w-20 h-20 object-cover rounded-lg border" />
+              <button
+                type="button"
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold hover:bg-red-600"
+                onClick={() => onRemoveNewImage(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
+
+
+
+
 
     <div className="flex gap-3 pt-4 sticky bottom-0 bg-white pb-2">
       <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl" disabled={isSubmitting}>
@@ -245,98 +366,114 @@ const PropertyCard = ({
   property: Property;
   onEdit: (property: Property, mobile?: boolean) => void;
   onDelete: (property: Property) => void;
-}) => (
-  <Card className="p-4 sm:p-6 border-border hover:shadow-lg transition-shadow">
-    <div className="flex gap-3 sm:gap-4">
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
-        <img src={property.images[0]} alt={property.title} className="w-full h-full object-cover" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title}</h3>
-          {property.status && (
-            <span
-              className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
-                }`}
-            >
-              {property.status}
-            </span>
-          )}
+}) => {
+  // Safe access to first image
+  const firstImage = property.images?.[0] || "/placeholder.jpg";
+  // Safe access to first price
+  const firstPrice = property.price?.[0]?.amount;
+
+  return (
+    <Card className="p-4 sm:p-6 border-border hover:shadow-lg transition-shadow">
+      <div className="flex gap-3 sm:gap-4">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+          <img
+            src={firstImage}
+            alt={property.title || "Property Image"}
+            className="w-full h-full object-cover"
+          />
         </div>
-
-        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
-          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-          <span className="truncate">{property.location.name}</span>
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
-          {property.views !== undefined && (
-            <div className="flex items-center gap-1">
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span>{property.views}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1">
-            <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary fill-primary" />
-            <span>{property.rating || 0}</span>
-          </div>
-
-          {/* Display all price options */}
-          <div className="flex flex-col font-semibold text-primary">
-            {property.price && property.price.length > 0 && (
-              <p className="text-md font-medium text-gray-900">
-                ₹{property.price[0].amount}
-                <span className="text-sm text-black/50"> /Month</span>{" "}
-                {property.price.length > 1 && (
-                  <span className="text-xs text-primary">(+Others)</span>
-                )}
-              </p>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">
+              {property.title || "Untitled"}
+            </h3>
+            {property.status && (
+              <span
+                className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${property.status === "active"
+                  ? "bg-green-500/10 text-green-600"
+                  : "bg-red-500/10 text-red-600"
+                  }`}
+              >
+                {property.status}
+              </span>
             )}
           </div>
-        </div>
 
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="hidden md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-            onClick={() => onEdit(property)}
-          >
-            <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-            <span className="hidden sm:inline">Edit</span>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="md:hidden flex-1 rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-            onClick={() => onEdit(property, true)}
-          >
-            <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-            <span className="hidden sm:inline">Edit</span>
-          </Button>
-          <Link to={`/property/${property._id}`} className="flex-1">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
+            <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+            <span className="truncate">{property.location?.name || "No location"}</span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
+            {property.views !== undefined && (
+              <div className="flex items-center gap-1">
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>{property.views}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1">
+              <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary fill-primary" />
+              <span>{property.rating || 0}</span>
+            </div>
+
+            {/* Display prices */}
+            {property.price && property.price.length > 0 && (
+              <div className="flex flex-col gap-1 mb-3">
+                {property.price?.slice(0,2).map((p, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-sm text-primary font-semibold">
+                    <span>{p.type || "Room"}:</span>
+                    <span>₹{p.amount} /Month</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+
+          <div className="flex gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="w-full rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+              className="hidden md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+              onClick={() => onEdit(property)}
             >
-              <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-              <span className="hidden sm:inline">View</span>
+              <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Edit</span>
             </Button>
-          </Link>
-          <Button
-            size="sm"
-            variant="outline"
-            className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600 px-2 sm:px-3"
-            onClick={() => onDelete(property)}
-          >
-            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="md:hidden flex-1 rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+              onClick={() => onEdit(property, true)}
+            >
+              <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Edit</span>
+            </Button>
+            <Link to={`/property/${property._id}`} className="flex-1">
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+              >
+                <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                <span className="hidden sm:inline">View</span>
+              </Button>
+            </Link>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600 px-2 sm:px-3"
+              onClick={() => onDelete(property)}
+            >
+              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-  </Card>
-);
+    </Card>
+  );
+};
+
 
 // Main Admin Properties Page
 const AdminPropertiesPage = () => {
@@ -348,6 +485,18 @@ const AdminPropertiesPage = () => {
   const [currentProperty, setCurrentProperty] = useState<Property | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<PropertyFormData>(INITIAL_FORM_STATE);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [notification, setNotification] = useState<string | null>(null);
+
+
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const categoryRef = useRef<HTMLSelectElement>(null);
+  const priceRef = useRef<HTMLDivElement>(null);
+  const locationRef = useRef<HTMLInputElement>(null);
+  const amenityRef = useRef<HTMLInputElement>(null);
+  const contactRef = useRef<HTMLInputElement>(null);
+  const imagesRef = useRef<HTMLInputElement>(null);
 
   // Fetch properties
   useEffect(() => {
@@ -374,6 +523,10 @@ const AdminPropertiesPage = () => {
   };
 
   const handleEdit = (property: Property, mobile = false) => {
+    // Ensure category is a full object from CATEGORIES
+    const category = CATEGORIES.find(c => c._id === property.category?._id)
+      || { _id: property.category?._id || "", name: property.category?.name || "" };
+
     setCurrentProperty(property);
     // Merge defaults so missing fields (gender, propertyType, status, etc.) get default values
     const merged: PropertyFormData = {
@@ -387,6 +540,46 @@ const AdminPropertiesPage = () => {
     setIsMobileFormOpen(mobile);
   };
 
+
+
+  const removeExistingImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index),
+    }));
+  };
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+
+    if (!formData.title?.trim()) errors.title = "Title is required";
+    if (!formData.description?.trim()) errors.description = "Description is required";
+    if (!formData.category?._id) errors.category = "Category is required";
+    if (!formData.price || formData.price.length === 0 || formData.price.every(p => !p.amount))
+      errors.price = "At least one price is required";
+    if (!formData.location?.name?.trim()) errors.location = "Location name is required";
+    if (!formData.amenity?.trim()) errors.amenity = "At least one amenity is required";
+    if (!formData.contactNumber?.trim()) errors.contactNumber = "Contact number is required";
+    if ((!formData.images || formData.images.length === 0) && (!formData.newImages || formData.newImages.length === 0)) {
+      errors.images = "Please upload at least one image";
+    }
+
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0; // returns true if valid
+  };
+
+  const handleFileChange = (files: File[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      newImages: [...(prev.newImages || []), ...files],
+    }));
+  };
+
+
+
+
+
   const handleDelete = (property: Property) => {
     setCurrentProperty(property);
     setDeleteDialogOpen(true);
@@ -395,103 +588,174 @@ const AdminPropertiesPage = () => {
   const confirmDelete = async () => {
     if (!currentProperty) return;
     setIsSubmitting(true);
+
     try {
-      await instance.delete(`/property/${currentProperty._id}`, { withCredentials: true });
-      setProperties((prev) => prev.filter((p) => p._id !== currentProperty._id));
+      await instance.delete(`/property/deleteproperty/${currentProperty._id}`, { withCredentials: true });
+
+      // Remove from frontend state
+      setProperties(prev => prev.filter(p => p._id !== currentProperty._id));
       setDeleteDialogOpen(false);
       setCurrentProperty(null);
+
+      setNotification("Property deleted successfully!");
+      setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting property:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-  const { name, value } = e.target;
 
-  if (name.startsWith("location.")) {
-    const field = name.split(".")[1];
-    setFormData((prev) => ({
-      ...prev,
-      location: { ...prev.location!, [field]: value },
-    }));
-  } else if (name === "category") {
-    const category = CATEGORIES.find((c) => c._id === value);
-    setFormData((prev) => ({
-      ...prev,
-      category: category || { _id: "", name: "" },
-    }));
-  } else {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-};
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value, files } = e.target as HTMLInputElement;
 
+    if (files && name === "newImages") {
+      // Convert FileList to File[]
+      setFormData((prev) => ({
+        ...prev,
+        newImages: [...(prev.newImages || []), ...Array.from(files)],
+      }));
+    } else if (name.startsWith("location.")) {
+      const field = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        location: { ...prev.location!, [field]: value },
+      }));
+    } else if (name === "category") {
+      const category = CATEGORIES.find((c) => c._id === value);
+      setFormData((prev) => ({
+        ...prev,
+        category: category || { _id: "", name: "" },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
 
   const handlePriceChange = (index: number, field: keyof PriceOption, value: string | number) => {
-  const updatedPrices = [...(formData.price || [])];
-  updatedPrices[index] = { ...updatedPrices[index], [field]: value };
-  setFormData((prev) => ({ ...prev, price: updatedPrices }));
-};
+    const updatedPrices = [...(formData.price || [])];
+    updatedPrices[index] = { ...updatedPrices[index], [field]: value };
+    setFormData((prev) => ({ ...prev, price: updatedPrices }));
+  };
 
-const addPriceOption = () => {
-  setFormData((prev) => ({ ...prev, price: [...(prev.price || []), { type: "", amount: 0 }] }));
-};
+  const addPriceOption = () => {
+    setFormData((prev) => ({ ...prev, price: [...(prev.price || []), { type: "", amount: 0 }] }));
+  };
 
-const removePriceOption = (index: number) => {
-  const updatedPrices = [...(formData.price || [])];
-  updatedPrices.splice(index, 1);
-  setFormData((prev) => ({ ...prev, price: updatedPrices }));
-};
+  const removePriceOption = (index: number) => {
+    const updatedPrices = [...(formData.price || [])];
+    updatedPrices.splice(index, 1);
+    setFormData((prev) => ({ ...prev, price: updatedPrices }));
+  };
 
-const handleSubmit = async () => {
-  setIsSubmitting(true);
-  try {
+  const handleRemoveNewImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      newImages: prev.newImages?.filter((_, i) => i !== index),
+    }));
+  };
 
 
-    const payload = {
-      ...formData,
-      // Ensure defaults are included even if user didn't touch the fields
-      gender: formData.gender ?? "men",
-      propertyType: formData.propertyType ?? "buy",
-      status: formData.status ?? "active",
-      category: formData.category?._id, // send only ID
-      price: formData.price?.filter((p) => p.amount > 0) || [], // send valid prices
-      location: formData.location || { name: "", url: "" },
-    };
-
-    let response;
-    if (currentProperty) {
-      // Update
-      response = await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, {
-        withCredentials: true,
-      });
-      setProperties((prev) =>
-        prev.map((p) => (p._id === currentProperty._id ? response.data : p))
-      );
-    } else {
-      // Add new
-      response = await instance.post("/property/addproperty", payload, { withCredentials: true });
-      setProperties((prev) => [response.data, ...prev]);
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      if (formErrors.title && titleRef.current) titleRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.description && descriptionRef.current) descriptionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.category && categoryRef.current) categoryRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.price && priceRef.current) priceRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.location && locationRef.current) locationRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.amenity && amenityRef.current) amenityRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.contactNumber && contactRef.current) contactRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.images && imagesRef.current) imagesRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
     }
 
-    handleCloseForm();
-  } catch (error) {
-    console.error("Error saving property:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+
+    setIsSubmitting(true);
+
+    try {
+      let imageUrls: string[] = [];
+
+      // If new images are selected, upload them to S3 first
+      if (formData.newImages && formData.newImages.length > 0) {
+        const fileArray = formData.newImages; // already an array of Files
+
+        // 1️⃣ Get signed URLs from backend
+        const res = await instance.post("/property/s3url", {
+          files: fileArray.map((f) => ({ name: f.name, type: f.type })),
+        });
+
+        const signedUrls = res.data.urls; // Array of { uploadUrl, fileUrl, key }
+
+        // 2️⃣ Upload files to S3 directly
+        await Promise.all(
+          fileArray.map((file, i) =>
+            fetch(signedUrls[i].uploadUrl, {
+              method: "PUT",
+              body: file,
+              headers: { "Content-Type": file.type },
+            })
+          )
+        );
+
+        // 3️⃣ Extract actual file URLs
+        imageUrls = signedUrls.map((item: any) => item.fileUrl);
+      }
+
+      // 4️⃣ Prepare payload
+      const payload = {
+        ...formData,
+        category: formData.category?._id,
+        price: formData.price?.filter((p) => p.amount > 0) || [],
+        location: formData.location || { name: "", url: "" },
+        images: [...(formData.images || []), ...imageUrls], // merge old + new
+      };
+
+      let response;
+      if (currentProperty) {
+        await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, { withCredentials: true });
+        // refetch all properties
+        const res = await instance.get("/show/allproperty", { withCredentials: true });
+        if (Array.isArray(res.data.data)) setProperties(res.data.data);
+      }
+      else {
+        response = await instance.post("/property/addproperty", payload, {
+          withCredentials: true,
+        });
+
+        const res = await instance.get("/show/allproperty", { withCredentials: true });
+        console.log(res.data);
+
+        if (Array.isArray(res.data.data)) {
+          setProperties(res.data.data); // <-- use the inner array
+        } else {
+          console.warn("Expected an array of properties, got:", res.data.data);
+          setProperties([]); // fallback
+        }
+      }
+
+      handleCloseForm();
+    } catch (error) {
+      console.error("Error saving property:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+
 
 
 
   const handleCloseForm = () => {
-  setIsFormOpen(false);
-  setIsMobileFormOpen(false);
-  setCurrentProperty(null);
-  setFormData(INITIAL_FORM_STATE);
-};
+    setIsFormOpen(false);
+    setIsMobileFormOpen(false);
+    setCurrentProperty(null);
+    setFormData(INITIAL_FORM_STATE);
+  };
 
 
   const stats = {
@@ -502,6 +766,15 @@ const handleSubmit = async () => {
 
   return (
     <div className="space-y-6">
+      {notification && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+          <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg pointer-events-auto max-w-xs text-sm text-center animate-fade-in">
+            {notification}
+          </div>
+        </div>
+      )}
+
+
       {/* Header & Add Property */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -517,7 +790,7 @@ const handleSubmit = async () => {
               Add Property
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden" >
             <DialogHeader>
               <DialogTitle>{currentProperty ? "Edit Property" : "Add New Property"}</DialogTitle>
             </DialogHeader>
@@ -529,9 +802,24 @@ const handleSubmit = async () => {
               onRemovePrice={removePriceOption}
               onSubmit={handleSubmit}
               onCancel={handleCloseForm}
+              onRemoveImage={removeExistingImage}
+              onRemoveNewImage={handleRemoveNewImage}
+              onFileChange={handleFileChange}
               isSubmitting={isSubmitting}
               isEditing={!!currentProperty}
+              formErrors={formErrors}
+              titleRef={titleRef}
+              descriptionRef={descriptionRef}
+              categoryRef={categoryRef}
+              priceRef={priceRef}
+              locationRef={locationRef}
+              amenityRef={amenityRef}
+              contactRef={contactRef}
+              imagesRef={imagesRef}
+              setFormData={setFormData}
+              notification={notification}
             />
+
           </DialogContent>
         </Dialog>
 
@@ -549,15 +837,30 @@ const handleSubmit = async () => {
             </DrawerHeader>
             <PropertyForm
               formData={formData}
+              setFormData={setFormData}
               onChange={handleInputChange}
               onPriceChange={handlePriceChange}
               onAddPrice={addPriceOption}
               onRemovePrice={removePriceOption}
               onSubmit={handleSubmit}
               onCancel={handleCloseForm}
+              onRemoveImage={removeExistingImage}
+              onRemoveNewImage={handleRemoveNewImage}
+              onFileChange={handleFileChange}
               isSubmitting={isSubmitting}
               isEditing={!!currentProperty}
+              formErrors={formErrors}
+              titleRef={titleRef}
+              descriptionRef={descriptionRef}
+              categoryRef={categoryRef}
+              priceRef={priceRef}
+              locationRef={locationRef}
+              amenityRef={amenityRef}
+              contactRef={contactRef}
+              imagesRef={imagesRef}
+              notification={notification}
             />
+
           </DrawerContent>
         </Drawer>
       </div>

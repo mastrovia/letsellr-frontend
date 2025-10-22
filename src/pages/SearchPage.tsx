@@ -101,9 +101,10 @@ export default function SearchPage() {
       }
 
       // TODO: Replace with your actual API endpoint
-      const response = await instance.get(`/show/allproperty?${params.toString()}`);
+      const response = await instance.get(`/property/search/?${params.toString()}`);
       // const data = await response.json();
-      setProperties(response.data.data);
+      setProperties(response.data.properties);
+      console.log(response.data.properties);
 
       // Simulating API call with timeout
       await new Promise((resolve) => setTimeout(resolve, 1500));
