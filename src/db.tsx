@@ -1,5 +1,5 @@
 export const letsellr = {
-  contactNumber: "9402384",
+  contactNumber: "9895415718",
 };
 
 export const categories = [
