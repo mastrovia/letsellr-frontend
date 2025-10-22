@@ -251,7 +251,7 @@ export default function PropertyPage() {
     window.scrollTo({ top: 0, behavior: "instant" });
     fetchProperty();
     fetchreviews();
-  }, [propertyId]);
+  }, []);
 
   // const handleToggleReviews = () => {
   //   setShowAllReviews(!showAllReviews);
@@ -324,7 +324,7 @@ export default function PropertyPage() {
       const reviewData: any = {
         propertyId,
         rating: selectedRating,
-        // name: reviewForm.name,
+        userName: reviewForm.name,
         email: reviewForm.email,
         comment: reviewForm.comment,
         timestamp: new Date().toISOString(),
