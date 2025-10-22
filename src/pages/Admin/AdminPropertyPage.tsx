@@ -37,6 +37,8 @@ interface Property {
   contactNumber?: string;
   status?: string;
   views?: number;
+  gender?: "men" | "women";
+  propertyType?: "buy" | "rent" | "lease";
 }
 
 interface PropertyFormData extends Partial<Property> { }
@@ -59,6 +61,8 @@ const INITIAL_FORM_STATE: PropertyFormData = {
   price: [{ type: "", amount: 0 }],
   location: { name: "", url: "" },
   contactNumber: "",
+  gender: "men",
+  propertyType: "buy",
   status: "active",
 };
 
@@ -178,6 +182,33 @@ const PropertyForm = ({
     <div>
       <label className="block text-sm font-medium mb-2">Contact Number *</label>
       <Input name="contactNumber" value={formData.contactNumber} onChange={onChange} placeholder="9876543210" className="rounded-xl" />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-2">Gender *</label>
+      <select
+        name="gender"
+        value={formData.gender}
+        onChange={onChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
+      >
+        <option value="men">Men</option>
+        <option value="women">Women</option>
+      </select>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-2">Property Type *</label>
+      <select
+        name="propertyType"
+        value={formData.propertyType}
+        onChange={onChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
+      >
+        <option value="buy">Buy</option>
+        <option value="rent">Rent</option>
+        <option value="lease">Lease</option>
+      </select>
     </div>
 
     <div>
@@ -344,7 +375,14 @@ const AdminPropertiesPage = () => {
 
   const handleEdit = (property: Property, mobile = false) => {
     setCurrentProperty(property);
-    setFormData(property);
+    // Merge defaults so missing fields (gender, propertyType, status, etc.) get default values
+    const merged: PropertyFormData = {
+      ...INITIAL_FORM_STATE,
+      ...property,
+      category: property.category || INITIAL_FORM_STATE.category,
+      location: property.location || INITIAL_FORM_STATE.location,
+    };
+    setFormData(merged);
     setIsFormOpen(!mobile);
     setIsMobileFormOpen(mobile);
   };
@@ -410,8 +448,15 @@ const removePriceOption = (index: number) => {
 const handleSubmit = async () => {
   setIsSubmitting(true);
   try {
+
+    console.log(formData)
+
     const payload = {
       ...formData,
+      // Ensure defaults are included even if user didn't touch the fields
+      gender: formData.gender ?? "men",
+      propertyType: formData.propertyType ?? "buy",
+      status: formData.status ?? "active",
       category: formData.category?._id, // send only ID
       price: formData.price?.filter((p) => p.amount > 0) || [], // send valid prices
       location: formData.location || { name: "", url: "" },
@@ -419,8 +464,9 @@ const handleSubmit = async () => {
 
     let response;
     if (currentProperty) {
+        return console.log(payload)
       // Update
-      response = await instance.put(`/property/update/${currentProperty._id}`, payload, {
+      response = await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, {
         withCredentials: true,
       });
       setProperties((prev) =>

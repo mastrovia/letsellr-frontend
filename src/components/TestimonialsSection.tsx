@@ -59,8 +59,8 @@ export const TestimonialsSection = () => {
                   <p className="text-foreground leading-relaxed">"{testimonial.content}"</p>
 
                   <div className="flex items-center gap-4 pt-4 border-t border-border">
-                    <Avatar className="h-12 w-12 bg-gradient-primary">
-                      <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
+                    <Avatar className="h-12 w-12 bg-primary">
+                      <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                         {testimonial.initials}
                       </AvatarFallback>
                     </Avatar>
