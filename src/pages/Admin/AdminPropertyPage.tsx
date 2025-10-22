@@ -380,7 +380,7 @@ const PropertyCard = ({
             {/* Display prices */}
             {property.price && property.price.length > 0 && (
               <div className="flex flex-col gap-1 mb-3">
-                {property.price.map((p, idx) => (
+                {property.price?.slice(0,2).map((p, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm text-primary font-semibold">
                     <span>{p.type || "Room"}:</span>
                     <span>₹{p.amount} /Month</span>

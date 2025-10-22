@@ -12,6 +12,7 @@ const AdminReviewsPage = () => {
     reviewfind();
   }, []);
   const navigate = useNavigate();
+  const [reviewcount,setreviewcount]=useState(0);
   var [reviews, setreviews] = useState([
     // {
     //   id: 1,
@@ -64,6 +65,7 @@ const AdminReviewsPage = () => {
     try {
       const response = await instance.get('/feedback/getallfeedbacks');
       setreviews(response.data.data);
+      setreviewcount(response.data.count);
       console.log(response.data.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -107,7 +109,7 @@ const AdminReviewsPage = () => {
   return (
     <div className="space-y-6">
       {/* Header with Filter Button */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Reviews Management</h2>
           <p className="text-muted-foreground mt-1">Manage and moderate user reviews</p>
@@ -116,25 +118,25 @@ const AdminReviewsPage = () => {
           <Filter className="h-4 w-4 mr-2" />
           Filter Reviews
         </Button>
-      </div>
+      </div> */}
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Card className="p-4 border-border">
           <p className="text-sm text-muted-foreground">Total Reviews</p>
-          <p className="text-2xl font-bold text-foreground mt-1">1,847</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{reviewcount}</p>
         </Card>
-        <Card className="p-4 border-border">
+        {/* <Card className="p-4 border-border">
           <p className="text-sm text-muted-foreground">Approved</p>
           <p className="text-2xl font-bold text-green-600 mt-1">1,723</p>
         </Card>
         <Card className="p-4 border-border">
           <p className="text-sm text-muted-foreground">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 mt-1">98</p>
-        </Card>
+        </Card> */}
         <Card className="p-4 border-border">
           <p className="text-sm text-muted-foreground">Avg. Rating</p>
-          <p className="text-2xl font-bold text-purple-600 mt-1">4.6</p>
+          <p className="text-2xl font-bold text-purple-600 mt-1">{(reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)}</p>
         </Card>
       </div>
 
