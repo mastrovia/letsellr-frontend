@@ -101,7 +101,7 @@ export default function SearchPage() {
       }
 
       // TODO: Replace with your actual API endpoint
-      const response = await instance.get(`/property/search/?${params.toString()}`);
+      const response = await instance.get(`/show/allproperty/?${params.toString()}`);
       // const data = await response.json();
       setProperties(response.data.properties);
       console.log(response.data.properties);
@@ -242,7 +242,7 @@ export default function SearchPage() {
               </div>
 
               {/* Gender Chips */}
-              <div className="flex items-center gap-2">
+              <div className="hidden flex items-center gap-2">
                 <Button
                   type="button"
                   variant={selectedGender === "men" ? "default" : "outline"}
@@ -414,7 +414,7 @@ export default function SearchPage() {
                 {/* Gender Chips */}
                 <div>
                   <label className="block text-sm font-medium mb-2">Gender</label>
-                  <div className="flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-2">
                     <Button
                       type="button"
                       variant={selectedGender === "men" ? "default" : "outline"}
@@ -476,6 +476,27 @@ export default function SearchPage() {
             )}
           </div>
         </div>
+
+            <div className="md:hidden flex items-center gap-2">
+                            <Button
+                            type="button"
+                            variant={selectedGender === "men" ? "default" : "outline"}
+                            disabled={isLoading}
+                            onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
+                            className="h-10 rounded-full"
+                            >
+                            Men
+                            </Button>
+                            <Button
+                            type="button"
+                            variant={selectedGender === "women" ? "default" : "outline"}
+                            disabled={isLoading}
+                            onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
+                            className="h-10 rounded-full"
+                            >
+                            Women
+                            </Button>
+              </div>
 
         {/* Loading State */}
         {isLoading ? (
