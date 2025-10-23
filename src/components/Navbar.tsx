@@ -32,7 +32,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed z-50 flex items-center top-0 w-full h-16 md:h-20 bg-white/70 backdrop-blur-lg  p-2 py-2 md:p-10 md:py-5 border-b">
-        <div className="container w-full flex justify-center md:justify-between">
+        <div className="container w-full flex justify-between">
           <Link to={"/"}>
             <div className="flex items-center">
               <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
@@ -41,7 +41,7 @@ export default function Navbar() {
           </Link>
           <Dialog>
             <DialogTrigger asChild>
-              <div className="hidden md:flex items-center gap-2 cursor-pointer"><PhoneCall className="w-5 h-5"/>Contact Us</div>
+              <div className="flex items-center gap-2 cursor-pointer"><PhoneCall className="w-5 h-5"/>Contact Us</div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
               <AlertDialogHeader>

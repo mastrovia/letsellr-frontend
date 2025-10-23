@@ -52,9 +52,8 @@ export const SearchBar = () => {
             if (searchQuery.trim()) params.append('query', searchQuery.trim());
             if (location.trim()) params.append('location', location.trim());
 
-
-      // Here you can navigate to a results page or update state
-      // console.log(response.data);
+            // Here you can navigate to a results page or update state
+            // console.log(response.data);
 
             // Example: navigate to results page with query params
             navigate(`/search/?${params.toString()}`);
@@ -76,24 +75,25 @@ export const SearchBar = () => {
             <div className="flex w-full justify-center gap-4 mb-6">
                 <Button
                     size="lg"
-                    variant='outline'
+                    variant="outline"
                     onClick={() => navigate(`/search?property_type=rent`)}
                 >
                     Rent
                 </Button>
+
                 <Button
                     size="lg"
-                    variant='outline'
-                    onClick={() => navigate(`/search?property_type=lease`)}
-                >
-                    Lease
-                </Button>
-                <Button
-                    size="lg"
-                    variant='outline'
+                    variant="outline"
                     onClick={() => navigate(`/search?property_type=buy`)}
                 >
                     Buy
+                </Button>
+                <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate(`/search?property_type=lease`)}
+                >
+                    Lease
                 </Button>
             </div>
             <div className="bg-card rounded-[2rem] shadow-md border border-border p-4 flex flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg">
