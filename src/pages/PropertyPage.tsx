@@ -207,9 +207,14 @@ export default function PropertyPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
-  const [showAllReviews, setShowAllReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
 
-  const displayedReviews = showAllReviews
+  const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 5);
+
+  const handleToggleReviews = () => {
+    setShowAllReviews(prev => !prev);
+  };
 
   // Fetch property data
   const fetchProperty = async () => {
@@ -239,13 +244,12 @@ export default function PropertyPage() {
   const fetchreviews = async () => {
     try {
       const response = await instance.get(`/feedback/getfeedbacks/${propertyId}`);
-      setShowAllReviews(response.data.data)
+      setAllReviews(response.data.data);
       console.log(response.data.data);
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
     }
-    catch (err) {
-      console.log(err);
-    }
-  }
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -349,6 +353,9 @@ export default function PropertyPage() {
       setIsSubmitting(false);
     }
   };
+
+
+
 
   function ContactComp() {
     return (
@@ -527,8 +534,8 @@ export default function PropertyPage() {
                 <h1 className="text-xl md:text-3xl">Guest Reviews</h1>
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-accent fill-accent" />
-                  <span className="text-lg font-semibold">{calculateAverageRating(showAllReviews)}</span>
-                  <span className="text-sm text-gray-600">({showAllReviews.length} reviews)</span>
+                  <span className="text-lg font-semibold">{calculateAverageRating(allReviews)}</span>
+                  <span className="text-sm text-gray-600">({allReviews.length} reviews)</span>
                 </div>
               </div>
 
@@ -578,14 +585,13 @@ export default function PropertyPage() {
                 ))}
               </div>
 
-
-              {showAllReviews.length > 3 && (
+              {allReviews.length > 5 && (
                 <Button
                   variant="outline"
-                  // onClick={handleToggleReviews}
+                  onClick={handleToggleReviews}
                   className="w-full md:w-auto py-6 hover:bg-primary/10 hover:text-black"
                 >
-                  {showAllReviews ? "Show Less Reviews" : `Show All ${showAllReviews.length} Reviews`}
+                  {showAllReviews ? "Show Less Reviews" : `Show All ${allReviews.length} Reviews`}
                 </Button>
               )}
             </section>
