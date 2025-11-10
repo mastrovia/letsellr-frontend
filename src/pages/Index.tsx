@@ -7,11 +7,31 @@ import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
 import { categories } from "@/db";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
   }, []);
+
+  const locations = [
+    "Mumbai",
+    "Bangalore",
+    "Delhi",
+    "Hyderabad",
+    "Pune",
+    "Chennai",
+    "Kolkata",
+    "Ahmedabad",
+    "Jaipur",
+    "Chandigarh",
+  ];
+
+  const handleLocationClick = (location: string) => {
+    navigate(`/search?location=${encodeURIComponent(location)}`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,6 +57,59 @@ const Index = () => {
                   Discover quality PGs, apartments, and hostels tailored for your work or study needs. Your ideal accommodation is just a
                   search away.
                 </p>
+
+                {/* Popular Locations Chips */}
+                <div className="flex flex-col gap-3 items-center justify-center max-w-4xl mx-auto px-4">
+                  {/* Mobile: Single Row with 4 chips */}
+                  <div className="flex md:hidden flex-wrap gap-2 justify-center items-center">
+                    {locations.slice(0, 4).map((location) => (
+                      <button
+                        key={location}
+                        onClick={() => handleLocationClick(location)}
+                        className="px-4 py-2 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-sm font-medium text-foreground transition-all duration-300 hover:scale-105 hover:shadow-md whitespace-nowrap"
+                      >
+                        {location}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Desktop: Two Rows with all chips */}
+                  <div className="hidden md:flex flex-col gap-3 w-full">
+                    {/* First Row */}
+                    <div className="flex flex-wrap gap-3 justify-center items-center">
+                      {locations.slice(0, 5).map((location, idx) => (
+                        <button
+                          key={location}
+                          onClick={() => handleLocationClick(location)}
+                          className="px-5 py-2 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-base font-medium text-foreground transition-all duration-300 hover:scale-105 hover:shadow-md whitespace-nowrap"
+                          style={{
+                            marginLeft: idx === 0 ? "0" : `${(idx % 3) * 8}px`,
+                            marginRight: `${((idx + 1) % 3) * 6}px`,
+                          }}
+                        >
+                          {location}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Second Row */}
+                    <div className="flex flex-wrap gap-3 justify-center items-center">
+                      {locations.slice(5, 10).map((location, idx) => (
+                        <button
+                          key={location}
+                          onClick={() => handleLocationClick(location)}
+                          className="px-5 py-2 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-base font-medium text-foreground transition-all duration-300 hover:scale-105 hover:shadow-md whitespace-nowrap"
+                          style={{
+                            marginLeft: `${((idx + 2) % 3) * 6}px`,
+                            marginRight: idx === 4 ? "0" : `${(idx % 3) * 8}px`,
+                          }}
+                        >
+                          {location}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Search Bar - Independent module with built-in navigation */}
@@ -53,7 +126,7 @@ const Index = () => {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 md:gap-6 md:col-span-3">
                     {categories
-                      .filter((a, i) => i > 0)
+                      .filter((_, i) => i > 0)
                       .map((category, idx) => (
                         <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 100}ms` }}>
                           <CategoryCard {...category} />
