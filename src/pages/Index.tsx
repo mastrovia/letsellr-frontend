@@ -16,18 +16,18 @@ const Index = () => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
   }, []);
 
-  const locations = [
-    "Mumbai",
-    "Bangalore",
-    "Delhi",
-    "Hyderabad",
-    "Pune",
-    "Chennai",
-    "Kolkata",
-    "Ahmedabad",
-    "Jaipur",
-    "Chandigarh",
-  ];
+const locations = [
+    "Mavoor road",
+    "Thondayad",
+    "Mananchira",
+    "Palayam",
+    "Nadakkavu",
+    "Beach area",
+    "Chalappuram",
+    "Kovoor",
+    "West hill",
+    "Mankave"
+];
 
   const handleLocationClick = (location: string) => {
     navigate(`/search?location=${encodeURIComponent(location)}`);
