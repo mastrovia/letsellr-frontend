@@ -13,6 +13,7 @@ import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminPropertiesPage from "./pages/Admin/AdminPropertyPage";
 import AdminReviewsPage from "./pages/Admin/AdminReviewsPage";
 // import AdminUsersPage from "./pages/Admin/AdminUsersPage";
+import FloatingContactIcons from "./components/FloatingContactIcons";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <FloatingContactIcons />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
