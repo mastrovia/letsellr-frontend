@@ -242,7 +242,7 @@ export default function SearchPage() {
               </div>
 
               {/* Gender Chips */}
-              <div className="hidden flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Button
                   type="button"
                   variant={selectedGender === "men" ? "default" : "outline"}
