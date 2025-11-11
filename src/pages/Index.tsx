@@ -51,7 +51,7 @@ const locations = [
                   <p className="text-sm md:text-base font-medium text-primary">Trusted by 5000+ Students & Professionals</p>
                 </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight max-w-5xl mx-auto">
-                  Find Your Perfect <span className="bg-gradient-primary bg-clip-text text-transparent">Home, Away From Home</span>
+                  Choose your next home.
                 </h1>
                 <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Discover quality PGs, apartments, and hostels tailored for your work or study needs. Your ideal accommodation is just a
