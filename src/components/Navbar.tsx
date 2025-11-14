@@ -6,27 +6,27 @@ import { letsellr } from "@/db";
 import { LucidePhoneMissed, MessageSquare, Phone, PhoneCall } from "lucide-react";
 
 function ContactComp() {
-    return (
-      <>
-        <a
-          href={`https://wa.me/91${letsellr?.contactNumber}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
-        >
-          <MessageSquare className="w-5 h-5" />
-          WhatsApp Chat
-        </a>
-        <a
-          href={`tel:+91${letsellr?.contactNumber}`}
-          className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
-        >
-          <Phone className="w-5 h-5" />
-          Call Host Directly
-        </a>
-      </>
-    );
-  }
+  return (
+    <>
+      <a
+        href={`https://wa.me/91${letsellr?.contactNumber}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
+      >
+        <MessageSquare className="w-5 h-5" />
+        WhatsApp Chat
+      </a>
+      <a
+        href={`tel:+91${letsellr?.contactNumber}`}
+        className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
+      >
+        <Phone className="w-5 h-5" />
+        Call Host Directly
+      </a>
+    </>
+  );
+}
 
 export default function Navbar() {
   return (
@@ -41,7 +41,10 @@ export default function Navbar() {
           </Link>
           <Dialog>
             <DialogTrigger asChild>
-              <div className="flex items-center gap-2 cursor-pointer"><PhoneCall className="w-5 h-5"/>Contact Us</div>
+              <div className="flex items-center gap-2 cursor-pointer text-primary">
+                <PhoneCall className="w-4 h-4" />
+                Contact Us
+              </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
               <AlertDialogHeader>

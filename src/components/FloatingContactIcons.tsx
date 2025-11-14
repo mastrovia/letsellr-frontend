@@ -6,14 +6,14 @@ const FloatingContactIcons = () => {
   const whatsappNumber = "+1234567890";
 
   return (
-    <div className="fixed bottom-8 right-6 z-50 flex flex-col gap-4">
+    <div className="fixed bottom-4 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
       {/* Phone Icon */}
       <a
         href={`tel:${phoneNumber}`}
-        className="group flex h-14 w-14 items-center justify-center rounded-full bg-blue-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+        className="group flex h-12 w-12 items-center justify-center rounded-full bg-blue-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
         aria-label="Call us"
       >
-        <Phone className="h-6 w-6 text-white transition-transform group-hover:rotate-12" />
+        <Phone className="h-5 w-5 text-white transition-transform group-hover:rotate-12" />
       </a>
 
       {/* WhatsApp Icon */}
@@ -21,11 +21,11 @@ const FloatingContactIcons = () => {
         href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex h-14 w-14 items-center justify-center rounded-full bg-green-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+        className="group flex h-12 w-12 items-center justify-center rounded-full bg-green-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
         aria-label="Chat on WhatsApp"
       >
         <svg
-          className="h-7 w-7 text-white transition-transform group-hover:rotate-12"
+          className="h-5 w-5 text-white transition-transform group-hover:rotate-12"
           fill="currentColor"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"

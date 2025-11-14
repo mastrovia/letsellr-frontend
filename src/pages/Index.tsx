@@ -16,7 +16,7 @@ const Index = () => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
   }, []);
 
-const locations = [
+  const locations = [
     "Mavoor road",
     "Thondayad",
     "Mananchira",
@@ -26,8 +26,8 @@ const locations = [
     "Chalappuram",
     "Kovoor",
     "West hill",
-    "Mankave"
-];
+    "Mankave",
+  ];
 
   const handleLocationClick = (location: string) => {
     navigate(`/search?location=${encodeURIComponent(location)}`);
@@ -40,18 +40,18 @@ const locations = [
 
       <section className="relative min-h-screen bg-white flex items-center justify-center overflow-hidden pb-16 md:pb-24">
         {/* Hero Content */}
-        <div className="relative z-10 w-full px-6 md:px-12 lg:px-16">
+        <div className="relative z-10 w-full md:px-12 lg:px-16">
           <div className="relative">
             <div className="absolute inset-0 z-0">{/* <BackgroundGridPattern /> */}</div>
 
             <div className="max-w-7xl mx-auto space-y-12 md:space-y-16 animate-fade-in relative">
               {/* Header */}
-              <div className="relative text-center space-y-6 md:space-y-8 px-4 mt-10">
+              <div className="relative text-center space-y-6 md:space-y-8 px-6 mt-10">
                 <div className="inline-block px-6 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
                   <p className="text-sm md:text-base font-medium text-primary">Trusted by 5000+ Students & Professionals</p>
                 </div>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight max-w-5xl mx-auto">
-                  Choose your next home.
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight max-w-5xl mx-auto">
+                  Choose your <span className="text-primary">next home.</span>
                 </h1>
                 <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Discover quality PGs, apartments, and hostels tailored for your work or study needs. Your ideal accommodation is just a
@@ -59,9 +59,9 @@ const locations = [
                 </p>
 
                 {/* Popular Locations Chips */}
-                <div className="flex flex-col gap-3 items-center justify-center max-w-4xl mx-auto px-4">
+                <div className="flex flex-col gap-3 items-center justify-center max-w-4xl mx-auto px-0">
                   {/* Mobile: Single Row with 4 chips */}
-                  <div className="flex md:hidden flex-wrap gap-2 justify-center items-center">
+                  {/* <div className="flex md:hidden flex-wrap gap-2 justify-center items-center">
                     {locations.slice(0, 4).map((location) => (
                       <button
                         key={location}
@@ -71,38 +71,17 @@ const locations = [
                         {location}
                       </button>
                     ))}
-                  </div>
+                  </div> */}
 
                   {/* Desktop: Two Rows with all chips */}
-                  <div className="hidden md:flex flex-col gap-3 w-full">
+                  <div className="flex flex-col gap-3 w-full max-w-3xl">
                     {/* First Row */}
-                    <div className="flex flex-wrap gap-3 justify-center items-center">
-                      {locations.slice(0, 5).map((location, idx) => (
+                    <div className="flex flex-wrap gap-2 justify-center items-center">
+                      {locations.map((location, idx) => (
                         <button
                           key={location}
                           onClick={() => handleLocationClick(location)}
-                          className="px-5 py-2 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-base font-medium text-foreground transition-all duration-300 hover:scale-105 hover:shadow-md whitespace-nowrap"
-                          style={{
-                            marginLeft: idx === 0 ? "0" : `${(idx % 3) * 8}px`,
-                            marginRight: `${((idx + 1) % 3) * 6}px`,
-                          }}
-                        >
-                          {location}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Second Row */}
-                    <div className="flex flex-wrap gap-3 justify-center items-center">
-                      {locations.slice(5, 10).map((location, idx) => (
-                        <button
-                          key={location}
-                          onClick={() => handleLocationClick(location)}
-                          className="px-5 py-2 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-base font-medium text-foreground transition-all duration-300 hover:scale-105 hover:shadow-md whitespace-nowrap"
-                          style={{
-                            marginLeft: `${((idx + 2) % 3) * 6}px`,
-                            marginRight: idx === 4 ? "0" : `${(idx % 3) * 8}px`,
-                          }}
+                          className="px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-xs sm:text-sm md:text-base font-medium text-foreground transition-all duration-300 hover:shadow-md whitespace-nowrap"
                         >
                           {location}
                         </button>
@@ -116,7 +95,7 @@ const locations = [
               <SearchBar />
 
               {/* Categories - Independent modules with built-in navigation */}
-              <div className="md:px-8 lg:px-12 relative">
+              <div className="md:px-8 lg:px-12 relative px-6">
                 <div className="grid gap-6 md:grid-cols-5">
                   <div className="md:flex relative w-full hidden md:col-span-2">
                     <CategoryCardBig {...categories[0]} />
