@@ -40,7 +40,7 @@ const Index = () => {
                   <p className="text-sm md:text-base font-medium text-primary">Trusted by 5000+ Students & Professionals</p>
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight max-w-5xl mx-auto">
-                  Choose your <span className="text-primary">next home.</span>
+                  Choose your next <span className="text-primary">home.</span>
                 </h1>
                 <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Discover quality PGs, apartments, and hostels tailored for your work or study needs. Your ideal accommodation is just a
