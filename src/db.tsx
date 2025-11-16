@@ -2,6 +2,19 @@ export const letsellr = {
   contactNumber: "9895415718",
 };
 
+export const DEFAULT_LOCATIONS = [
+  "Mavoor road",
+  "Thondayad",
+  "Mananchira",
+  "Palayam",
+  "Nadakkavu",
+  "Beach area",
+  "Chalappuram",
+  "Kovoor",
+  "West hill",
+  "Mankave",
+];
+
 export const categories = [
   {
     title: "PGs/Hostels",

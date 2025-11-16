@@ -17,6 +17,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import instance from "@/lib/axios";
+import { DEFAULT_LOCATIONS } from "@/db";
 
 // Types
 interface PriceOption {
@@ -203,14 +204,20 @@ const PropertyForm = ({
 
     <div>
       <label className="block text-sm font-medium mb-2">Location Name *</label>
-      <Input
+      <select
         ref={locationRef}
         name="location.name"
         value={formData.location?.name}
         onChange={onChange}
-        placeholder="HSR Layout, Bangalore"
-        className="rounded-xl"
-      />
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
+      >
+        <option value="">Select location</option>
+        {DEFAULT_LOCATIONS.map((location) => (
+          <option key={location} value={location}>
+            {location}
+          </option>
+        ))}
+      </select>
       {formErrors.location && <p className="text-red-500 text-xs mt-1">{formErrors.location}</p>}
     </div>
 

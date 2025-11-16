@@ -4,13 +4,13 @@ import Navbar from "@/components/Navbar";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { categories, sampleProperties } from "@/db";
+import { categories, DEFAULT_LOCATIONS, sampleProperties } from "@/db";
 import instance from "@/lib/axios";
 import { Search, MapPin, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-const LOCATIONS = ["kozhikode"];
+const LOCATIONS = DEFAULT_LOCATIONS;
 
 // Skeleton loader component matching PropertyCard design
 function PropertyCardSkeleton() {

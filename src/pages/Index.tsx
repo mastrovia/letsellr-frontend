@@ -5,7 +5,7 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { Footer } from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
-import { categories } from "@/db";
+import { categories, DEFAULT_LOCATIONS } from "@/db";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,18 +16,7 @@ const Index = () => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
   }, []);
 
-  const locations = [
-    "Mavoor road",
-    "Thondayad",
-    "Mananchira",
-    "Palayam",
-    "Nadakkavu",
-    "Beach area",
-    "Chalappuram",
-    "Kovoor",
-    "West hill",
-    "Mankave",
-  ];
+  const locations = DEFAULT_LOCATIONS;
 
   const handleLocationClick = (location: string) => {
     navigate(`/search?location=${encodeURIComponent(location)}`);
