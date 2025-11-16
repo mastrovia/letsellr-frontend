@@ -60,19 +60,19 @@ export const SearchBar = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6">
-      <div className="bg-card rounded-[2rem] shadow-md border border-border p-4 flex  items-center flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg text-sm">
-        <div className="flex w-full justify-center gap-2">
-          <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=rent`)}>
-            Rent
-          </Button>
+      <div className="flex w-full justify-center gap-2">
+        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=rent`)}>
+          Rent
+        </Button>
 
-          <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=buy`)}>
-            Buy
-          </Button>
-          <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=lease`)}>
-            Lease
-          </Button>
-        </div>
+        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=buy`)}>
+          Buy
+        </Button>
+        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=lease`)}>
+          Lease
+        </Button>
+      </div>
+      <div className="hidden bg-card rounded-[2rem] shadow-md border border-border p-4 items-center flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg text-sm">
         {/* Location Filter */}
         <div className="w-full relative">
           <div className="relative">
