@@ -10,12 +10,18 @@ interface CategoryCardProps {
   value?: string;
   name?: string;
   onClick?: () => void;
+  propertyType?: string;
+  location?: string;
 }
 
-export const CategoryCardBig = ({ title, description, count, action, value, name, onClick }: CategoryCardProps) => {
-  // Build search URL with category parameter
+export const CategoryCardBig = ({ title, description, count, action, value, name, onClick, propertyType, location }: CategoryCardProps) => {
+  // Build search URL with category, property_type, and location parameters
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
-  const searchUrl = `/search/?category=${encodeURIComponent(categoryValue)}`;
+  const params = new URLSearchParams();
+  params.append("category", categoryValue);
+  if (propertyType) params.append("property_type", propertyType);
+  if (location) params.append("location", location);
+  const searchUrl = `/search/?${params.toString()}`;
 
   // If onClick is provided, use a div instead of Link
   if (onClick) {
@@ -62,10 +68,14 @@ export const CategoryCardBig = ({ title, description, count, action, value, name
   );
 };
 
-export const CategoryCard = ({ title, description, image, count, action, value, name, onClick }: CategoryCardProps) => {
-  // Build search URL with category parameter
+export const CategoryCard = ({ title, description, image, count, action, value, name, onClick, propertyType, location }: CategoryCardProps) => {
+  // Build search URL with category, property_type, and location parameters
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
-  const searchUrl = `/search/?category=${encodeURIComponent(categoryValue)}`;
+  const params = new URLSearchParams();
+  params.append("category", categoryValue);
+  if (propertyType) params.append("property_type", propertyType);
+  if (location) params.append("location", location);
+  const searchUrl = `/search/?${params.toString()}`;
 
   // If onClick is provided, use a div instead of Link
   if (onClick) {

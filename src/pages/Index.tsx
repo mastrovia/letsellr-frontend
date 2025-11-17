@@ -6,11 +6,11 @@ import { Footer } from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
 import { categories, DEFAULT_LOCATIONS } from "@/db";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Index = () => {
-  const navigate = useNavigate();
+  const [propertyType, setPropertyType] = useState("rent"); // Default to rent
+  const [location, setLocation] = useState("");
 
   useEffect(() => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
@@ -18,8 +18,8 @@ const Index = () => {
 
   const locations = DEFAULT_LOCATIONS;
 
-  const handleLocationClick = (location: string) => {
-    navigate(`/search?location=${encodeURIComponent(location)}`);
+  const handleLocationClick = (locationName: string) => {
+    setLocation(locationName);
   };
 
   return (
@@ -47,6 +47,14 @@ const Index = () => {
                   search away.
                 </p>
 
+                {/* Search Bar - Independent module with built-in navigation */}
+                <SearchBar
+                  propertyType={propertyType}
+                  onPropertyTypeChange={setPropertyType}
+                  location={location}
+                  onLocationChange={setLocation}
+                />
+
                 {/* Popular Locations Chips */}
                 <div className="flex flex-col gap-3 items-center justify-center max-w-4xl mx-auto px-0">
                   {/* Mobile: Single Row with 4 chips */}
@@ -66,13 +74,17 @@ const Index = () => {
                   <div className="flex flex-col gap-3 w-full max-w-3xl">
                     {/* First Row */}
                     <div className="flex flex-wrap gap-2 justify-center items-center">
-                      {locations.map((location, idx) => (
+                      {locations.map((loc) => (
                         <button
-                          key={location}
-                          onClick={() => handleLocationClick(location)}
-                          className="px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/40 text-xs sm:text-sm md:text-base font-medium text-foreground transition-all duration-300 hover:shadow-md whitespace-nowrap"
+                          key={loc}
+                          onClick={() => handleLocationClick(loc)}
+                          className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${
+                            location === loc
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-primary/5 hover:bg-primary/15 border-primary/20 hover:border-primary/40 text-foreground"
+                          }`}
                         >
-                          {location}
+                          {loc}
                         </button>
                       ))}
                     </div>
@@ -80,24 +92,21 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Search Bar - Independent module with built-in navigation */}
-              <SearchBar />
-
               {/* Categories - Independent modules with built-in navigation */}
               <div className="md:px-8 lg:px-12 relative px-6">
                 <div className="grid gap-6 md:grid-cols-5">
                   <div className="md:flex relative w-full hidden md:col-span-2">
-                    <CategoryCardBig {...categories[0]} />
+                    <CategoryCardBig {...categories[0]} propertyType={propertyType} location={location} />
                   </div>
                   <div className="flex md:hidden w-full">
-                    <CategoryCard {...categories[0]} />
+                    <CategoryCard {...categories[0]} propertyType={propertyType} location={location} />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 md:gap-6 md:col-span-3">
                     {categories
                       .filter((_, i) => i > 0)
                       .map((category, idx) => (
                         <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 100}ms` }}>
-                          <CategoryCard {...category} />
+                          <CategoryCard {...category} propertyType={propertyType} location={location} />
                         </div>
                       ))}
                   </div>

@@ -1,89 +1,54 @@
-import { useState } from "react";
-import { Search, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import instance from "@/lib/axios";
-import { DEFAULT_LOCATIONS } from "@/db";
 
-const POPULAR_LOCATIONS = DEFAULT_LOCATIONS;
+interface SearchBarProps {
+  propertyType: string;
+  onPropertyTypeChange: (type: string) => void;
+  location: string;
+  onLocationChange: (location: string) => void;
+}
 
-const SEARCH_SUGGESTIONS = [
-  "PG near HSR Layout, Bangalore",
-  "2BHK Apartment in Koramangala",
-  "Hostel near IIT Delhi",
-  "Shared PG for students in Pune",
-  "Single room PG in Mumbai",
-];
-
-export const SearchBar = () => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
-
-  const filteredSearchSuggestions = SEARCH_SUGGESTIONS.filter((suggestion) => suggestion.toLowerCase().includes(searchQuery.toLowerCase()));
-  const filteredLocations = POPULAR_LOCATIONS.filter((loc) => loc.toLowerCase().includes(location.toLowerCase()));
-
-  // Show all locations when input is focused and empty
-  const locationsToShow = location ? filteredLocations : POPULAR_LOCATIONS;
-
-  // Handle search - builds URL and navigates
-  const handleSearch = async () => {
-    if (!searchQuery.trim() && !location.trim()) return;
-
-    try {
-      const params = new URLSearchParams();
-      console.log(params);
-
-      if (searchQuery.trim()) params.append("query", searchQuery.trim());
-      if (location.trim()) params.append("location", location.trim());
-
-      // Here you can navigate to a results page or update state
-      // console.log(response.data);
-
-      // Example: navigate to results page with query params
-      navigate(`/search/?${params.toString()}`);
-    } catch (err) {
-      console.error("Search failed", err);
-      alert("No properties found");
-    }
-  };
-
-  // Handle Enter key press
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+export const SearchBar = ({ propertyType, onPropertyTypeChange, location, onLocationChange }: SearchBarProps) => {
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6">
+    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col gap-4">
       <div className="flex w-full justify-center gap-2">
-        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=rent`)}>
+        <Button
+          size="lg"
+          variant={propertyType === "rent" ? "default" : "outline"}
+          className="rounded-[10px]"
+          onClick={() => onPropertyTypeChange("rent")}
+        >
           Rent
         </Button>
 
-        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=buy`)}>
+        <Button
+          size="lg"
+          variant={propertyType === "buy" ? "default" : "outline"}
+          className="rounded-[10px]"
+          onClick={() => onPropertyTypeChange("buy")}
+        >
           Buy
         </Button>
-        <Button size="lg" variant="outline" className="rounded-[10px]" onClick={() => navigate(`/search?property_type=lease`)}>
+        <Button
+          size="lg"
+          variant={propertyType === "lease" ? "default" : "outline"}
+          className="rounded-[10px]"
+          onClick={() => onPropertyTypeChange("lease")}
+        >
           Lease
         </Button>
       </div>
-      <div className="hidden bg-card rounded-[2rem] shadow-md border border-border p-4 items-center flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg text-sm">
+      <div className="bg-card rounded-[2rem] shadow-md border border-border p-4 items-center flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-lg text-sm">
         {/* Location Filter */}
         <div className="w-full relative">
           <div className="relative">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
-              placeholder="Location"
+              placeholder="Select Location"
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              onFocus={() => setShowLocationSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
-              onKeyPress={handleKeyPress}
+              onChange={(e) => onLocationChange(e.target.value)}
               className="pl-12 h-10 md:h-12 border-0 bg-secondary/50 rounded-2xl text-sm focus-visible:ring-1 focus-visible:ring-primary"
             />
           </div>
