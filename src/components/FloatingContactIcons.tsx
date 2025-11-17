@@ -10,7 +10,7 @@ const FloatingContactIcons = () => {
     <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
       {/* Phone Icon */}
       <a
-        href={`tel:${phoneNumber}`}
+        href={`tel:+91${phoneNumber}`}
         className="group flex h-12 w-12 items-center justify-center rounded-full bg-blue-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
         aria-label="Call us"
       >
@@ -19,7 +19,7 @@ const FloatingContactIcons = () => {
 
       {/* WhatsApp Icon */}
       <a
-        href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`}
+        href={`https://wa.me/91${whatsappNumber.replace(/[^0-9]/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
         className="group flex h-12 w-12 items-center justify-center rounded-full bg-green-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
