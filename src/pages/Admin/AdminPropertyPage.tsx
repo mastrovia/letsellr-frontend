@@ -17,12 +17,18 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import instance from "@/lib/axios";
-import { DEFAULT_LOCATIONS } from "@/db";
 
 // Types
 interface PriceOption {
   type: string;
   amount: number;
+}
+
+interface Location {
+  _id: string;
+  title: string;
+  googleMapUrl: string;
+  importantLocation?: boolean;
 }
 
 interface Property {
@@ -32,7 +38,7 @@ interface Property {
   images: string[];
   category: { _id: string; name: string };
   amenity: string;
-  location: { name: string; url: string };
+  location: Location | string; // Can be populated object or just ID
   price: PriceOption[];
   rating?: number;
   contactNumber?: string;
@@ -63,7 +69,7 @@ const INITIAL_FORM_STATE: PropertyFormData = {
   category: { _id: "", name: "" },
   amenity: "",
   price: [{ type: "", amount: 0 }],
-  location: { name: "", url: "" },
+  location: "", // Location ID
   contactNumber: "",
   gender: "men",
   propertyType: "buy",
@@ -94,7 +100,8 @@ const PropertyForm = ({
   contactRef,
   imagesRef,
   setFormData,
-  notification
+  notification,
+  locations
 }: {
   formData: PropertyFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
@@ -117,8 +124,9 @@ const PropertyForm = ({
   amenityRef: React.RefObject<HTMLInputElement>;
   contactRef: React.RefObject<HTMLInputElement>;
   imagesRef: React.RefObject<HTMLInputElement>;
-  setFormData: React.Dispatch<React.SetStateAction<PropertyFormData>>
+  setFormData: React.Dispatch<React.SetStateAction<PropertyFormData>>;
   notification: string;
+  locations: Location[];
 }) => (
 
   <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
@@ -203,34 +211,22 @@ const PropertyForm = ({
     </div>
 
     <div>
-      <label className="block text-sm font-medium mb-2">Location Name *</label>
+      <label className="block text-sm font-medium mb-2">Location *</label>
       <select
-        ref={locationRef}
-        name="location.name"
-        value={formData.location?.name}
+        ref={locationRef as React.RefObject<HTMLSelectElement>}
+        name="location"
+        value={typeof formData.location === 'string' ? formData.location : (formData.location as Location)?._id || ''}
         onChange={onChange}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         <option value="">Select location</option>
-        {DEFAULT_LOCATIONS.map((location) => (
-          <option key={location} value={location}>
-            {location}
+        {locations.map((location) => (
+          <option key={location._id} value={location._id}>
+            {location.title}
           </option>
         ))}
       </select>
       {formErrors.location && <p className="text-red-500 text-xs mt-1">{formErrors.location}</p>}
-    </div>
-
-    <div>
-      <label className="block text-sm font-medium mb-2">Location URL (Google Maps)</label>
-      <Input
-        ref={locationRef}
-        name="location.url"
-        value={formData.location?.url}
-        onChange={onChange}
-        placeholder="https://maps.google.com/..."
-        className="rounded-xl"
-      />
     </div>
 
     <div>
@@ -408,7 +404,11 @@ const PropertyCard = ({
 
           <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
             <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="truncate">{property.location?.name || "No location"}</span>
+            <span className="truncate">
+              {typeof property.location === 'string'
+                ? "No location"
+                : (property.location as Location)?.title || "No location"}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
@@ -494,7 +494,7 @@ const AdminPropertiesPage = () => {
   const [formData, setFormData] = useState<PropertyFormData>(INITIAL_FORM_STATE);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [notification, setNotification] = useState<string | null>(null);
-
+  const [locations, setLocations] = useState<Location[]>([]);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -505,9 +505,10 @@ const AdminPropertiesPage = () => {
   const contactRef = useRef<HTMLInputElement>(null);
   const imagesRef = useRef<HTMLInputElement>(null);
 
-  // Fetch properties
+  // Fetch properties and locations
   useEffect(() => {
     fetchProperties();
+    fetchLocations();
   }, []);
 
   const fetchProperties = async () => {
@@ -521,6 +522,16 @@ const AdminPropertiesPage = () => {
       setProperties([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const res = await instance.get("/location/fulllocations");
+      setLocations(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      setLocations([]);
     }
   };
 
@@ -540,7 +551,7 @@ const AdminPropertiesPage = () => {
       ...INITIAL_FORM_STATE,
       ...property,
       category: property.category || INITIAL_FORM_STATE.category,
-      location: property.location || INITIAL_FORM_STATE.location,
+      location: typeof property.location === 'string' ? property.location : (property.location as Location)?._id || "",
     };
     setFormData(merged);
     setIsFormOpen(!mobile);
@@ -564,13 +575,13 @@ const AdminPropertiesPage = () => {
     if (!formData.category?._id) errors.category = "Category is required";
     if (!formData.price || formData.price.length === 0 || formData.price.every(p => !p.amount))
       errors.price = "At least one price is required";
-    if (!formData.location?.name?.trim()) errors.location = "Location name is required";
+    if (!formData.location || (typeof formData.location === 'string' && !formData.location.trim()))
+      errors.location = "Location is required";
     if (!formData.amenity?.trim()) errors.amenity = "At least one amenity is required";
     if (!formData.contactNumber?.trim()) errors.contactNumber = "Contact number is required";
     if ((!formData.images || formData.images.length === 0) && (!formData.newImages || formData.newImages.length === 0)) {
       errors.images = "Please upload at least one image";
     }
-
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0; // returns true if valid
@@ -717,7 +728,7 @@ const AdminPropertiesPage = () => {
         ...formData,
         category: formData.category?._id,
         price: formData.price?.filter((p) => p.amount > 0) || [],
-        location: formData.location || { name: "", url: "" },
+        location: typeof formData.location === 'string' ? formData.location : (formData.location as Location)?._id || "",
         images: [...(formData.images || []), ...imageUrls], // merge old + new
       };
 
@@ -825,6 +836,7 @@ const AdminPropertiesPage = () => {
               imagesRef={imagesRef}
               setFormData={setFormData}
               notification={notification}
+              locations={locations}
             />
 
           </DialogContent>
@@ -866,6 +878,7 @@ const AdminPropertiesPage = () => {
               contactRef={contactRef}
               imagesRef={imagesRef}
               notification={notification}
+              locations={locations}
             />
 
           </DrawerContent>

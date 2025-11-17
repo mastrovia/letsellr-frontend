@@ -15,8 +15,10 @@ export interface Property {
   amenity: string;
   price: { amount: number, type: string }[];
   location: {
-    name: string;
-    url: string;
+    _id: string;
+    title: string;
+    googleMapUrl: string;
+    importantLocation?: boolean;
   };
   priceOptions?: { price: number; description: string }[];
   rating?: number;
@@ -64,10 +66,10 @@ export default function PropertyCard(data: Property) {
           <h3 className="text-sm text-gray-700">
             <Link to="#">{data?.title}</Link>
           </h3>
-          {data?.location?.name && (
+          {data?.location?.title && (
             <p className="text-sm text-gray-500 relative flex items-center gap-1">
               <MapPin className="h-3 w-3 text-muted-foreground" />
-              <span>{data?.location?.name}</span>
+              <span>{data?.location?.title}</span>
             </p>
           )}
           <p className="text-sm text-gray-500 sm:flex flex-wrap gap-1 hidden">

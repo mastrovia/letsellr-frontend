@@ -4,13 +4,18 @@ import Navbar from "@/components/Navbar";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { categories, DEFAULT_LOCATIONS, sampleProperties } from "@/db";
+import { categories } from "@/db";
 import instance from "@/lib/axios";
 import { Search, MapPin, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-const LOCATIONS = DEFAULT_LOCATIONS;
+interface Location {
+  _id: string;
+  title: string;
+  googleMapUrl: string;
+  importantLocation?: boolean;
+}
 
 // Skeleton loader component matching PropertyCard design
 function PropertyCardSkeleton() {
@@ -66,7 +71,19 @@ export default function SearchPage() {
   const [maxPrice, setMaxPrice] = useState<string>(searchParams.get("maxPrice") || "");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [properties, setProperties] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch locations from API
+  const fetchLocations = async () => {
+    try {
+      const res = await instance.get("/location/fulllocations");
+      setLocations(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      setLocations([]);
+    }
+  };
 
   // Fetch properties from API
   const fetchProperties = async () => {
@@ -174,6 +191,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
+    fetchLocations();
   }, []);
 
   return (
@@ -214,9 +232,9 @@ export default function SearchPage() {
                   className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">All Locations</option>
-                  {LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
+                  {locations.map((loc) => (
+                    <option key={loc._id} value={loc.title}>
+                      {loc.title}
                     </option>
                   ))}
                 </select>
@@ -362,9 +380,9 @@ export default function SearchPage() {
                       className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-white cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                     >
                       <option value="">All Locations</option>
-                      {LOCATIONS.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
+                      {locations.map((loc) => (
+                        <option key={loc._id} value={loc.title}>
+                          {loc.title}
                         </option>
                       ))}
                     </select>

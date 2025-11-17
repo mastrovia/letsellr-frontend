@@ -5,21 +5,39 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { Footer } from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
-import { categories, DEFAULT_LOCATIONS } from "@/db";
+import { categories } from "@/db";
 import { useEffect, useState } from "react";
+import instance from "@/lib/axios";
+
+interface Location {
+  _id: string;
+  title: string;
+  googleMapUrl: string;
+  importantLocation?: boolean;
+}
 
 const Index = () => {
   const [propertyType, setPropertyType] = useState("rent"); // Default to rent
   const [location, setLocation] = useState("");
+  const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
     document.getElementsByTagName("html")[0]?.scrollTo?.({ top: 0, behavior: "instant" });
+    fetchLocations();
   }, []);
 
-  const locations = DEFAULT_LOCATIONS;
+  const fetchLocations = async () => {
+    try {
+      const res = await instance.get("/location/fulllocations");
+      setLocations(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      setLocations([]);
+    }
+  };
 
-  const handleLocationClick = (locationName: string) => {
-    setLocation(locationName);
+  const handleLocationClick = (locationTitle: string) => {
+    setLocation(locationTitle);
   };
 
   return (
@@ -76,15 +94,15 @@ const Index = () => {
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       {locations.map((loc) => (
                         <button
-                          key={loc}
-                          onClick={() => handleLocationClick(loc)}
+                          key={loc._id}
+                          onClick={() => handleLocationClick(loc.title)}
                           className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${
-                            location === loc
+                            location === loc.title
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-primary/5 hover:bg-primary/15 border-primary/20 hover:border-primary/40 text-foreground"
                           }`}
                         >
-                          {loc}
+                          {loc.title}
                         </button>
                       ))}
                     </div>

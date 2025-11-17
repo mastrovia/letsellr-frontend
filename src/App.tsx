@@ -12,6 +12,7 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminPropertiesPage from "./pages/Admin/AdminPropertyPage";
 import AdminReviewsPage from "./pages/Admin/AdminReviewsPage";
+import AdminLocationPage from "./pages/Admin/AdminLocationPage";
 // import AdminUsersPage from "./pages/Admin/AdminUsersPage";
 import FloatingContactIcons from "./components/FloatingContactIcons";
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
             <Route path="properties" element={<AdminPropertiesPage />} />
+            <Route path="locations" element={<AdminLocationPage />} />
             <Route path="reviews" element={<AdminReviewsPage />} />
             {/* <Route path="users" element={<AdminUsersPage />} /> */}
             {/* <Route path="categories" element={<AdminCategory />} /> */}
