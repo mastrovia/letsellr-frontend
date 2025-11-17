@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import instance from "@/lib/axios";
 import ImageGallery from "@/components/Imageswiper";
+import { useProperty } from "@/contexts/PropertyContext";
 const iconMappings = [
   { keywords: ["wifi", "wi-fi"], icon: Wifi },
   { keywords: ["kettle", "coffee"], icon: Coffee },
@@ -215,6 +216,7 @@ export default function PropertyPage() {
   const [allReviews, setAllReviews] = useState<Review[]>([]);
   const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const { setCurrentProduct } = useProperty();
 
   const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 5);
 
@@ -231,7 +233,10 @@ export default function PropertyPage() {
       const response = await instance.get(`/property/findproperty/${propertyId}`);
       // console.log(response.data.property)
       // const data = await response.json();
-      setProduct(response.data.property);
+      const propertyData = response.data.property;
+      setProduct(propertyData);
+      // Set current product in context for FloatingContactIcons
+      setCurrentProduct(propertyData);
 
       // Simulating API call
       // await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -242,6 +247,7 @@ export default function PropertyPage() {
     } catch (error) {
       console.error("Error fetching property:", error);
       setProduct(null);
+      setCurrentProduct(null);
     } finally {
       setIsLoading(false);
     }
@@ -274,6 +280,11 @@ export default function PropertyPage() {
     fetchProperty();
     fetchreviews();
     fetchPhoneNumber();
+
+    // Cleanup: Clear current product when leaving the page
+    return () => {
+      setCurrentProduct(null);
+    };
   }, []);
 
   // const handleToggleReviews = () => {

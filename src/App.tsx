@@ -15,6 +15,7 @@ import AdminReviewsPage from "./pages/Admin/AdminReviewsPage";
 import AdminLocationPage from "./pages/Admin/AdminLocationPage";
 import AdminPropertyTypePage from "./pages/Admin/AdminPropertyTypePage";
 import AdminSetupPage from "./pages/Admin/AdminSetupPage";
+import { PropertyProvider } from "./contexts/PropertyContext";
 // import AdminUsersPage from "./pages/Admin/AdminUsersPage";
 import FloatingContactIcons from "./components/FloatingContactIcons";
 
@@ -22,11 +23,12 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <FloatingContactIcons />
-      <BrowserRouter>
+    <PropertyProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <FloatingContactIcons />
+        <BrowserRouter>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
@@ -51,6 +53,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+  </PropertyProvider>
   </QueryClientProvider>
 );
 
