@@ -94,7 +94,7 @@ export default function SearchPage() {
       // Build query params for API
       const params = new URLSearchParams();
       if (searchQuery) params.append("query", searchQuery);
-      if (selectedLocation) params.append("location", selectedLocation);
+      if (selectedLocation) params.append("locationId", selectedLocation);
       if (selectedCategory) params.append("category", selectedCategory);
       if (selectedPropertyType) {
         params.append("propertyType", selectedPropertyType);
@@ -234,7 +234,7 @@ export default function SearchPage() {
                 >
                   <option value="">All Locations</option>
                   {locations.map((loc) => (
-                    <option key={loc._id} value={loc.title}>
+                    <option key={loc._id} value={loc._id}>
                       {loc.title}
                     </option>
                   ))}
@@ -382,7 +382,7 @@ export default function SearchPage() {
                     >
                       <option value="">All Locations</option>
                       {locations.map((loc) => (
-                        <option key={loc._id} value={loc.title}>
+                        <option key={loc._id} value={loc._id}>
                           {loc.title}
                         </option>
                       ))}

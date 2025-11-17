@@ -98,7 +98,7 @@ const Index = () => {
                           key={loc._id}
                           onClick={() => handleLocationClick(loc.title)}
                           className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${
-                            location === loc.title
+                            location?.toLowerCase() === loc.title?.toLowerCase()
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-primary/5 hover:bg-primary/15 border-primary/20 hover:border-primary/40 text-foreground"
                           }`}

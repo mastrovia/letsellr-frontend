@@ -13,7 +13,7 @@ export interface Property {
     name: string;
   };
   amenity: string;
-  price: { amount: number, type: string }[];
+  price: { amount: number; type: string }[];
   location: {
     _id: string;
     title: string;
@@ -25,13 +25,13 @@ export interface Property {
   rating?: number;
   contactNumber?: string;
 }
-  // const getInitials = (name: string) => {
-  //   return name
-  //     .split(" ")
-  //     .map((word) => word.charAt(0).toUpperCase())
-  //     .slice(0, 2)
-  //     .join("");
-  // };
+// const getInitials = (name: string) => {
+//   return name
+//     .split(" ")
+//     .map((word) => word.charAt(0).toUpperCase())
+//     .slice(0, 2)
+//     .join("");
+// };
 
 export default function PropertyCard(data: Property) {
   return (
@@ -48,9 +48,7 @@ export default function PropertyCard(data: Property) {
               <p className="text-md font-medium text-gray-900">
                 ₹{data.price[0].amount}
                 <span className="text-sm text-black/50"> /Month</span>{" "}
-                {data.price.length > 1 && (
-                  <span className="text-xs text-primary">(+Others)</span>
-                )}
+                {data.price.length > 1 && <span className="text-xs text-primary">(+Others)</span>}
               </p>
             )}
 
@@ -68,25 +66,26 @@ export default function PropertyCard(data: Property) {
             <Link to="#">{data?.title}</Link>
           </h3>
           {data?.location?.title && (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 flex gap-2 items-center">
               <p className="flex items-center gap-1 font-medium">
                 <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                 <span>{data?.location?.title}</span>
               </p>
-              {data?.location?.description && (
-                <p className="text-xs text-gray-400 ml-4 line-clamp-1">{data?.location?.description}</p>
-              )}
+              {data?.location?.description && <p className="text-xs text-gray-400 line-clamp-1">{data?.location?.description}</p>}
             </div>
           )}
-          <p className="text-sm text-gray-500 sm:flex flex-wrap gap-1 hidden">
-            {data?.amenity?.split(",").slice(0, 3)  ?.map((value) => {
-              const title = value?.trim();
-              return (
-                <Badge variant="outline" key={title}>
-                  {title}
-                </Badge>
-              );
-            })}
+          <p className="text-sm text-gray-500 sm:flex gap-1 hidden">
+            {data?.amenity
+              ?.split(",")
+              .slice(0, 3)
+              ?.map((value) => {
+                const title = value?.trim();
+                return (
+                  <Badge variant="outline" key={title} className="whitespace-nowrap">
+                    {title}
+                  </Badge>
+                );
+              })}
           </p>
         </div>
       </div>

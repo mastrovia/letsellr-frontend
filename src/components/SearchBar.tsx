@@ -13,28 +13,28 @@ export const SearchBar = ({ propertyType, onPropertyTypeChange, location, onLoca
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 flex flex-col gap-4">
-      <div className="flex w-full justify-center gap-2">
+      <div className="flex w-full justify-center gap-2 md:gap-3">
         <Button
-          size="lg"
+          size="sm"
           variant={propertyType === "rent" ? "default" : "outline"}
-          className="rounded-[10px]"
+          className="rounded-[10px] h-8 md:h-9 px-4 md:px-6 text-xs md:text-sm"
           onClick={() => onPropertyTypeChange("rent")}
         >
           Rent
         </Button>
 
         <Button
-          size="lg"
+          size="sm"
           variant={propertyType === "buy" ? "default" : "outline"}
-          className="rounded-[10px]"
+          className="rounded-[10px] h-8 md:h-9 px-4 md:px-6 text-xs md:text-sm"
           onClick={() => onPropertyTypeChange("buy")}
         >
           Buy
         </Button>
         <Button
-          size="lg"
+          size="sm"
           variant={propertyType === "lease" ? "default" : "outline"}
-          className="rounded-[10px]"
+          className="rounded-[10px] h-8 md:h-9 px-4 md:px-6 text-xs md:text-sm"
           onClick={() => onPropertyTypeChange("lease")}
         >
           Lease
