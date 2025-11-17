@@ -62,11 +62,15 @@ function PropertyCardSkeleton() {
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // State
+  // State - Initialize with locationId if available
   const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
-  const [selectedLocation, setSelectedLocation] = useState(searchParams.get("location") || "");
+  const [selectedLocation, setSelectedLocation] = useState(
+    searchParams.get("locationId") || searchParams.get("location") || ""
+  );
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
-  const [selectedPropertyType, setSelectedPropertyType] = useState(searchParams.get("propertyType") || searchParams.get("property_type") || "");
+  const [selectedPropertyType, setSelectedPropertyType] = useState(
+    searchParams.get("propertyType") || searchParams.get("property_type") || ""
+  );
   const [selectedGender, setSelectedGender] = useState(searchParams.get("gender") || "");
   const [minPrice, setMinPrice] = useState<string>(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState<string>(searchParams.get("maxPrice") || "");
@@ -74,6 +78,7 @@ export default function SearchPage() {
   const [properties, setProperties] = useState([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch locations from API
   const fetchLocations = async () => {
@@ -118,7 +123,6 @@ export default function SearchPage() {
         params.append("maxPrice", String(maxV));
       }
 
-      // TODO: Replace with your actual API endpoint
       const response = await instance.get(`/show/allproperty/?${params.toString()}`);
       // const data = await response.json();
       setProperties(response.data.properties);
@@ -137,11 +141,35 @@ export default function SearchPage() {
     }
   };
 
-  // Sync URL params on any filter change to auto-trigger fetching
+  // Initialize from URL params only once when locations are loaded
   useEffect(() => {
+    if (locations.length > 0 && !isInitialized) {
+      const locationId = searchParams.get("locationId") || "";
+      const locationName = searchParams.get("location") || "";
+
+      // If locationId is provided, use it directly
+      if (locationId) {
+        setSelectedLocation(locationId);
+      }
+      // If only location name is provided, try to find matching location ID
+      else if (locationName) {
+        const matchedLocation = locations.find((loc) => loc.title.toLowerCase() === locationName.toLowerCase());
+        if (matchedLocation) {
+          setSelectedLocation(matchedLocation._id);
+        }
+      }
+
+      setIsInitialized(true);
+    }
+  }, [locations, searchParams, isInitialized]);
+
+  // Sync URL params on filter changes (only after initialization)
+  useEffect(() => {
+    if (!isInitialized) return; // Don't sync until initialized
+
     const params = new URLSearchParams();
     if (searchQuery) params.set("query", searchQuery);
-    if (selectedLocation) params.set("location", selectedLocation);
+    if (selectedLocation) params.set("locationId", selectedLocation);
     if (selectedCategory) params.set("category", selectedCategory);
     if (selectedPropertyType) {
       params.set("propertyType", selectedPropertyType);
@@ -153,29 +181,19 @@ export default function SearchPage() {
 
     const next = params.toString();
     const current = searchParams.toString();
+
+    // Only update if there's an actual difference
     if (next !== current) {
       setSearchParams(params, { replace: true });
     }
-  }, [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
 
+  // Fetch properties when filters change
   useEffect(() => {
-    const query = searchParams.get("query") || "";
-    const location = searchParams.get("location") || "";
-    const category = searchParams.get("category") || "";
-    const propertyType = searchParams.get("propertyType") || searchParams.get("property_type") || "";
-    const gender = searchParams.get("gender") || "";
-    const min = searchParams.get("minPrice") || "";
-    const max = searchParams.get("maxPrice") || "";
-
-    setSearchQuery(query);
-    setSelectedLocation(location);
-    setSelectedCategory(category);
-    setSelectedPropertyType(propertyType);
-    setSelectedGender(gender);
-    setMinPrice(min);
-    setMaxPrice(max);
-    fetchProperties();
-  }, [searchParams]);
+    if (isInitialized) {
+      fetchProperties();
+    }
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -187,8 +205,18 @@ export default function SearchPage() {
     setMaxPrice("");
   };
 
-  const hasActiveFilters = Boolean(searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedGender || minPrice || maxPrice);
-  const activeFilterCount = [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice].filter(Boolean).length;
+  const hasActiveFilters = Boolean(
+    searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedGender || minPrice || maxPrice
+  );
+  const activeFilterCount = [
+    searchQuery,
+    selectedLocation,
+    selectedCategory,
+    selectedPropertyType,
+    selectedGender,
+    minPrice,
+    maxPrice,
+  ].filter(Boolean).length;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -219,7 +247,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
-                // disabled={isLoading}
+                  // disabled={isLoading}
                 />
               </div>
 
@@ -337,8 +365,7 @@ export default function SearchPage() {
               )}
 
               {/* Search Button removed: auto-fetch on change */}
-
-              </div>
+            </div>
           </div>
 
           {/* Mobile Filters */}
@@ -352,7 +379,7 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
-              // disabled={isLoading}
+                // disabled={isLoading}
               />
             </div>
 
@@ -496,26 +523,26 @@ export default function SearchPage() {
           </div>
         </div>
 
-            <div className="md:hidden flex items-center gap-2">
-                            <Button
-                            type="button"
-                            variant={selectedGender === "men" ? "default" : "outline"}
-                            disabled={isLoading}
-                            onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
-                            className="h-10 rounded-full"
-                            >
-                            Men
-                            </Button>
-                            <Button
-                            type="button"
-                            variant={selectedGender === "women" ? "default" : "outline"}
-                            disabled={isLoading}
-                            onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
-                            className="h-10 rounded-full"
-                            >
-                            Women
-                            </Button>
-              </div>
+        <div className="md:hidden flex items-center gap-2">
+          <Button
+            type="button"
+            variant={selectedGender === "men" ? "default" : "outline"}
+            disabled={isLoading}
+            onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
+            className="h-10 rounded-full"
+          >
+            Men
+          </Button>
+          <Button
+            type="button"
+            variant={selectedGender === "women" ? "default" : "outline"}
+            disabled={isLoading}
+            onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
+            className="h-10 rounded-full"
+          >
+            Women
+          </Button>
+        </div>
 
         {/* Loading State */}
         {isLoading ? (

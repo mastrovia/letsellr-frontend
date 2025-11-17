@@ -20,6 +20,7 @@ interface Location {
 const Index = () => {
   const [propertyType, setPropertyType] = useState("rent"); // Default to rent
   const [location, setLocation] = useState("");
+  const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
@@ -37,8 +38,9 @@ const Index = () => {
     }
   };
 
-  const handleLocationClick = (locationTitle: string) => {
+  const handleLocationClick = (locationTitle: string, locId: string) => {
     setLocation(locationTitle);
+    setLocationId(locId);
   };
 
   return (
@@ -96,7 +98,7 @@ const Index = () => {
                       {locations.map((loc) => (
                         <button
                           key={loc._id}
-                          onClick={() => handleLocationClick(loc.title)}
+                          onClick={() => handleLocationClick(loc.title, loc._id)}
                           className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${
                             location?.toLowerCase() === loc.title?.toLowerCase()
                               ? "bg-primary text-primary-foreground border-primary"
@@ -115,17 +117,17 @@ const Index = () => {
               <div className="md:px-8 lg:px-12 relative px-6">
                 <div className="grid gap-6 md:grid-cols-5">
                   <div className="md:flex relative w-full hidden md:col-span-2">
-                    <CategoryCardBig {...categories[0]} propertyType={propertyType} location={location} />
+                    <CategoryCardBig {...categories[0]} propertyType={propertyType} location={location} locationId={locationId} />
                   </div>
                   <div className="flex md:hidden w-full">
-                    <CategoryCard {...categories[0]} propertyType={propertyType} location={location} />
+                    <CategoryCard {...categories[0]} propertyType={propertyType} location={location} locationId={locationId} />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 md:gap-6 md:col-span-3">
                     {categories
                       .filter((_, i) => i > 0)
                       .map((category, idx) => (
                         <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 100}ms` }}>
-                          <CategoryCard {...category} propertyType={propertyType} location={location} />
+                          <CategoryCard {...category} propertyType={propertyType} location={location} locationId={locationId} />
                         </div>
                       ))}
                   </div>

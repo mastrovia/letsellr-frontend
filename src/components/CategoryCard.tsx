@@ -12,15 +12,21 @@ interface CategoryCardProps {
   onClick?: () => void;
   propertyType?: string;
   location?: string;
+  locationId?: string;
 }
 
-export const CategoryCardBig = ({ title, description, count, action, value, name, onClick, propertyType, location }: CategoryCardProps) => {
+export const CategoryCardBig = ({ title, description, count, action, value, name, onClick, propertyType, location, locationId }: CategoryCardProps) => {
   // Build search URL with category, property_type, and location parameters
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
   const params = new URLSearchParams();
   params.append("category", categoryValue);
   if (propertyType) params.append("property_type", propertyType);
-  if (location) params.append("location", location);
+  // Prefer locationId if available, otherwise use location name
+  if (locationId) {
+    params.append("locationId", locationId);
+  } else if (location) {
+    params.append("location", location);
+  }
   const searchUrl = `/search/?${params.toString()}`;
 
   // If onClick is provided, use a div instead of Link
@@ -68,13 +74,18 @@ export const CategoryCardBig = ({ title, description, count, action, value, name
   );
 };
 
-export const CategoryCard = ({ title, description, image, count, action, value, name, onClick, propertyType, location }: CategoryCardProps) => {
+export const CategoryCard = ({ title, description, image, count, action, value, name, onClick, propertyType, location, locationId }: CategoryCardProps) => {
   // Build search URL with category, property_type, and location parameters
   const categoryValue = value || name?.toLowerCase() || title.toLowerCase();
   const params = new URLSearchParams();
   params.append("category", categoryValue);
   if (propertyType) params.append("property_type", propertyType);
-  if (location) params.append("location", location);
+  // Prefer locationId if available, otherwise use location name
+  if (locationId) {
+    params.append("locationId", locationId);
+  } else if (location) {
+    params.append("location", location);
+  }
   const searchUrl = `/search/?${params.toString()}`;
 
   // If onClick is provided, use a div instead of Link
