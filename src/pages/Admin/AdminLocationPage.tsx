@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 interface Location {
   _id: string;
   title: string;
+  description: string;
   googleMapUrl: string;
   importantLocation: boolean;
 }
@@ -36,6 +37,7 @@ const AdminLocationPage = () => {
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
   const [formData, setFormData] = useState<LocationFormData>({
     title: "",
+    description: "",
     googleMapUrl: "",
     importantLocation: false,
   });
@@ -56,7 +58,7 @@ const AdminLocationPage = () => {
   }, []);
 
   // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -78,7 +80,7 @@ const AdminLocationPage = () => {
       await instance.post("/location/addlocation", formData);
       await fetchLocations();
       setIsAddDialogOpen(false);
-      setFormData({ title: "", googleMapUrl: "", importantLocation: false });
+      setFormData({ title: "", description: "", googleMapUrl: "", importantLocation: false });
     } catch (error: any) {
       console.error("Error adding location:", error);
       alert(error.response?.data?.message || "Failed to add location");
@@ -100,7 +102,7 @@ const AdminLocationPage = () => {
       await fetchLocations();
       setIsEditDialogOpen(false);
       setEditingLocation(null);
-      setFormData({ title: "", googleMapUrl: "", importantLocation: false });
+      setFormData({ title: "", description: "", googleMapUrl: "", importantLocation: false });
     } catch (error: any) {
       console.error("Error updating location:", error);
       alert(error.response?.data?.message || "Failed to update location");
@@ -131,6 +133,7 @@ const AdminLocationPage = () => {
     setEditingLocation(location);
     setFormData({
       title: location.title,
+      description: location.description,
       googleMapUrl: location.googleMapUrl,
       importantLocation: location.importantLocation,
     });
@@ -160,6 +163,17 @@ const AdminLocationPage = () => {
               <div className="space-y-2">
                 <Label htmlFor="title">Location Title *</Label>
                 <Input id="title" name="title" placeholder="e.g., Mavoor road" value={formData.title || ""} onChange={handleInputChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Add details about this location..."
+                  value={formData.description || ""}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="googleMapUrl">Google Map URL *</Label>
@@ -210,14 +224,9 @@ const AdminLocationPage = () => {
                       <h3 className="font-semibold">{location.title}</h3>
                       {location.importantLocation && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
                     </div>
-                    {/* <a
-                      href={location.googleMapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-500 hover:underline"
-                    >
-                      View on Google Maps
-                    </a> */}
+                    {location.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2">{location.description}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -249,6 +258,17 @@ const AdminLocationPage = () => {
                 placeholder="e.g., Mavoor road"
                 value={formData.title || ""}
                 onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Description</Label>
+              <textarea
+                id="edit-description"
+                name="description"
+                placeholder="Add details about this location..."
+                value={formData.description || ""}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
               />
             </div>
             <div className="space-y-2">

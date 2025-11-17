@@ -13,6 +13,7 @@ import { Link, useSearchParams } from "react-router-dom";
 interface Location {
   _id: string;
   title: string;
+  description?: string;
   googleMapUrl: string;
   importantLocation?: boolean;
 }

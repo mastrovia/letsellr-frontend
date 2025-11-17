@@ -12,6 +12,7 @@ import instance from "@/lib/axios";
 interface Location {
   _id: string;
   title: string;
+  description?: string;
   googleMapUrl: string;
   importantLocation?: boolean;
 }

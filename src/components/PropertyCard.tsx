@@ -17,6 +17,7 @@ export interface Property {
   location: {
     _id: string;
     title: string;
+    description?: string;
     googleMapUrl: string;
     importantLocation?: boolean;
   };
@@ -67,10 +68,15 @@ export default function PropertyCard(data: Property) {
             <Link to="#">{data?.title}</Link>
           </h3>
           {data?.location?.title && (
-            <p className="text-sm text-gray-500 relative flex items-center gap-1">
-              <MapPin className="h-3 w-3 text-muted-foreground" />
-              <span>{data?.location?.title}</span>
-            </p>
+            <div className="text-sm text-gray-500">
+              <p className="flex items-center gap-1 font-medium">
+                <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                <span>{data?.location?.title}</span>
+              </p>
+              {data?.location?.description && (
+                <p className="text-xs text-gray-400 ml-4 line-clamp-1">{data?.location?.description}</p>
+              )}
+            </div>
           )}
           <p className="text-sm text-gray-500 sm:flex flex-wrap gap-1 hidden">
             {data?.amenity?.split(",").slice(0, 3)  ?.map((value) => {

@@ -27,6 +27,7 @@ interface PriceOption {
 interface Location {
   _id: string;
   title: string;
+  description?: string;
   googleMapUrl: string;
   importantLocation?: boolean;
 }
@@ -402,13 +403,20 @@ const PropertyCard = ({
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
-            <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="truncate">
-              {typeof property.location === 'string'
-                ? "No location"
-                : (property.location as Location)?.title || "No location"}
-            </span>
+          <div className="text-xs sm:text-sm text-muted-foreground mb-2">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="truncate font-medium">
+                {typeof property.location === 'string'
+                  ? "No location"
+                  : (property.location as Location)?.title || "No location"}
+              </span>
+            </div>
+            {typeof property.location !== 'string' && (property.location as Location)?.description && (
+              <p className="text-xs text-muted-foreground/70 ml-5 line-clamp-1">
+                {(property.location as Location)?.description}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">

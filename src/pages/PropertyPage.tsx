@@ -514,9 +514,14 @@ export default function PropertyPage() {
             {product?.location?.googleMapUrl && (
               <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2 md:gap-3">
                 <h1 className="text-xl md:text-3xl flex items-center gap-1">Location</h1>
-                <p className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground" /> {product?.location?.title}
-                </p>
+                <div>
+                  <p className="flex items-center gap-1 font-medium">
+                    <MapPin className="h-4 w-4 text-muted-foreground" /> {product?.location?.title}
+                  </p>
+                  {product?.location?.description && (
+                    <p className="text-sm text-muted-foreground mt-1 ml-5">{product?.location?.description}</p>
+                  )}
+                </div>
                 <iframe
                   src={product?.location?.googleMapUrl}
                   width="100%"
