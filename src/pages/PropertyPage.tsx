@@ -214,6 +214,7 @@ export default function PropertyPage() {
   const [submitMessage, setSubmitMessage] = useState("");
   const [allReviews, setAllReviews] = useState<Review[]>([]);
   const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 5);
 
@@ -256,10 +257,23 @@ export default function PropertyPage() {
     }
   };
 
+  // Fetch settings phone number
+  const fetchPhoneNumber = async () => {
+    try {
+      const response = await instance.get("/settings/get/default_phone_number");
+      if (response.data.success) {
+        setPhoneNumber(response.data.data.value || "");
+      }
+    } catch (error) {
+      console.error("Error fetching phone number:", error);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     fetchProperty();
     fetchreviews();
+    fetchPhoneNumber();
   }, []);
 
   // const handleToggleReviews = () => {
@@ -360,10 +374,42 @@ export default function PropertyPage() {
   };
 
   function ContactComp() {
+    // Create WhatsApp message template with property details
+    const getWhatsAppMessage = () => {
+      const propertyName = product?.title || "Property";
+      const location = typeof product?.location === 'string'
+        ? product?.location
+        : product?.location?.title || "Location";
+      const price = product?.price?.[0]?.amount || "N/A";
+      const propertyTypeCategory = typeof product?.propertyTypeCategory === 'string'
+        ? product?.propertyTypeCategory
+        : product?.propertyTypeCategory?.name || "";
+
+      const message = `Hi, I'm interested in this property:
+
+*${propertyName}*
+📍 Location: ${location}
+${propertyTypeCategory ? `🏷️ Type: ${propertyTypeCategory}\n` : ''}💰 Price: ₹${price}/Month
+
+I would like to know more details. Please contact me.`;
+
+      return encodeURIComponent(message);
+    };
+
+    const contactPhone = product?.contactNumber || phoneNumber;
+
+    if (!contactPhone) {
+      return (
+        <div className="text-center text-muted-foreground">
+          Contact information not available
+        </div>
+      );
+    }
+
     return (
       <>
         <a
-          href={`https://wa.me/91${product?.contactNumber || letsellr?.contactNumber}`}
+          href={`https://wa.me/91${contactPhone}?text=${getWhatsAppMessage()}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
@@ -372,7 +418,7 @@ export default function PropertyPage() {
           WhatsApp Chat
         </a>
         <a
-          href={`tel:+91${product?.contactNumber || letsellr?.contactNumber}`}
+          href={`tel:+91${contactPhone}`}
           className="flex items-center justify-center gap-3 w-full bg-primary/5 border border-primary/70 text-primary font-bold py-3 rounded-xl transition-all duration-200 shadow-md"
         >
           <Phone className="w-5 h-5" />

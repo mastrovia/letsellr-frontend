@@ -10,6 +10,7 @@ export const menuItems = [
   { id: "locations", path: "/admin/locations", icon: MapPin, label: "Locations" },
   { id: "property-types", path: "/admin/property-types", icon: Tag, label: "Property Types" },
   { id: "reviews", path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
+  { id: "setup", path: "/admin/setup", icon: Settings, label: "Setup" },
   // { id: "users", path: "/admin/users", icon: Users, label: "Users" },
 ];
 

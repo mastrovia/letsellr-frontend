@@ -1,10 +1,29 @@
-import { letsellr } from "@/db";
 import { Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import instance from "@/lib/axios";
 
 const FloatingContactIcons = () => {
-  // Replace these with your actual phone number and WhatsApp number
-  const phoneNumber = letsellr.contactNumber;
-  const whatsappNumber = letsellr.contactNumber;
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  // Fetch phone number from settings
+  useEffect(() => {
+    const fetchPhoneNumber = async () => {
+      try {
+        const response = await instance.get("/settings/get/default_phone_number");
+        if (response.data.success) {
+          setPhoneNumber(response.data.data.value || "");
+        }
+      } catch (error) {
+        console.error("Error fetching phone number:", error);
+      }
+    };
+    fetchPhoneNumber();
+  }, []);
+
+  // Don't render if no phone number is set
+  if (!phoneNumber) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
@@ -19,7 +38,7 @@ const FloatingContactIcons = () => {
 
       {/* WhatsApp Icon */}
       <a
-        href={`https://wa.me/91${whatsappNumber.replace(/[^0-9]/g, "")}`}
+        href={`https://wa.me/91${phoneNumber.replace(/[^0-9]/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
         className="group flex h-12 w-12 items-center justify-center rounded-full bg-green-400 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"

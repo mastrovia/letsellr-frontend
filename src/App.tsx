@@ -14,6 +14,7 @@ import AdminPropertiesPage from "./pages/Admin/AdminPropertyPage";
 import AdminReviewsPage from "./pages/Admin/AdminReviewsPage";
 import AdminLocationPage from "./pages/Admin/AdminLocationPage";
 import AdminPropertyTypePage from "./pages/Admin/AdminPropertyTypePage";
+import AdminSetupPage from "./pages/Admin/AdminSetupPage";
 // import AdminUsersPage from "./pages/Admin/AdminUsersPage";
 import FloatingContactIcons from "./components/FloatingContactIcons";
 
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="locations" element={<AdminLocationPage />} />
             <Route path="property-types" element={<AdminPropertyTypePage />} />
             <Route path="reviews" element={<AdminReviewsPage />} />
+            <Route path="setup" element={<AdminSetupPage />} />
             {/* <Route path="users" element={<AdminUsersPage />} /> */}
             {/* <Route path="categories" element={<AdminCategory />} /> */}
           </Route>
