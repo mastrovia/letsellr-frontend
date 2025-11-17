@@ -1,9 +1,10 @@
+import { letsellr } from "@/db";
 import { Phone } from "lucide-react";
 
 const FloatingContactIcons = () => {
   // Replace these with your actual phone number and WhatsApp number
-  const phoneNumber = "+1234567890";
-  const whatsappNumber = "+1234567890";
+  const phoneNumber = letsellr.contactNumber;
+  const whatsappNumber = letsellr.contactNumber;
 
   return (
     <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
