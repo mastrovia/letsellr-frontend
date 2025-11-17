@@ -388,19 +388,16 @@ export default function PropertyPage() {
     // Create WhatsApp message template with property details
     const getWhatsAppMessage = () => {
       const propertyName = product?.title || "Property";
-      const location = typeof product?.location === 'string'
-        ? product?.location
-        : product?.location?.title || "Location";
+      const location = typeof product?.location === "string" ? product?.location : product?.location?.title || "Location";
       const price = product?.price?.[0]?.amount || "N/A";
-      const propertyTypeCategory = typeof product?.propertyTypeCategory === 'string'
-        ? product?.propertyTypeCategory
-        : product?.propertyTypeCategory?.name || "";
+      const propertyTypeCategory =
+        typeof product?.propertyTypeCategory === "string" ? product?.propertyTypeCategory : product?.propertyTypeCategory?.name || "";
 
       const message = `Hi, I'm interested in this property:
 
 *${propertyName}*
-📍 Location: ${location}
-${propertyTypeCategory ? `🏷️ Type: ${propertyTypeCategory}\n` : ''}💰 Price: ₹${price}/Month
+Location: ${location}
+${propertyTypeCategory ? ` Type: ${propertyTypeCategory}\n` : ""} Price: ₹${price}/Month
 
 I would like to know more details. Please contact me.`;
 
@@ -410,11 +407,7 @@ I would like to know more details. Please contact me.`;
     const contactPhone = product?.contactNumber || phoneNumber;
 
     if (!contactPhone) {
-      return (
-        <div className="text-center text-muted-foreground">
-          Contact information not available
-        </div>
-      );
+      return <div className="text-center text-muted-foreground">Contact information not available</div>;
     }
 
     return (

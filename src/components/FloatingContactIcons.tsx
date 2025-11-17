@@ -27,19 +27,19 @@ const FloatingContactIcons = () => {
     if (!currentProduct) return "";
 
     const propertyName = currentProduct?.title || "Property";
-    const location = typeof currentProduct?.location === 'string'
-      ? currentProduct?.location
-      : currentProduct?.location?.title || "Location";
+    const location =
+      typeof currentProduct?.location === "string" ? currentProduct?.location : currentProduct?.location?.title || "Location";
     const price = currentProduct?.price?.[0]?.amount || "N/A";
-    const propertyTypeCategory = typeof currentProduct?.propertyTypeCategory === 'string'
-      ? currentProduct?.propertyTypeCategory
-      : currentProduct?.propertyTypeCategory?.name || "";
+    const propertyTypeCategory =
+      typeof currentProduct?.propertyTypeCategory === "string"
+        ? currentProduct?.propertyTypeCategory
+        : currentProduct?.propertyTypeCategory?.name || "";
 
     const message = `Hi, I'm interested in this property:
 
 *${propertyName}*
-📍 Location: ${location}
-${propertyTypeCategory ? `🏷️ Type: ${propertyTypeCategory}\n` : ''}💰 Price: ₹${price}/Month
+ Location: ${location}
+${propertyTypeCategory ? ` Type: ${propertyTypeCategory}\n` : ""} Price: ₹${price}/Month
 
 I would like to know more details. Please contact me.`;
 
@@ -56,8 +56,8 @@ I would like to know more details. Please contact me.`;
 
   // Build WhatsApp URL with message template if on product page
   const whatsappUrl = currentProduct
-    ? `https://wa.me/91${phoneNumber.replace(/[^0-9]/g, "")}?text=${getWhatsAppMessage()}`
-    : `https://wa.me/91${phoneNumber.replace(/[^0-9]/g, "")}`;
+    ? `https://wa.me/+91${phoneNumber.replace(/[^0-9]/g, "")}?text=${getWhatsAppMessage()}`
+    : `https://wa.me/+91${phoneNumber.replace(/[^0-9]/g, "")}`;
 
   return (
     <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
