@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation, Link } from "react-router-dom";
-import { Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search, MapPin } from "lucide-react";
+import { Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search, MapPin, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -8,6 +8,7 @@ export const menuItems = [
   // { id: "overview", path: "/admin", icon: Home, label: "Overview" },
   { id: "properties", path: "/admin/properties", icon: Building2, label: "Properties" },
   { id: "locations", path: "/admin/locations", icon: MapPin, label: "Locations" },
+  { id: "property-types", path: "/admin/property-types", icon: Tag, label: "Property Types" },
   { id: "reviews", path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
   // { id: "users", path: "/admin/users", icon: Users, label: "Users" },
 ];

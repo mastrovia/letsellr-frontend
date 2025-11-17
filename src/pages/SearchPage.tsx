@@ -18,6 +18,12 @@ interface Location {
   importantLocation?: boolean;
 }
 
+interface PropertyType {
+  _id: string;
+  name: string;
+  description?: string;
+}
+
 // Skeleton loader component matching PropertyCard design
 function PropertyCardSkeleton() {
   return (
@@ -71,12 +77,15 @@ export default function SearchPage() {
   const [selectedPropertyType, setSelectedPropertyType] = useState(
     searchParams.get("propertyType") || searchParams.get("property_type") || ""
   );
-  const [selectedGender, setSelectedGender] = useState(searchParams.get("gender") || "");
+  const [selectedPropertyTypeCategory, setSelectedPropertyTypeCategory] = useState(
+    searchParams.get("propertyTypeCategory") || ""
+  );
   const [minPrice, setMinPrice] = useState<string>(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState<string>(searchParams.get("maxPrice") || "");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [properties, setProperties] = useState([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -88,6 +97,23 @@ export default function SearchPage() {
     } catch (error) {
       console.error("Error fetching locations:", error);
       setLocations([]);
+    }
+  };
+
+  // Fetch property types from API and filter for Male/Female only
+  const fetchPropertyTypes = async () => {
+    try {
+      const res = await instance.get("/propertytype/fullpropertytypes");
+      const allTypes = res.data.data || [];
+
+      // Filter to only show Male and Female by their IDs
+      const allowedIds = ['691af1bfaf170e0a594e3ebe', '691af1c3af170e0a594e3ec1'];
+      const filteredTypes = allTypes.filter((type: PropertyType) => allowedIds.includes(type._id));
+
+      setPropertyTypes(filteredTypes);
+    } catch (error) {
+      console.error("Error fetching property types:", error);
+      setPropertyTypes([]);
     }
   };
 
@@ -106,7 +132,7 @@ export default function SearchPage() {
         // Backward compatibility with existing links
         params.append("property_type", selectedPropertyType);
       }
-      if (selectedGender) params.append("gender", selectedGender);
+      if (selectedPropertyTypeCategory) params.append("propertyTypeCategory", selectedPropertyTypeCategory);
       // Normalize price filters
       const minV = Number(minPrice);
       const maxV = Number(maxPrice);
@@ -175,7 +201,7 @@ export default function SearchPage() {
       params.set("propertyType", selectedPropertyType);
       params.set("property_type", selectedPropertyType);
     }
-    if (selectedGender) params.set("gender", selectedGender);
+    if (selectedPropertyTypeCategory) params.set("propertyTypeCategory", selectedPropertyTypeCategory);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
 
@@ -186,34 +212,34 @@ export default function SearchPage() {
     if (next !== current) {
       setSearchParams(params, { replace: true });
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
 
   // Fetch properties when filters change
   useEffect(() => {
     if (isInitialized) {
       fetchProperties();
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedGender, minPrice, maxPrice]);
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
 
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedLocation("");
     setSelectedCategory("");
     setSelectedPropertyType("");
-    setSelectedGender("");
+    setSelectedPropertyTypeCategory("");
     setMinPrice("");
     setMaxPrice("");
   };
 
   const hasActiveFilters = Boolean(
-    searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedGender || minPrice || maxPrice
+    searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedPropertyTypeCategory || minPrice || maxPrice
   );
   const activeFilterCount = [
     searchQuery,
     selectedLocation,
     selectedCategory,
     selectedPropertyType,
-    selectedGender,
+    selectedPropertyTypeCategory,
     minPrice,
     maxPrice,
   ].filter(Boolean).length;
@@ -221,6 +247,7 @@ export default function SearchPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     fetchLocations();
+    fetchPropertyTypes();
   }, []);
 
   return (
@@ -288,26 +315,20 @@ export default function SearchPage() {
                 </select>
               </div>
 
-              {/* Gender Chips */}
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant={selectedGender === "men" ? "default" : "outline"}
-                  disabled={isLoading}
-                  onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
-                  className="h-10 rounded-full"
-                >
-                  Men
-                </Button>
-                <Button
-                  type="button"
-                  variant={selectedGender === "women" ? "default" : "outline"}
-                  disabled={isLoading}
-                  onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
-                  className="h-10 rounded-full"
-                >
-                  Women
-                </Button>
+              {/* Property Type Category Chips */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {propertyTypes.map((type) => (
+                  <Button
+                    key={type._id}
+                    type="button"
+                    variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+                    disabled={isLoading}
+                    onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+                    className="h-10 rounded-full"
+                  >
+                    {type.name}
+                  </Button>
+                ))}
               </div>
 
               {/* Category Select */}
@@ -457,28 +478,22 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Gender Chips */}
+                {/* Property Type Category */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Gender</label>
-                  <div className="hidden md:flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant={selectedGender === "men" ? "default" : "outline"}
-                      disabled={isLoading}
-                      onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
-                      className="h-9 rounded-full"
-                    >
-                      Men
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={selectedGender === "women" ? "default" : "outline"}
-                      disabled={isLoading}
-                      onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
-                      className="h-9 rounded-full"
-                    >
-                      Women
-                    </Button>
+                  <label className="block text-sm font-medium mb-2">Property Type Category</label>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {propertyTypes.map((type) => (
+                      <Button
+                        key={type._id}
+                        type="button"
+                        variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+                        disabled={isLoading}
+                        onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+                        className="h-9 rounded-full"
+                      >
+                        {type.name}
+                      </Button>
+                    ))}
                   </div>
                 </div>
 
@@ -523,25 +538,20 @@ export default function SearchPage() {
           </div>
         </div>
 
-        <div className="md:hidden flex items-center gap-2">
-          <Button
-            type="button"
-            variant={selectedGender === "men" ? "default" : "outline"}
-            disabled={isLoading}
-            onClick={() => setSelectedGender(selectedGender === "men" ? "" : "men")}
-            className="h-10 rounded-full"
-          >
-            Men
-          </Button>
-          <Button
-            type="button"
-            variant={selectedGender === "women" ? "default" : "outline"}
-            disabled={isLoading}
-            onClick={() => setSelectedGender(selectedGender === "women" ? "" : "women")}
-            className="h-10 rounded-full"
-          >
-            Women
-          </Button>
+        {/* Property Type Category - Mobile */}
+        <div className="md:hidden flex items-center gap-2 flex-wrap">
+          {propertyTypes.map((type) => (
+            <Button
+              key={type._id}
+              type="button"
+              variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+              disabled={isLoading}
+              onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+              className="h-10 rounded-full"
+            >
+              {type.name}
+            </Button>
+          ))}
         </div>
 
         {/* Loading State */}

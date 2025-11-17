@@ -6,7 +6,7 @@ const FloatingContactIcons = () => {
   const whatsappNumber = "+1234567890";
 
   return (
-    <div className="fixed bottom-4 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
+    <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
       {/* Phone Icon */}
       <a
         href={`tel:${phoneNumber}`}

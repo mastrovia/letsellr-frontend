@@ -32,6 +32,12 @@ interface Location {
   importantLocation?: boolean;
 }
 
+interface PropertyType {
+  _id: string;
+  name: string;
+  description?: string;
+}
+
 interface Property {
   _id: string;
   title: string;
@@ -45,8 +51,8 @@ interface Property {
   contactNumber?: string;
   status?: string;
   views?: number;
-  gender?: "men" | "women";
   propertyType?: "buy" | "rent" | "lease";
+  propertyTypeCategory?: PropertyType | string; // Can be populated object or just ID
 }
 
 interface PropertyFormData extends Partial<Property> {
@@ -58,10 +64,8 @@ const CATEGORIES = [
   { _id: "68de658f54859517744aa90e", name: "Flat/Apartment" },
   { _id: "68de57ee22d6206bc4564263", name: "Land" },
   { _id: "68dcccd771afa460402c3651", name: "Villa/Houses" },
-  { _id: "68de1c35f11084356eafd988", name: "Commercial" }
+  { _id: "68de1c35f11084356eafd988", name: "Commercial" },
 ];
-
-
 
 const INITIAL_FORM_STATE: PropertyFormData = {
   title: "",
@@ -72,9 +76,9 @@ const INITIAL_FORM_STATE: PropertyFormData = {
   price: [{ type: "", amount: 0 }],
   location: "", // Location ID
   contactNumber: "",
-  gender: "men",
   propertyType: "buy",
   status: "active",
+  propertyTypeCategory: "",
 };
 
 // Property Form Component
@@ -102,7 +106,8 @@ const PropertyForm = ({
   imagesRef,
   setFormData,
   notification,
-  locations
+  locations,
+  propertyTypes,
 }: {
   formData: PropertyFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
@@ -128,8 +133,8 @@ const PropertyForm = ({
   setFormData: React.Dispatch<React.SetStateAction<PropertyFormData>>;
   notification: string;
   locations: Location[];
+  propertyTypes: PropertyType[];
 }) => (
-
   <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
     <div>
       <label className="block text-sm font-medium mb-2">Title *</label>
@@ -158,7 +163,7 @@ const PropertyForm = ({
         name="category"
         value={formData.category?._id}
         onChange={(e) => {
-          const selected = CATEGORIES.find(c => c._id === e.target.value);
+          const selected = CATEGORIES.find((c) => c._id === e.target.value);
           setFormData({ ...formData, category: selected || { _id: "", name: "" } });
         }}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -188,13 +193,7 @@ const PropertyForm = ({
             placeholder="Amount"
             type="number"
             value={p.amount === 0 ? "" : p.amount}
-            onChange={(e) =>
-              onPriceChange(
-                idx,
-                "amount",
-                e.target.value === "" ? "" : Number(e.target.value)
-              )
-            }
+            onChange={(e) => onPriceChange(idx, "amount", e.target.value === "" ? "" : Number(e.target.value))}
             className="rounded-xl w-24"
           />
 
@@ -216,7 +215,7 @@ const PropertyForm = ({
       <select
         ref={locationRef as React.RefObject<HTMLSelectElement>}
         name="location"
-        value={typeof formData.location === 'string' ? formData.location : (formData.location as Location)?._id || ''}
+        value={typeof formData.location === "string" ? formData.location : (formData.location as Location)?._id || ""}
         onChange={onChange}
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
@@ -257,19 +256,6 @@ const PropertyForm = ({
     </div>
 
     <div>
-      <label className="block text-sm font-medium mb-2">Gender *</label>
-      <select
-        name="gender"
-        value={formData.gender}
-        onChange={onChange}
-        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
-      >
-        <option value="men">Men</option>
-        <option value="women">Women</option>
-      </select>
-    </div>
-
-    <div>
       <label className="block text-sm font-medium mb-2">Property Type *</label>
       <select
         name="propertyType"
@@ -284,6 +270,27 @@ const PropertyForm = ({
     </div>
 
     <div>
+      <label className="block text-sm font-medium mb-2">Property Type Category</label>
+      <select
+        name="propertyTypeCategory"
+        value={
+          typeof formData.propertyTypeCategory === "string"
+            ? formData.propertyTypeCategory
+            : (formData.propertyTypeCategory as PropertyType)?._id || ""
+        }
+        onChange={onChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
+      >
+        <option value="">Select property type category</option>
+        {propertyTypes.map((type) => (
+          <option key={type._id} value={type._id}>
+            {type.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <div>
       {/* <label className="block text-sm font-medium mb-2">Status *</label>
       <select
         name="status"
@@ -292,7 +299,7 @@ const PropertyForm = ({
         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
       /> */}
 
-       <label className="block text-sm font-medium mb-2">Property Images *</label>
+      <label className="block text-sm font-medium mb-2">Property Images *</label>
       <input
         ref={imagesRef}
         type="file"
@@ -345,10 +352,6 @@ const PropertyForm = ({
       )}
     </div>
 
-
-
-
-
     <div className="flex gap-3 pt-4 sticky bottom-0 bg-white pb-2">
       <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl" disabled={isSubmitting}>
         Cancel
@@ -380,23 +383,16 @@ const PropertyCard = ({
     <Card className="p-4 sm:p-6 border-border hover:shadow-lg transition-shadow">
       <div className="flex gap-3 sm:gap-4">
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
-          <img
-            src={firstImage}
-            alt={property.title || "Property Image"}
-            className="w-full h-full object-cover"
-          />
+          <img src={firstImage} alt={property.title || "Property Image"} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">
-              {property.title || "Untitled"}
-            </h3>
+            <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title || "Untitled"}</h3>
             {property.status && (
               <span
-                className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${property.status === "active"
-                  ? "bg-green-500/10 text-green-600"
-                  : "bg-red-500/10 text-red-600"
-                  }`}
+                className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${
+                  property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
+                }`}
               >
                 {property.status}
               </span>
@@ -404,18 +400,22 @@ const PropertyCard = ({
           </div>
 
           <div className="text-xs sm:text-sm text-muted-foreground mb-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="truncate font-medium">
-                {typeof property.location === 'string'
-                  ? "No location"
-                  : (property.location as Location)?.title || "No location"}
+                {typeof property.location === "string" ? "No location" : (property.location as Location)?.title || "No location"}
               </span>
+              {typeof property.location !== "string" && (property.location as Location)?.description && (
+                <p className="text-xs text-muted-foreground/70 line-clamp-1">{(property.location as Location)?.description}</p>
+              )}
             </div>
-            {typeof property.location !== 'string' && (property.location as Location)?.description && (
-              <p className="text-xs text-muted-foreground/70 ml-5 line-clamp-1">
-                {(property.location as Location)?.description}
-              </p>
+            {/* Property Type Category Badge */}
+            {property.propertyTypeCategory && typeof property.propertyTypeCategory !== "string" && (
+              <div className="mt-1">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                  {(property.propertyTypeCategory as PropertyType).name}
+                </span>
+              </div>
             )}
           </div>
 
@@ -434,7 +434,7 @@ const PropertyCard = ({
             {/* Display prices */}
             {property.price && property.price.length > 0 && (
               <div className="flex flex-col gap-1 mb-3">
-                {property.price?.slice(0,2).map((p, idx) => (
+                {property.price?.slice(0, 2).map((p, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm text-primary font-semibold">
                     <span>{p.type || "Room"}:</span>
                     <span>₹{p.amount} /Month</span>
@@ -442,7 +442,6 @@ const PropertyCard = ({
                 ))}
               </div>
             )}
-
           </div>
 
           <div className="flex gap-2">
@@ -489,7 +488,6 @@ const PropertyCard = ({
   );
 };
 
-
 // Main Admin Properties Page
 const AdminPropertiesPage = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -503,6 +501,7 @@ const AdminPropertiesPage = () => {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [notification, setNotification] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -513,10 +512,11 @@ const AdminPropertiesPage = () => {
   const contactRef = useRef<HTMLInputElement>(null);
   const imagesRef = useRef<HTMLInputElement>(null);
 
-  // Fetch properties and locations
+  // Fetch properties, locations, and property types
   useEffect(() => {
     fetchProperties();
     fetchLocations();
+    fetchPropertyTypes();
   }, []);
 
   const fetchProperties = async () => {
@@ -543,6 +543,16 @@ const AdminPropertiesPage = () => {
     }
   };
 
+  const fetchPropertyTypes = async () => {
+    try {
+      const res = await instance.get("/propertytype/fullpropertytypes");
+      setPropertyTypes(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching property types:", error);
+      setPropertyTypes([]);
+    }
+  };
+
   const resetForm = () => {
     setFormData(INITIAL_FORM_STATE);
     setCurrentProperty(null);
@@ -550,8 +560,10 @@ const AdminPropertiesPage = () => {
 
   const handleEdit = (property: Property, mobile = false) => {
     // Ensure category is a full object from CATEGORIES
-    const category = CATEGORIES.find(c => c._id === property.category?._id)
-      || { _id: property.category?._id || "", name: property.category?.name || "" };
+    const category = CATEGORIES.find((c) => c._id === property.category?._id) || {
+      _id: property.category?._id || "",
+      name: property.category?.name || "",
+    };
 
     setCurrentProperty(property);
     // Merge defaults so missing fields (gender, propertyType, status, etc.) get default values
@@ -559,17 +571,19 @@ const AdminPropertiesPage = () => {
       ...INITIAL_FORM_STATE,
       ...property,
       category: property.category || INITIAL_FORM_STATE.category,
-      location: typeof property.location === 'string' ? property.location : (property.location as Location)?._id || "",
+      location: typeof property.location === "string" ? property.location : (property.location as Location)?._id || "",
+      propertyTypeCategory:
+        typeof property.propertyTypeCategory === "string"
+          ? property.propertyTypeCategory
+          : (property.propertyTypeCategory as PropertyType)?._id || "",
     };
     setFormData(merged);
     setIsFormOpen(!mobile);
     setIsMobileFormOpen(mobile);
   };
 
-
-
   const removeExistingImage = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: prev.images?.filter((_, i) => i !== index),
     }));
@@ -581,9 +595,9 @@ const AdminPropertiesPage = () => {
     if (!formData.title?.trim()) errors.title = "Title is required";
     if (!formData.description?.trim()) errors.description = "Description is required";
     if (!formData.category?._id) errors.category = "Category is required";
-    if (!formData.price || formData.price.length === 0 || formData.price.every(p => !p.amount))
+    if (!formData.price || formData.price.length === 0 || formData.price.every((p) => !p.amount))
       errors.price = "At least one price is required";
-    if (!formData.location || (typeof formData.location === 'string' && !formData.location.trim()))
+    if (!formData.location || (typeof formData.location === "string" && !formData.location.trim()))
       errors.location = "Location is required";
     if (!formData.amenity?.trim()) errors.amenity = "At least one amenity is required";
     if (!formData.contactNumber?.trim()) errors.contactNumber = "Contact number is required";
@@ -602,10 +616,6 @@ const AdminPropertiesPage = () => {
     }));
   };
 
-
-
-
-
   const handleDelete = (property: Property) => {
     setCurrentProperty(property);
     setDeleteDialogOpen(true);
@@ -619,7 +629,7 @@ const AdminPropertiesPage = () => {
       await instance.delete(`/property/deleteproperty/${currentProperty._id}`, { withCredentials: true });
 
       // Remove from frontend state
-      setProperties(prev => prev.filter(p => p._id !== currentProperty._id));
+      setProperties((prev) => prev.filter((p) => p._id !== currentProperty._id));
       setDeleteDialogOpen(false);
       setCurrentProperty(null);
 
@@ -632,10 +642,7 @@ const AdminPropertiesPage = () => {
     }
   };
 
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
 
     if (files && name === "newImages") {
@@ -661,7 +668,6 @@ const AdminPropertiesPage = () => {
     }
   };
 
-
   const handlePriceChange = (index: number, field: keyof PriceOption, value: string | number) => {
     const updatedPrices = [...(formData.price || [])];
     updatedPrices[index] = { ...updatedPrices[index], [field]: value };
@@ -685,11 +691,11 @@ const AdminPropertiesPage = () => {
     }));
   };
 
-
   const handleSubmit = async () => {
     if (!validateForm()) {
       if (formErrors.title && titleRef.current) titleRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-      else if (formErrors.description && descriptionRef.current) descriptionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (formErrors.description && descriptionRef.current)
+        descriptionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       else if (formErrors.category && categoryRef.current) categoryRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       else if (formErrors.price && priceRef.current) priceRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       else if (formErrors.location && locationRef.current) locationRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -698,7 +704,6 @@ const AdminPropertiesPage = () => {
       else if (formErrors.images && imagesRef.current) imagesRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-
 
     setIsSubmitting(true);
 
@@ -736,7 +741,11 @@ const AdminPropertiesPage = () => {
         ...formData,
         category: formData.category?._id,
         price: formData.price?.filter((p) => p.amount > 0) || [],
-        location: typeof formData.location === 'string' ? formData.location : (formData.location as Location)?._id || "",
+        location: typeof formData.location === "string" ? formData.location : (formData.location as Location)?._id || "",
+        propertyTypeCategory:
+          typeof formData.propertyTypeCategory === "string"
+            ? formData.propertyTypeCategory
+            : (formData.propertyTypeCategory as PropertyType)?._id || "",
         images: [...(formData.images || []), ...imageUrls], // merge old + new
       };
 
@@ -746,8 +755,7 @@ const AdminPropertiesPage = () => {
         // refetch all properties
         const res = await instance.get("/show/allproperty", { withCredentials: true });
         if (Array.isArray(res.data.data)) setProperties(res.data.data);
-      }
-      else {
+      } else {
         response = await instance.post("/property/addproperty", payload, {
           withCredentials: true,
         });
@@ -771,18 +779,12 @@ const AdminPropertiesPage = () => {
     }
   };
 
-
-
-
-
-
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setIsMobileFormOpen(false);
     setCurrentProperty(null);
     setFormData(INITIAL_FORM_STATE);
   };
-
 
   const stats = {
     total: properties.length,
@@ -800,7 +802,6 @@ const AdminPropertiesPage = () => {
         </div>
       )}
 
-
       {/* Header & Add Property */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -816,7 +817,7 @@ const AdminPropertiesPage = () => {
               Add Property
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden" >
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle>{currentProperty ? "Edit Property" : "Add New Property"}</DialogTitle>
             </DialogHeader>
@@ -845,8 +846,8 @@ const AdminPropertiesPage = () => {
               setFormData={setFormData}
               notification={notification}
               locations={locations}
+              propertyTypes={propertyTypes}
             />
-
           </DialogContent>
         </Dialog>
 
@@ -887,8 +888,8 @@ const AdminPropertiesPage = () => {
               imagesRef={imagesRef}
               notification={notification}
               locations={locations}
+              propertyTypes={propertyTypes}
             />
-
           </DrawerContent>
         </Drawer>
       </div>
@@ -916,9 +917,7 @@ const AdminPropertiesPage = () => {
         ) : properties.length === 0 ? (
           <div>No properties found.</div>
         ) : (
-          properties.map((property) => (
-            <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />
-          ))
+          properties.map((property) => <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />)
         )}
       </div>
 

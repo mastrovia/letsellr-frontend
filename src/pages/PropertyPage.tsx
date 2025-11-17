@@ -23,7 +23,7 @@ import {
   WashingMachine,
   Wifi,
   CookingPot,
-  BookOpenCheck
+  BookOpenCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -40,7 +40,6 @@ const iconMappings = [
   { keywords: ["parking", "car parking", "bike parking"], icon: ParkingCircle },
   { keywords: ["kitchen", "cooking", "bike parking"], icon: CookingPot },
   { keywords: ["study", "study-room"], icon: CookingPot },
-
 ];
 
 const getAmenityIcon = (amenity: string) => {
@@ -54,7 +53,7 @@ const getAmenityIcon = (amenity: string) => {
 };
 
 interface Review {
-  propertyId: string | number,
+  propertyId: string | number;
   id: number;
   name: string;
   rating: number;
@@ -62,6 +61,12 @@ interface Review {
   comment: string;
   date: string;
   timestamp: string;
+}
+
+interface PropertyType {
+  _id: string;
+  name: string;
+  description?: string;
 }
 
 // Skeleton Components
@@ -213,7 +218,7 @@ export default function PropertyPage() {
   const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 5);
 
   const handleToggleReviews = () => {
-    setShowAllReviews(prev => !prev);
+    setShowAllReviews((prev) => !prev);
   };
 
   // Fetch property data
@@ -222,7 +227,7 @@ export default function PropertyPage() {
     try {
       // TODO: Replace with your actual API endpoint
       // const response = await fetch(/api/properties/${propertyId});
-      const response = await instance.get(`/property/findproperty/${propertyId}`)
+      const response = await instance.get(`/property/findproperty/${propertyId}`);
       // console.log(response.data.property)
       // const data = await response.json();
       setProduct(response.data.property);
@@ -239,7 +244,7 @@ export default function PropertyPage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const fetchreviews = async () => {
     try {
@@ -333,8 +338,8 @@ export default function PropertyPage() {
         comment: reviewForm.comment,
         timestamp: new Date().toISOString(),
       };
-      const response = await instance.post("/feedback/addfeedback", { data: reviewData })
-      console.log(response.data)
+      const response = await instance.post("/feedback/addfeedback", { data: reviewData });
+      console.log(response.data);
       // console.log("Review submitted:", reviewData);
       setSubmitMessage("Thank you for your review!");
 
@@ -353,9 +358,6 @@ export default function PropertyPage() {
       setIsSubmitting(false);
     }
   };
-
-
-
 
   function ContactComp() {
     return (
@@ -465,7 +467,17 @@ export default function PropertyPage() {
       </div>
       <Navbar />
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
-        <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
+        <div className="flex flex-col gap-3">
+          <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
+          {/* Property Type Category Badge */}
+          {product?.propertyTypeCategory && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                {typeof product.propertyTypeCategory === "string" ? product.propertyTypeCategory : product.propertyTypeCategory.name}
+              </span>
+            </div>
+          )}
+        </div>
 
         <ImageGallery images={product?.images || []} />
 
@@ -554,38 +566,24 @@ export default function PropertyPage() {
                       {/* Left side: Avatar and reviewer info */}
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary font-semibold text-sm md:text-base">
-                            {review.email?.charAt(0).toUpperCase()}
-                          </span>
+                          <span className="text-primary font-semibold text-sm md:text-base">{review.email?.charAt(0).toUpperCase()}</span>
                         </div>
                         <div className="flex flex-col">
-                          <h3 className="font-semibold text-green-700 text-sm md:text-base">
-                            {review.email}
-                          </h3>
-                          <span className="text-xs md:text-sm text-gray-500">
-                            {formatReviewDate(review.createdAt)}
-                          </span>
+                          <h3 className="font-semibold text-green-700 text-sm md:text-base">{review.email}</h3>
+                          <span className="text-xs md:text-sm text-gray-500">{formatReviewDate(review.createdAt)}</span>
                         </div>
                       </div>
 
                       {/* Right side: Rating stars */}
                       <div className="flex gap-0.5 mt-2 md:mt-0">
                         {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={cn(
-                              "h-3 w-3 md:h-4 md:w-4 text-accent",
-                              i < review.rating ? "fill-accent" : ""
-                            )}
-                          />
+                          <Star key={i} className={cn("h-3 w-3 md:h-4 md:w-4 text-accent", i < review.rating ? "fill-accent" : "")} />
                         ))}
                       </div>
                     </div>
 
                     {/* Review comment */}
-                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-                      {review.comment}
-                    </p>
+                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">{review.comment}</p>
                   </div>
                 ))}
               </div>
@@ -708,8 +706,7 @@ export default function PropertyPage() {
             <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <p className="flex items-center gap-1">Starting Price</p>
               <h1 className="text-3xl flex items-end gap-1">
-                {/* Access the first price option's amount */}
-                ₹{product?.price?.[0]?.amount || 0}
+                {/* Access the first price option's amount */}₹{product?.price?.[0]?.amount || 0}
                 <span className="text-sm text-black/50">/ Month</span>{" "}
                 {product?.price?.length > 1 && <span className="text-xs text-primary">(+Others price options)</span>}
               </h1>
@@ -775,11 +772,40 @@ export default function PropertyPage() {
       <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
         <div>
           <p className="flex items-center gap-1 text-sm">Starting Price</p>
-          <h1 className="text-2xl flex items-end gap-1">
-            ₹{product?.price?.[0]?.amount || 0}
-            <span className="text-sm text-black/50">/ Month</span>{" "}
-            {product?.price?.length > 1 && <span className="text-xs text-primary">(+Others)</span>}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl flex items-end gap-1">
+              ₹{product?.price?.[0]?.amount || 0}
+              <span className="text-sm text-black/50">/ Month</span>
+            </h1>
+            {product?.price?.length > 1 && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-xs text-primary underline font-medium hover:text-primary/80">
+                    +{product.price.length - 1} more
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <AlertDialogHeader>
+                    <DialogTitle>All Price Options</DialogTitle>
+                  </AlertDialogHeader>
+                  <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+                    {product.price.map((priceOption, i) => (
+                      <div
+                        key={priceOption._id || i}
+                        className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-gray-200"
+                      >
+                        <div className="font-medium text-gray-700 text-sm capitalize">{priceOption?.type}</div>
+                        <div className="font-bold text-lg">₹{priceOption?.amount}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <DialogDescription className="text-center text-sm text-gray-600">
+                    Choose the option that fits your budget
+                  </DialogDescription>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
         <div className="">
           <Drawer>
