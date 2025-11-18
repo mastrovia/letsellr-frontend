@@ -40,6 +40,7 @@ interface PropertyType {
 
 interface Property {
   _id: string;
+  propertyCode?: string;
   title: string;
   description: string;
   images: string[];
@@ -136,6 +137,22 @@ const PropertyForm = ({
   propertyTypes: PropertyType[];
 }) => (
   <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+    {/* Property Code - Only show for editing existing properties */}
+    {isEditing && formData.propertyCode && (
+      <div>
+        <label className="block text-sm font-medium mb-2">Property Code</label>
+        <Input
+          name="propertyCode"
+          value={formData.propertyCode}
+          onChange={onChange}
+          placeholder="4-5 digit code"
+          className="rounded-xl"
+          maxLength={5}
+        />
+        <p className="text-xs text-gray-500 mt-1">You can update this code. Must be 4-5 digits and unique.</p>
+      </div>
+    )}
+
     <div>
       <label className="block text-sm font-medium mb-2">Title *</label>
       <Input ref={titleRef} name="title" value={formData.title} onChange={onChange} placeholder="Property title" className="rounded-xl" />
@@ -387,7 +404,12 @@ const PropertyCard = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title || "Untitled"}</h3>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title || "Untitled"}</h3>
+              {property.propertyCode && (
+                <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>
+              )}
+            </div>
             {property.status && (
               <span
                 className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${
@@ -502,6 +524,7 @@ const AdminPropertiesPage = () => {
   const [notification, setNotification] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -786,6 +809,20 @@ const AdminPropertiesPage = () => {
     setFormData(INITIAL_FORM_STATE);
   };
 
+  // Filter properties based on search query
+  const filteredProperties = properties.filter((property) => {
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+    const matchesCode = property.propertyCode?.toLowerCase().includes(query);
+    const matchesTitle = property.title?.toLowerCase().includes(query);
+    const matchesLocation = typeof property.location === "string"
+      ? false
+      : property.location?.title?.toLowerCase().includes(query);
+
+    return matchesCode || matchesTitle || matchesLocation;
+  });
+
   const stats = {
     total: properties.length,
     active: properties.filter((p) => p.status === "active").length,
@@ -894,6 +931,22 @@ const AdminPropertiesPage = () => {
         </Drawer>
       </div>
 
+      {/* Search Bar */}
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          placeholder="Search by property code, title, or location..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="rounded-xl flex-1"
+        />
+        {searchQuery && (
+          <Button variant="outline" onClick={() => setSearchQuery("")} className="rounded-xl">
+            Clear
+          </Button>
+        )}
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 flex flex-col items-center">
@@ -914,10 +967,12 @@ const AdminPropertiesPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
           <div>Loading...</div>
-        ) : properties.length === 0 ? (
-          <div>No properties found.</div>
+        ) : filteredProperties.length === 0 ? (
+          <div className="col-span-full text-center py-8 text-muted-foreground">
+            {searchQuery ? `No properties found matching "${searchQuery}"` : "No properties found."}
+          </div>
         ) : (
-          properties.map((property) => <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />)
+          filteredProperties.map((property) => <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />)
         )}
       </div>
 

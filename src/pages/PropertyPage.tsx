@@ -389,6 +389,7 @@ export default function PropertyPage() {
     // Create WhatsApp message template with property details
     const getWhatsAppMessage = () => {
       const propertyName = product?.title || "Property";
+      const propertyCode = product?.propertyCode || "";
       const location = typeof product?.location === "string" ? product?.location : product?.location?.title || "Location";
       const price = product?.price?.[0]?.amount || "N/A";
       const propertyTypeCategory =
@@ -397,8 +398,8 @@ export default function PropertyPage() {
       const message = `Hi, I'm interested in this property:
 
 *${propertyName}*
-Location: ${location}
-${propertyTypeCategory ? ` Type: ${propertyTypeCategory}\n` : ""} Price: ₹${price}/Month
+${propertyCode ? `Property Code: ${propertyCode}\n` : ""}Location: ${location}
+${propertyTypeCategory ? `Type: ${propertyTypeCategory}\n` : ""}Price: ₹${price}/Month
 
 I would like to know more details. Please contact me.`;
 
@@ -520,14 +521,20 @@ I would like to know more details. Please contact me.`;
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
-          {/* Property Type Category Badge */}
-          {product?.propertyTypeCategory && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Property Code Badge */}
+            {product?.propertyCode && (
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-800 border border-gray-300">
+                Code: {product.propertyCode}
+              </span>
+            )}
+            {/* Property Type Category Badge */}
+            {product?.propertyTypeCategory && (
               <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
                 {typeof product.propertyTypeCategory === "string" ? product.propertyTypeCategory : product.propertyTypeCategory.name}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <ImageGallery images={product?.images || []} />
