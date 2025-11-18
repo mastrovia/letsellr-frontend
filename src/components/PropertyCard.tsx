@@ -77,7 +77,7 @@ export default function PropertyCard(data: Property) {
           <p className="text-sm text-gray-500 sm:flex gap-1 hidden">
             {data?.amenity
               ?.split(",")
-              ?.filter((e) => e)
+              ?.filter((e) => e?.trim())
               ?.slice(0, 3)
               ?.map((value) => {
                 const title = value?.trim();

@@ -561,7 +561,7 @@ I would like to know more details. Please contact me.`;
               <div className="grid md:grid-cols-2 gap-3">
                 {product.amenity
                   ?.split(",")
-                  ?.filter((e) => e)
+                  ?.filter((e) => e?.trim())
                   ?.map((value, i) => {
                     const amenity = value?.trim();
                     const Icon = getAmenityIcon(amenity);
