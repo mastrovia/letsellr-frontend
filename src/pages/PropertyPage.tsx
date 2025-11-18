@@ -24,6 +24,7 @@ import {
   Wifi,
   CookingPot,
   BookOpenCheck,
+  GraduationCap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -40,7 +41,7 @@ const iconMappings = [
   { keywords: ["ac", "air conditioner", "air conditioning"], icon: AirVent },
   { keywords: ["parking", "car parking", "bike parking"], icon: ParkingCircle },
   { keywords: ["kitchen", "cooking", "bike parking"], icon: CookingPot },
-  { keywords: ["study", "study-room"], icon: CookingPot },
+  { keywords: ["study", "study-room"], icon: GraduationCap },
 ];
 
 const getAmenityIcon = (amenity: string) => {
@@ -551,24 +552,27 @@ I would like to know more details. Please contact me.`;
             <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <h1 className="text-xl md:text-3xl flex items-center gap-1">What this place offers</h1>
               <div className="grid md:grid-cols-2 gap-3">
-                {product.amenity?.split(",")?.map((value, i) => {
-                  const amenity = value?.trim();
-                  const Icon = getAmenityIcon(amenity);
+                {product.amenity
+                  ?.split(",")
+                  ?.filter((e) => e)
+                  ?.map((value, i) => {
+                    const amenity = value?.trim();
+                    const Icon = getAmenityIcon(amenity);
 
-                  return (
-                    <div
-                      key={i}
-                      className="group flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
-                    >
-                      <div className="p-1.5 bg-gray-800 rounded-md group-hover:bg-gray-900 transition-all duration-300">
-                        <Icon className="w-4 h-4 text-white" />
+                    return (
+                      <div
+                        key={i}
+                        className="group flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
+                      >
+                        <div className="p-1.5 bg-gray-800 rounded-md group-hover:bg-gray-900 transition-all duration-300">
+                          <Icon className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="font-medium text-gray-700 text-sm group-hover:text-gray-900 transition-colors duration-300">
+                          {amenity}
+                        </span>
                       </div>
-                      <span className="font-medium text-gray-700 text-sm group-hover:text-gray-900 transition-colors duration-300">
-                        {amenity}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
 
