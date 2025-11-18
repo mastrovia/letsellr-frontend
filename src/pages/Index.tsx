@@ -30,7 +30,7 @@ const Index = () => {
 
   const fetchLocations = async () => {
     try {
-      const res = await instance.get("/location/fulllocations");
+      const res = await instance.get("/location/fulllocations?onlyImportantLocations=true");
       setLocations(res.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
