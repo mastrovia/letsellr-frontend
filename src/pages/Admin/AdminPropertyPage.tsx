@@ -138,20 +138,13 @@ const PropertyForm = ({
 }) => (
   <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
     {/* Property Code - Only show for editing existing properties */}
-    {isEditing && formData.propertyCode && (
+    {
       <div>
         <label className="block text-sm font-medium mb-2">Property Code</label>
-        <Input
-          name="propertyCode"
-          value={formData.propertyCode}
-          onChange={onChange}
-          placeholder="4-5 digit code"
-          className="rounded-xl"
-          maxLength={5}
-        />
-        <p className="text-xs text-gray-500 mt-1">You can update this code. Must be 4-5 digits and unique.</p>
+        <Input name="propertyCode" value={formData.propertyCode} onChange={onChange} placeholder="4-5 digit code" className="rounded-xl" />
+        <p className="text-xs text-gray-500 mt-1">You can update this code. must be unique.</p>
       </div>
-    )}
+    }
 
     <div>
       <label className="block text-sm font-medium mb-2">Title *</label>
@@ -406,9 +399,7 @@ const PropertyCard = ({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title || "Untitled"}</h3>
-              {property.propertyCode && (
-                <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>
-              )}
+              {property.propertyCode && <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>}
             </div>
             {property.status && (
               <span
@@ -816,9 +807,7 @@ const AdminPropertiesPage = () => {
     const query = searchQuery.toLowerCase();
     const matchesCode = property.propertyCode?.toLowerCase().includes(query);
     const matchesTitle = property.title?.toLowerCase().includes(query);
-    const matchesLocation = typeof property.location === "string"
-      ? false
-      : property.location?.title?.toLowerCase().includes(query);
+    const matchesLocation = typeof property.location === "string" ? false : property.location?.title?.toLowerCase().includes(query);
 
     return matchesCode || matchesTitle || matchesLocation;
   });
@@ -972,7 +961,9 @@ const AdminPropertiesPage = () => {
             {searchQuery ? `No properties found matching "${searchQuery}"` : "No properties found."}
           </div>
         ) : (
-          filteredProperties.map((property) => <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />)
+          filteredProperties.map((property) => (
+            <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />
+          ))
         )}
       </div>
 
