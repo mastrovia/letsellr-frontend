@@ -39,6 +39,7 @@ const FloatingContactIcons = () => {
 
 *${propertyName}*
  Location: ${location}
+ Code : ${currentProduct?.propertyCode || "N/A"}
 ${propertyTypeCategory ? ` Type: ${propertyTypeCategory}\n` : ""} Price: ₹${price}/Month
 
 I would like to know more details. Please contact me.`;
