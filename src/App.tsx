@@ -27,33 +27,33 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <FloatingContactIcons />
         <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/property/:propertyId" element={<PropertyPage />} />
+          <FloatingContactIcons />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/property/:propertyId" element={<PropertyPage />} />
 
-          {/* Admin Layout with Nested Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="properties" element={<AdminPropertiesPage />} />
-            <Route path="locations" element={<AdminLocationPage />} />
-            <Route path="property-types" element={<AdminPropertyTypePage />} />
-            <Route path="reviews" element={<AdminReviewsPage />} />
-            <Route path="setup" element={<AdminSetupPage />} />
-            {/* <Route path="users" element={<AdminUsersPage />} /> */}
-            {/* <Route path="categories" element={<AdminCategory />} /> */}
-          </Route>
+            {/* Admin Layout with Nested Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="properties" element={<AdminPropertiesPage />} />
+              <Route path="locations" element={<AdminLocationPage />} />
+              <Route path="property-types" element={<AdminPropertyTypePage />} />
+              <Route path="reviews" element={<AdminReviewsPage />} />
+              <Route path="setup" element={<AdminSetupPage />} />
+              {/* <Route path="users" element={<AdminUsersPage />} /> */}
+              {/* <Route path="categories" element={<AdminCategory />} /> */}
+            </Route>
 
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </PropertyProvider>
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </PropertyProvider>
   </QueryClientProvider>
 );
 

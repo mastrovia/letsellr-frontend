@@ -2,10 +2,15 @@ import { Phone } from "lucide-react";
 import { useState, useEffect } from "react";
 import instance from "@/lib/axios";
 import { useProperty } from "@/contexts/PropertyContext";
+import { useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 const FloatingContactIcons = () => {
   const [defaultPhoneNumber, setDefaultPhoneNumber] = useState("");
   const { currentProduct } = useProperty();
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith("/admin");
+  // const resolvedPath = useResolvedPath("");
 
   // Fetch default phone number from settings
   useEffect(() => {
@@ -61,7 +66,7 @@ I would like to know more details. Please contact me.`;
     : `https://wa.me/+91${phoneNumber.replace(/[^0-9]/g, "")}`;
 
   return (
-    <div className="fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4">
+    <div className={cn("fixed bottom-24 md:bottom-8 right-3 md:right-6 z-50 flex flex-col gap-2 md:gap-4", isAdminPage && "hidden")}>
       {/* Phone Icon */}
       <a
         href={`tel:+91${phoneNumber}`}
