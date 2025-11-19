@@ -1,4 +1,4 @@
-import { MapPin, Eye, Star, Edit, Trash2, Plus, Upload, Save, LinkIcon } from "lucide-react";
+import { MapPin, Eye, Star, Edit, Trash2, Plus, Upload, Save, LinkIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -403,9 +403,8 @@ const PropertyCard = ({
             </div>
             {property.status && (
               <span
-                className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${
-                  property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
-                }`}
+                className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${property.status === "active" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
+                  }`}
               >
                 {property.status}
               </span>
@@ -517,6 +516,12 @@ const AdminPropertiesPage = () => {
   const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const itemsPerPage = 12;
+
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
@@ -528,17 +533,32 @@ const AdminPropertiesPage = () => {
 
   // Fetch properties, locations, and property types
   useEffect(() => {
-    fetchProperties();
     fetchLocations();
     fetchPropertyTypes();
   }, []);
 
+  // Fetch properties when page or search changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProperties();
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timer);
+  }, [currentPage, searchQuery]);
+
   const fetchProperties = async () => {
     setIsLoading(true);
     try {
-      const res = await instance.get("/show/allproperty", { withCredentials: true });
-      const data = Array.isArray(res.data.data) ? res.data.data : [];
+      const params = new URLSearchParams();
+      params.append("page", currentPage.toString());
+      params.append("limit", itemsPerPage.toString());
+      if (searchQuery) params.append("query", searchQuery);
+
+      const res = await instance.get(`/show/allproperty?${params.toString()}`, { withCredentials: true });
+      const data = Array.isArray(res.data.properties) ? res.data.properties : [];
       setProperties(data);
+      setTotalPages(res.data.totalpages || 1);
+      setTotalProperties(res.data.totalproperty || 0);
     } catch (error) {
       console.error(error);
       setProperties([]);
@@ -646,6 +666,7 @@ const AdminPropertiesPage = () => {
       setProperties((prev) => prev.filter((p) => p._id !== currentProperty._id));
       setDeleteDialogOpen(false);
       setCurrentProperty(null);
+      fetchProperties(); // Refetch to update pagination
 
       setNotification("Property deleted successfully!");
       setTimeout(() => setNotification(null), 3000);
@@ -767,22 +788,13 @@ const AdminPropertiesPage = () => {
       if (currentProperty) {
         await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, { withCredentials: true });
         // refetch all properties
-        const res = await instance.get("/show/allproperty", { withCredentials: true });
-        if (Array.isArray(res.data.data)) setProperties(res.data.data);
+        fetchProperties();
       } else {
         response = await instance.post("/property/addproperty", payload, {
           withCredentials: true,
         });
 
-        const res = await instance.get("/show/allproperty", { withCredentials: true });
-        console.log(res.data);
-
-        if (Array.isArray(res.data.data)) {
-          setProperties(res.data.data); // <-- use the inner array
-        } else {
-          console.warn("Expected an array of properties, got:", res.data.data);
-          setProperties([]); // fallback
-        }
+        fetchProperties();
       }
 
       handleCloseForm();
@@ -800,22 +812,11 @@ const AdminPropertiesPage = () => {
     setFormData(INITIAL_FORM_STATE);
   };
 
-  // Filter properties based on search query
-  const filteredProperties = properties.filter((property) => {
-    if (!searchQuery.trim()) return true;
-
-    const query = searchQuery.toLowerCase();
-    const matchesCode = property.propertyCode?.toLowerCase().includes(query);
-    const matchesTitle = property.title?.toLowerCase().includes(query);
-    const matchesLocation = typeof property.location === "string" ? false : property.location?.title?.toLowerCase().includes(query);
-
-    return matchesCode || matchesTitle || matchesLocation;
-  });
-
-  const stats = {
-    total: properties.length,
-    active: properties.filter((p) => p.status === "active").length,
-    inactive: properties.filter((p) => p.status !== "active").length,
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -926,11 +927,17 @@ const AdminPropertiesPage = () => {
           type="text"
           placeholder="Search by property code, title, or location..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setCurrentPage(1); // Reset to page 1 on search
+          }}
           className="rounded-xl flex-1"
         />
         {searchQuery && (
-          <Button variant="outline" onClick={() => setSearchQuery("")} className="rounded-xl">
+          <Button variant="outline" onClick={() => {
+            setSearchQuery("");
+            setCurrentPage(1);
+          }} className="rounded-xl">
             Clear
           </Button>
         )}
@@ -940,32 +947,71 @@ const AdminPropertiesPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 flex flex-col items-center">
           <span className="text-muted-foreground">Total Properties</span>
-          <span className="text-2xl font-bold">{stats.total}</span>
+          <span className="text-2xl font-bold">{totalProperties}</span>
         </Card>
-        <Card className="p-4 flex flex-col items-center">
+        {/* <Card className="p-4 flex flex-col items-center">
           <span className="text-muted-foreground">Active</span>
           <span className="text-2xl font-bold">{stats.active}</span>
         </Card>
         <Card className="p-4 flex flex-col items-center">
           <span className="text-muted-foreground">Inactive</span>
           <span className="text-2xl font-bold">{stats.inactive}</span>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Property List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
           <div>Loading...</div>
-        ) : filteredProperties.length === 0 ? (
+        ) : properties.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
             {searchQuery ? `No properties found matching "${searchQuery}"` : "No properties found."}
           </div>
         ) : (
-          filteredProperties.map((property) => (
+          properties.map((property) => (
             <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />
           ))
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-10 w-10 rounded-full"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handlePageChange(page)}
+                className={`h-10 w-10 rounded-full ${currentPage === page ? "pointer-events-none" : ""}`}
+              >
+                {page}
+              </Button>
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-10 w-10 rounded-full"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Delete Alert */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

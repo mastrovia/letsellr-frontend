@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories } from "@/db";
 import instance from "@/lib/axios";
-import { Search, MapPin, Filter, X } from "lucide-react";
+import { Search, MapPin, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -89,6 +89,11 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 12;
+
   // Fetch locations from API
   const fetchLocations = async () => {
     try {
@@ -149,13 +154,18 @@ export default function SearchPage() {
         params.append("maxPrice", String(maxV));
       }
 
+      // Pagination params
+      params.append("page", currentPage.toString());
+      params.append("limit", itemsPerPage.toString());
+
       const response = await instance.get(`/show/allproperty/?${params.toString()}`);
       // const data = await response.json();
       setProperties(response.data.properties);
+      setTotalPages(response.data.totalpages || 1);
       console.log(response.data.properties);
 
       // Simulating API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // For now, set empty array (replace with actual API response)
       // setProperties(sampleProperties);
@@ -205,6 +215,9 @@ export default function SearchPage() {
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
 
+    // Sync page to URL
+    if (currentPage > 1) params.set("page", currentPage.toString());
+
     const next = params.toString();
     const current = searchParams.toString();
 
@@ -212,14 +225,22 @@ export default function SearchPage() {
     if (next !== current) {
       setSearchParams(params, { replace: true });
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice, currentPage]);
 
   // Fetch properties when filters change
   useEffect(() => {
     if (isInitialized) {
       fetchProperties();
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
+  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice, currentPage]);
+
+  // Reset page when filters change (except page itself)
+  useEffect(() => {
+    if (isInitialized) {
+      setCurrentPage(1);
+    }
+  }, [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
+
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -229,6 +250,14 @@ export default function SearchPage() {
     setSelectedPropertyTypeCategory("");
     setMinPrice("");
     setMaxPrice("");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const hasActiveFilters = Boolean(
@@ -274,7 +303,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
-                  // disabled={isLoading}
+                // disabled={isLoading}
                 />
               </div>
 
@@ -400,7 +429,7 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
-                // disabled={isLoading}
+              // disabled={isLoading}
               />
             </div>
 
@@ -584,9 +613,45 @@ export default function SearchPage() {
                     </Link>
                   ))}
                 </div>
-                {/* <div className="text-center">
-                  <Button className="rounded-2xl">Load more</Button>
-                </div> */}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-8">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="h-10 w-10 rounded-full"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => handlePageChange(page)}
+                          className={`h-10 w-10 rounded-full ${currentPage === page ? "pointer-events-none" : ""}`}
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="h-10 w-10 rounded-full"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200">
