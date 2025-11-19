@@ -17,6 +17,8 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import instance from "@/lib/axios";
+import { PropertyCardSkeleton } from "@/components/skeletons";
+import { toast } from "sonner";
 
 // Types
 interface PriceOption {
@@ -127,7 +129,7 @@ const PropertyForm = ({
   descriptionRef: React.RefObject<HTMLTextAreaElement>;
   categoryRef: React.RefObject<HTMLSelectElement>;
   priceRef: React.RefObject<HTMLDivElement>;
-  locationRef: React.RefObject<HTMLInputElement>;
+  locationRef: React.RefObject<HTMLSelectElement>;
   amenityRef: React.RefObject<HTMLInputElement>;
   contactRef: React.RefObject<HTMLInputElement>;
   imagesRef: React.RefObject<HTMLInputElement>;
@@ -223,7 +225,7 @@ const PropertyForm = ({
     <div>
       <label className="block text-sm font-medium mb-2">Location *</label>
       <select
-        ref={locationRef as React.RefObject<HTMLSelectElement>}
+        ref={locationRef}
         name="location"
         value={typeof formData.location === "string" ? formData.location : (formData.location as Location)?._id || ""}
         onChange={onChange}
@@ -390,7 +392,7 @@ const PropertyCard = ({
   const firstPrice = property.price?.[0]?.amount;
 
   return (
-    <Card className="p-4 sm:p-6 border-border hover:shadow-lg transition-shadow">
+    <Card className="p-4 sm:p-5 border-border hover:shadow-lg transition-shadow relative flex flex-col justify-between">
       <div className="flex gap-3 sm:gap-4">
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
           <img src={firstImage} alt={property.title || "Property Image"} className="w-full h-full object-cover" />
@@ -399,7 +401,6 @@ const PropertyCard = ({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground text-base sm:text-lg truncate">{property.title || "Untitled"}</h3>
-              {property.propertyCode && <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>}
             </div>
             {property.status && (
               <span
@@ -421,14 +422,17 @@ const PropertyCard = ({
                 <p className="text-xs text-muted-foreground/70 line-clamp-1">{(property.location as Location)?.description}</p>
               )}
             </div>
-            {/* Property Type Category Badge */}
-            {property.propertyTypeCategory && typeof property.propertyTypeCategory !== "string" && (
-              <div className="mt-1">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                  {(property.propertyTypeCategory as PropertyType).name}
-                </span>
-              </div>
-            )}
+            <div className="absolute top-4 right-4 flex flex-row-reverse items-center gap-2">
+              {/* Property Type Category Badge */}
+              {property.propertyTypeCategory && typeof property.propertyTypeCategory !== "string" && (
+                <div className="">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                    {(property.propertyTypeCategory as PropertyType).name}
+                  </span>
+                </div>
+              )}
+              {property.propertyCode && <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
@@ -455,46 +459,45 @@ const PropertyCard = ({
               </div>
             )}
           </div>
-
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="hidden md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-              onClick={() => onEdit(property)}
-            >
-              <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Edit</span>
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="md:hidden flex-1 rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-              onClick={() => onEdit(property, true)}
-            >
-              <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Edit</span>
-            </Button>
-            <Link to={`/property/${property._id}`} className="flex-1">
-              <Button
-                size="sm"
-                variant="outline"
-                className="w-full rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
-              >
-                <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-                <span className="hidden sm:inline">View</span>
-              </Button>
-            </Link>
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600 px-2 sm:px-3"
-              onClick={() => onDelete(property)}
-            >
-              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
-          </div>
         </div>
+      </div>
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="hidden md:flex rounded-lg flex-1 hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+          onClick={() => onEdit(property)}
+        >
+          <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+          <span className="hidden sm:inline">Edit</span>
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="md:hidden flex-1 rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+          onClick={() => onEdit(property, true)}
+        >
+          <Edit className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+          <span className="hidden sm:inline">Edit</span>
+        </Button>
+        <Link to={`/property/${property._id}`} className="flex-1">
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full rounded-lg hover:bg-primary/5 hover:text-primary hover:border-primary text-xs sm:text-sm"
+          >
+            <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+            <span className="hidden sm:inline">View</span>
+          </Button>
+        </Link>
+        <Button
+          size="sm"
+          variant="outline"
+          className="rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-600 px-2 sm:px-3"
+          onClick={() => onDelete(property)}
+        >
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
       </div>
     </Card>
   );
@@ -526,7 +529,7 @@ const AdminPropertiesPage = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const priceRef = useRef<HTMLDivElement>(null);
-  const locationRef = useRef<HTMLInputElement>(null);
+  const locationRef = useRef<HTMLSelectElement>(null);
   const amenityRef = useRef<HTMLInputElement>(null);
   const contactRef = useRef<HTMLInputElement>(null);
   const imagesRef = useRef<HTMLInputElement>(null);
@@ -561,6 +564,7 @@ const AdminPropertiesPage = () => {
       setTotalProperties(res.data.totalproperty || 0);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to fetch properties");
       setProperties([]);
     } finally {
       setIsLoading(false);
@@ -669,9 +673,11 @@ const AdminPropertiesPage = () => {
       fetchProperties(); // Refetch to update pagination
 
       setNotification("Property deleted successfully!");
+      toast.success("Property deleted successfully");
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
       console.error("Error deleting property:", error);
+      toast.error("Failed to delete property");
     } finally {
       setIsSubmitting(false);
     }
@@ -685,12 +691,6 @@ const AdminPropertiesPage = () => {
       setFormData((prev) => ({
         ...prev,
         newImages: [...(prev.newImages || []), ...Array.from(files)],
-      }));
-    } else if (name.startsWith("location.")) {
-      const field = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        location: { ...prev.location!, [field]: value },
       }));
     } else if (name === "category") {
       const category = CATEGORIES.find((c) => c._id === value);
@@ -960,19 +960,25 @@ const AdminPropertiesPage = () => {
       </div>
 
       {/* Property List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : properties.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-muted-foreground">
-            {searchQuery ? `No properties found matching "${searchQuery}"` : "No properties found."}
-          </div>
-        ) : (
-          properties.map((property) => (
-            <PropertyCard key={property._id} property={property} onEdit={handleEdit} onDelete={handleDelete} />
-          ))
-        )}
-      </div>
+      {/* Properties Grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <PropertyCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
+          {properties.map((property) => (
+            <PropertyCard
+              key={property._id}
+              property={property}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Pagination Controls */}
       {totalPages > 1 && (

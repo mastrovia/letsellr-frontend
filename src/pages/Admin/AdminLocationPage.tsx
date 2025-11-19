@@ -1,4 +1,4 @@
-import { MapPin, Edit, Trash2, Plus, Save, X, Star } from "lucide-react";
+import { MapPin, Edit, Trash2, Plus, Save, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ import { useState, useEffect } from "react";
 import instance from "@/lib/axios";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { LocationSkeleton } from "@/components/skeletons";
+import { toast } from "sonner";
 
 // Types
 interface Location {
@@ -41,15 +43,20 @@ const AdminLocationPage = () => {
     googleMapUrl: "",
     importantLocation: false,
   });
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch all locations
   const fetchLocations = async () => {
+    setIsLoading(true);
     try {
       const response = await instance.get("/location");
       setLocations(response.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
+      toast.error("Failed to fetch locations");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,43 +78,45 @@ const AdminLocationPage = () => {
   // Add new location
   const handleAddLocation = async () => {
     if (!formData.title || !formData.googleMapUrl) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.post("/location", formData);
       await fetchLocations();
       setIsAddDialogOpen(false);
       setFormData({ title: "", description: "", googleMapUrl: "", importantLocation: false });
+      toast.success("Location added successfully");
     } catch (error: any) {
       console.error("Error adding location:", error);
-      alert(error.response?.data?.message || "Failed to add location");
+      toast.error(error.response?.data?.message || "Failed to add location");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   // Edit location
   const handleEditLocation = async () => {
     if (!editingLocation || !formData.title || !formData.googleMapUrl) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.put(`/location/${editingLocation._id}`, formData);
       await fetchLocations();
       setIsEditDialogOpen(false);
       setEditingLocation(null);
       setFormData({ title: "", description: "", googleMapUrl: "", importantLocation: false });
+      toast.success("Location updated successfully");
     } catch (error: any) {
       console.error("Error updating location:", error);
-      alert(error.response?.data?.message || "Failed to update location");
+      toast.error(error.response?.data?.message || "Failed to update location");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -115,16 +124,17 @@ const AdminLocationPage = () => {
   const handleDeleteLocation = async () => {
     if (!deleteLocationId) return;
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.delete(`/location/${deleteLocationId}`);
       await fetchLocations();
       setDeleteLocationId(null);
+      toast.success("Location deleted successfully");
     } catch (error: any) {
       console.error("Error deleting location:", error);
-      alert(error.response?.data?.message || "Failed to delete location. It may be associated with properties.");
+      toast.error(error.response?.data?.message || "Failed to delete location. It may be associated with properties.");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -197,9 +207,9 @@ const AdminLocationPage = () => {
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAddLocation} disabled={loading}>
+              <Button onClick={handleAddLocation} disabled={isSubmitting}>
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? "Saving..." : "Save Location"}
+                {isSubmitting ? "Saving..." : "Save Location"}
               </Button>
             </div>
           </DialogContent>
@@ -208,7 +218,9 @@ const AdminLocationPage = () => {
 
       {/* Locations Grid */}
       <div className="grid gap-4">
-        {locations.length === 0 ? (
+        {isLoading ? (
+          [...Array(5)].map((_, i) => <LocationSkeleton key={i} />)
+        ) : locations.length === 0 ? (
           <Card className="p-8 text-center">
             <MapPin className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">No locations found. Add your first location!</p>
@@ -293,9 +305,9 @@ const AdminLocationPage = () => {
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEditLocation} disabled={loading}>
+            <Button onClick={handleEditLocation} disabled={isSubmitting}>
               <Save className="h-4 w-4 mr-2" />
-              {loading ? "Updating..." : "Update Location"}
+              {isSubmitting ? "Updating..." : "Update Location"}
             </Button>
           </div>
         </DialogContent>
@@ -312,8 +324,8 @@ const AdminLocationPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteLocation} disabled={loading}>
-              {loading ? "Deleting..." : "Delete"}
+            <AlertDialogAction onClick={handleDeleteLocation} disabled={isSubmitting}>
+              {isSubmitting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

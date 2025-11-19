@@ -5,14 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import instance from "@/lib/axios";
+import { toast } from "sonner";
 
 const AdminSetupPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
 
   // Fetch current phone number
   const fetchPhoneNumber = async () => {
@@ -25,6 +22,7 @@ const AdminSetupPage = () => {
       // If setting doesn't exist yet, that's okay
       if (error.response?.status !== 404) {
         console.error("Error fetching phone number:", error);
+        toast.error("Failed to fetch phone number");
       }
     }
   };
@@ -36,22 +34,14 @@ const AdminSetupPage = () => {
   const handleSave = async () => {
     // Validate phone number
     if (!phoneNumber.trim()) {
-      setNotification({
-        type: "error",
-        message: "Please enter a phone number",
-      });
-      setTimeout(() => setNotification(null), 3000);
+      toast.error("Please enter a phone number");
       return;
     }
 
     // Basic phone number validation (10 digits)
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(phoneNumber.trim())) {
-      setNotification({
-        type: "error",
-        message: "Please enter a valid 10-digit phone number",
-      });
-      setTimeout(() => setNotification(null), 3000);
+      toast.error("Please enter a valid 10-digit phone number");
       return;
     }
 
@@ -63,18 +53,10 @@ const AdminSetupPage = () => {
         description: "Default phone number for contact",
       });
 
-      setNotification({
-        type: "success",
-        message: "Phone number saved successfully!",
-      });
-      setTimeout(() => setNotification(null), 3000);
+      toast.success("Phone number saved successfully!");
     } catch (error: any) {
       console.error("Error saving phone number:", error);
-      setNotification({
-        type: "error",
-        message: error.response?.data?.message || "Failed to save phone number",
-      });
-      setTimeout(() => setNotification(null), 3000);
+      toast.error(error.response?.data?.message || "Failed to save phone number");
     } finally {
       setLoading(false);
     }
@@ -82,18 +64,6 @@ const AdminSetupPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Notification */}
-      {notification && (
-        <div
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${notification.type === "success"
-              ? "bg-green-500 text-white"
-              : "bg-red-500 text-white"
-            }`}
-        >
-          {notification.message}
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

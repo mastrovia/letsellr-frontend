@@ -16,6 +16,8 @@ import {
 import { useState, useEffect } from "react";
 import instance from "@/lib/axios";
 import { Label } from "@/components/ui/label";
+import { LocationSkeleton } from "@/components/skeletons";
+import { toast } from "sonner";
 
 // Types
 interface PropertyType {
@@ -36,15 +38,20 @@ const AdminPropertyTypePage = () => {
     name: "",
     description: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch all property types
   const fetchPropertyTypes = async () => {
+    setIsLoading(true);
     try {
       const response = await instance.get("/propertytype");
       setPropertyTypes(response.data.data || []);
     } catch (error) {
       console.error("Error fetching property types:", error);
+      toast.error("Failed to fetch property types");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,43 +68,45 @@ const AdminPropertyTypePage = () => {
   // Add new property type
   const handleAddPropertyType = async () => {
     if (!formData.name) {
-      alert("Please enter a property type name");
+      toast.error("Please enter a property type name");
       return;
     }
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.post("/propertytype", formData);
       await fetchPropertyTypes();
       setIsAddDialogOpen(false);
       setFormData({ name: "", description: "" });
+      toast.success("Property type added successfully");
     } catch (error: any) {
       console.error("Error adding property type:", error);
-      alert(error.response?.data?.message || "Failed to add property type");
+      toast.error(error.response?.data?.message || "Failed to add property type");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   // Edit property type
   const handleEditPropertyType = async () => {
     if (!editingPropertyType || !formData.name) {
-      alert("Please enter a property type name");
+      toast.error("Please enter a property type name");
       return;
     }
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.put(`/propertytype/${editingPropertyType._id}`, formData);
       await fetchPropertyTypes();
       setIsEditDialogOpen(false);
       setEditingPropertyType(null);
       setFormData({ name: "", description: "" });
+      toast.success("Property type updated successfully");
     } catch (error: any) {
       console.error("Error updating property type:", error);
-      alert(error.response?.data?.message || "Failed to update property type");
+      toast.error(error.response?.data?.message || "Failed to update property type");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -105,16 +114,17 @@ const AdminPropertyTypePage = () => {
   const handleDeletePropertyType = async () => {
     if (!deletePropertyTypeId) return;
 
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await instance.delete(`/propertytype/${deletePropertyTypeId}`);
       await fetchPropertyTypes();
       setDeletePropertyTypeId(null);
+      toast.success("Property type deleted successfully");
     } catch (error: any) {
       console.error("Error deleting property type:", error);
-      alert(error.response?.data?.message || "Failed to delete property type. It may be associated with properties.");
+      toast.error(error.response?.data?.message || "Failed to delete property type. It may be associated with properties.");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -174,9 +184,9 @@ const AdminPropertyTypePage = () => {
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAddPropertyType} disabled={loading}>
+              <Button onClick={handleAddPropertyType} disabled={isSubmitting}>
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? "Saving..." : "Save Property Type"}
+                {isSubmitting ? "Saving..." : "Save Property Type"}
               </Button>
             </div>
           </DialogContent>
@@ -185,7 +195,9 @@ const AdminPropertyTypePage = () => {
 
       {/* Property Types Grid */}
       <div className="grid gap-4">
-        {propertyTypes.length === 0 ? (
+        {isLoading ? (
+          [...Array(5)].map((_, i) => <LocationSkeleton key={i} />)
+        ) : propertyTypes.length === 0 ? (
           <Card className="p-8 text-center">
             <Tag className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">No property types found. Add your first property type!</p>
@@ -250,9 +262,9 @@ const AdminPropertyTypePage = () => {
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEditPropertyType} disabled={loading}>
+            <Button onClick={handleEditPropertyType} disabled={isSubmitting}>
               <Save className="h-4 w-4 mr-2" />
-              {loading ? "Updating..." : "Update Property Type"}
+              {isSubmitting ? "Updating..." : "Update Property Type"}
             </Button>
           </div>
         </DialogContent>
@@ -269,8 +281,8 @@ const AdminPropertyTypePage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletePropertyType} disabled={loading}>
-              {loading ? "Deleting..." : "Delete"}
+            <AlertDialogAction onClick={handleDeletePropertyType} disabled={isSubmitting}>
+              {isSubmitting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
