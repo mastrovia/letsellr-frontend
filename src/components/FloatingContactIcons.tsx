@@ -16,7 +16,7 @@ const FloatingContactIcons = () => {
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       try {
-        const response = await instance.get("/settings/get/default_phone_number");
+        const response = await instance.get("/settings/default_phone_number");
         if (response.data.success) {
           setDefaultPhoneNumber(response.data.data.value || "");
         }

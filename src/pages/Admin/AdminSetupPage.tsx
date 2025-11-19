@@ -17,7 +17,7 @@ const AdminSetupPage = () => {
   // Fetch current phone number
   const fetchPhoneNumber = async () => {
     try {
-      const response = await instance.get("/settings/get/default_phone_number");
+      const response = await instance.get("/settings/default_phone_number");
       if (response.data.success) {
         setPhoneNumber(response.data.data.value || "");
       }
@@ -57,7 +57,7 @@ const AdminSetupPage = () => {
 
     setLoading(true);
     try {
-      await instance.post("/settings/update", {
+      await instance.post("/settings", {
         key: "default_phone_number",
         value: phoneNumber.trim(),
         description: "Default phone number for contact",
@@ -85,11 +85,10 @@ const AdminSetupPage = () => {
       {/* Notification */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
-            notification.type === "success"
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${notification.type === "success"
               ? "bg-green-500 text-white"
               : "bg-red-500 text-white"
-          }`}
+            }`}
         >
           {notification.message}
         </div>

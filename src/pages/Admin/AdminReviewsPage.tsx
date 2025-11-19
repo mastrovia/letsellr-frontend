@@ -76,7 +76,7 @@ const AdminReviewsPage = () => {
 
   const reviewfind = async () => {
     try {
-      const response = await instance.get("/feedback/getallfeedbacks");
+      const response = await instance.get("/feedback");
       setreviews(response.data.data);
       setreviewcount(response.data.count);
       console.log(response.data.data);
@@ -93,7 +93,7 @@ const AdminReviewsPage = () => {
     if (!deletingId) return;
     setIsSubmitting(true);
     try {
-      await instance.delete(`/feedback/deletefeedback/${deletingId}`);
+      await instance.delete(`/feedback/${deletingId}`);
       setreviews((prev) => prev.filter((review) => review._id !== deletingId));
       setDeleteDialogOpen(false);
       setDeletingId(null);

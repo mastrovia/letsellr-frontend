@@ -231,7 +231,7 @@ export default function PropertyPage() {
     try {
       // TODO: Replace with your actual API endpoint
       // const response = await fetch(/api/properties/${propertyId});
-      const response = await instance.get(`/property/findproperty/${propertyId}`);
+      const response = await instance.get(`/property/${propertyId}`);
       // console.log(response.data.property)
       // const data = await response.json();
       const propertyData = response.data.property;
@@ -256,7 +256,7 @@ export default function PropertyPage() {
 
   const fetchreviews = async () => {
     try {
-      const response = await instance.get(`/feedback/getfeedbacks/${propertyId}`);
+      const response = await instance.get(`/feedback/property/${propertyId}`);
       setAllReviews(response.data.data);
       console.log(response.data.data);
     } catch (err) {
@@ -267,7 +267,7 @@ export default function PropertyPage() {
   // Fetch settings phone number
   const fetchPhoneNumber = async () => {
     try {
-      const response = await instance.get("/settings/get/default_phone_number");
+      const response = await instance.get("/settings/default_phone_number");
       if (response.data.success) {
         setPhoneNumber(response.data.data.value || "");
       }
@@ -364,7 +364,7 @@ export default function PropertyPage() {
         comment: reviewForm.comment,
         timestamp: new Date().toISOString(),
       };
-      const response = await instance.post("/feedback/addfeedback", { data: reviewData });
+      const response = await instance.post("/feedback", { data: reviewData });
       console.log(response.data);
       // console.log("Review submitted:", reviewData);
       setSubmitMessage("Thank you for your review!");

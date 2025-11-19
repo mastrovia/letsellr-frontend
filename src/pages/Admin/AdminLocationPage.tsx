@@ -27,7 +27,7 @@ interface Location {
   importantLocation: boolean;
 }
 
-interface LocationFormData extends Partial<Location> {}
+interface LocationFormData extends Partial<Location> { }
 
 const AdminLocationPage = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -46,7 +46,7 @@ const AdminLocationPage = () => {
   // Fetch all locations
   const fetchLocations = async () => {
     try {
-      const response = await instance.get("/location/fulllocations");
+      const response = await instance.get("/location");
       setLocations(response.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -77,7 +77,7 @@ const AdminLocationPage = () => {
 
     setLoading(true);
     try {
-      await instance.post("/location/addlocation", formData);
+      await instance.post("/location", formData);
       await fetchLocations();
       setIsAddDialogOpen(false);
       setFormData({ title: "", description: "", googleMapUrl: "", importantLocation: false });
@@ -98,7 +98,7 @@ const AdminLocationPage = () => {
 
     setLoading(true);
     try {
-      await instance.put(`/location/updatelocation/${editingLocation._id}`, formData);
+      await instance.put(`/location/${editingLocation._id}`, formData);
       await fetchLocations();
       setIsEditDialogOpen(false);
       setEditingLocation(null);
@@ -117,7 +117,7 @@ const AdminLocationPage = () => {
 
     setLoading(true);
     try {
-      await instance.delete(`/location/deletelocation/${deleteLocationId}`);
+      await instance.delete(`/location/${deleteLocationId}`);
       await fetchLocations();
       setDeleteLocationId(null);
     } catch (error: any) {

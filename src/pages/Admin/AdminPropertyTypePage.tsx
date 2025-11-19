@@ -24,7 +24,7 @@ interface PropertyType {
   description?: string;
 }
 
-interface PropertyTypeFormData extends Partial<PropertyType> {}
+interface PropertyTypeFormData extends Partial<PropertyType> { }
 
 const AdminPropertyTypePage = () => {
   const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
@@ -41,7 +41,7 @@ const AdminPropertyTypePage = () => {
   // Fetch all property types
   const fetchPropertyTypes = async () => {
     try {
-      const response = await instance.get("/propertytype/fullpropertytypes");
+      const response = await instance.get("/propertytype");
       setPropertyTypes(response.data.data || []);
     } catch (error) {
       console.error("Error fetching property types:", error);
@@ -67,7 +67,7 @@ const AdminPropertyTypePage = () => {
 
     setLoading(true);
     try {
-      await instance.post("/propertytype/addpropertytype", formData);
+      await instance.post("/propertytype", formData);
       await fetchPropertyTypes();
       setIsAddDialogOpen(false);
       setFormData({ name: "", description: "" });
@@ -88,7 +88,7 @@ const AdminPropertyTypePage = () => {
 
     setLoading(true);
     try {
-      await instance.put(`/propertytype/updatepropertytype/${editingPropertyType._id}`, formData);
+      await instance.put(`/propertytype/${editingPropertyType._id}`, formData);
       await fetchPropertyTypes();
       setIsEditDialogOpen(false);
       setEditingPropertyType(null);
@@ -107,7 +107,7 @@ const AdminPropertyTypePage = () => {
 
     setLoading(true);
     try {
-      await instance.delete(`/propertytype/deletepropertytype/${deletePropertyTypeId}`);
+      await instance.delete(`/propertytype/${deletePropertyTypeId}`);
       await fetchPropertyTypes();
       setDeletePropertyTypeId(null);
     } catch (error: any) {

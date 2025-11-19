@@ -30,7 +30,7 @@ const Index = () => {
 
   const fetchLocations = async () => {
     try {
-      const res = await instance.get("/location/fulllocations?onlyImportantLocations=true");
+      const res = await instance.get("/location/important");
       setLocations(res.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -99,11 +99,10 @@ const Index = () => {
                         <button
                           key={loc._id}
                           onClick={() => handleLocationClick(loc.title, loc._id)}
-                          className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${
-                            location?.toLowerCase() === loc.title?.toLowerCase()
+                          className={`px-2 py-1 sm:px-2.5 sm:py-1 md:px-4 md:py-1.5 rounded-full border font-medium transition-all duration-300 hover:shadow-md whitespace-nowrap text-xs sm:text-sm md:text-base ${location?.toLowerCase() === loc.title?.toLowerCase()
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-primary/5 hover:bg-primary/15 border-primary/20 hover:border-primary/40 text-foreground"
-                          }`}
+                            }`}
                         >
                           {loc.title}
                         </button>

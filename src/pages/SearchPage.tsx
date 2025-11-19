@@ -97,7 +97,7 @@ export default function SearchPage() {
   // Fetch locations from API
   const fetchLocations = async () => {
     try {
-      const res = await instance.get("/location/fulllocations");
+      const res = await instance.get("/location");
       setLocations(res.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -108,7 +108,7 @@ export default function SearchPage() {
   // Fetch property types from API and filter for Male/Female only
   const fetchPropertyTypes = async () => {
     try {
-      const res = await instance.get("/propertytype/fullpropertytypes");
+      const res = await instance.get("/propertytype");
       const allTypes = res.data.data || [];
 
       // Filter to only show Male and Female by their IDs
@@ -158,7 +158,7 @@ export default function SearchPage() {
       params.append("page", currentPage.toString());
       params.append("limit", itemsPerPage.toString());
 
-      const response = await instance.get(`/show/allproperty/?${params.toString()}`);
+      const response = await instance.get(`/property?${params.toString()}`);
       // const data = await response.json();
       setProperties(response.data.properties);
       setTotalPages(response.data.totalpages || 1);

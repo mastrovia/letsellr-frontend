@@ -554,7 +554,7 @@ const AdminPropertiesPage = () => {
       params.append("limit", itemsPerPage.toString());
       if (searchQuery) params.append("query", searchQuery);
 
-      const res = await instance.get(`/show/allproperty?${params.toString()}`, { withCredentials: true });
+      const res = await instance.get(`/property?${params.toString()}`, { withCredentials: true });
       const data = Array.isArray(res.data.properties) ? res.data.properties : [];
       setProperties(data);
       setTotalPages(res.data.totalpages || 1);
@@ -569,7 +569,7 @@ const AdminPropertiesPage = () => {
 
   const fetchLocations = async () => {
     try {
-      const res = await instance.get("/location/fulllocations");
+      const res = await instance.get("/location");
       setLocations(res.data.data || []);
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -579,7 +579,7 @@ const AdminPropertiesPage = () => {
 
   const fetchPropertyTypes = async () => {
     try {
-      const res = await instance.get("/propertytype/fullpropertytypes");
+      const res = await instance.get("/propertytype");
       setPropertyTypes(res.data.data || []);
     } catch (error) {
       console.error("Error fetching property types:", error);
@@ -660,7 +660,7 @@ const AdminPropertiesPage = () => {
     setIsSubmitting(true);
 
     try {
-      await instance.delete(`/property/deleteproperty/${currentProperty._id}`, { withCredentials: true });
+      await instance.delete(`/property/${currentProperty._id}`, { withCredentials: true });
 
       // Remove from frontend state
       setProperties((prev) => prev.filter((p) => p._id !== currentProperty._id));
@@ -750,7 +750,7 @@ const AdminPropertiesPage = () => {
         const fileArray = formData.newImages; // already an array of Files
 
         // 1️⃣ Get signed URLs from backend
-        const res = await instance.post("/property/s3url", {
+        const res = await instance.post("/property/upload-url", {
           files: fileArray.map((f) => ({ name: f.name, type: f.type })),
         });
 
@@ -786,11 +786,11 @@ const AdminPropertiesPage = () => {
 
       let response;
       if (currentProperty) {
-        await instance.put(`/property/updateproperty/${currentProperty._id}`, payload, { withCredentials: true });
+        await instance.put(`/property/${currentProperty._id}`, payload, { withCredentials: true });
         // refetch all properties
         fetchProperties();
       } else {
-        response = await instance.post("/property/addproperty", payload, {
+        response = await instance.post("/property", payload, {
           withCredentials: true,
         });
 
