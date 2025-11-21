@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { categories, letsellr, sampleProperties } from "@/db";
 import { cn } from "@/lib/utils";
 import {
@@ -782,6 +782,26 @@ I would like to know more details. Please contact me.`;
                 </div>
               </div>
 
+              {/* Vacancy Count Display */}
+              {product?.vacancyCount !== undefined && (
+                <>
+                  <hr />
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-medium text-gray-600">Availability</p>
+                    <div className="flex items-center">
+                      <span
+                        className={`px-3 py-2 rounded-lg text-sm font-medium w-full text-center ${product.vacancyCount > 0
+                          ? "bg-green-50 text-green-700 border border-green-200"
+                          : "bg-gray-100 text-gray-600 border border-gray-200"
+                          }`}
+                      >
+                        {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies Available` : "No Vacancies Available"}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
+
               {/* Map the price array instead of priceOptions */}
               {product?.price?.length > 0 && (
                 <>
@@ -831,9 +851,9 @@ I would like to know more details. Please contact me.`;
 
       {/* Mobile Bottom Bar */}
       <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
-        <div>
+        <div className="flex-1">
           <p className="flex items-center gap-1 text-sm">Starting Price</p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl flex items-end gap-1">
               ₹{product?.price?.[0]?.amount || 0}
               <span className="text-sm text-black/50">/ Month</span>
@@ -867,20 +887,35 @@ I would like to know more details. Please contact me.`;
               </Dialog>
             )}
           </div>
+
+          {/* Vacancy Count Badge - Mobile */}
+          {product?.vacancyCount !== undefined && (
+            <div className="mt-2">
+              <span
+                className={`inline-block px-2 py-1 rounded-md text-xs font-medium ${product.vacancyCount > 0
+                    ? "bg-green-50 text-green-700 border border-green-200"
+                    : "bg-gray-100 text-gray-600 border border-gray-200"
+                  }`}
+              >
+                {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies` : "No Vacancies"}
+              </span>
+            </div>
+          )}
         </div>
-        <div className="">
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button className="w-full py-6">Contact now</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="flex flex-col gap-3 p-5 pb-10">
-                <DrawerTitle className="text-center pb-4">Contact now</DrawerTitle>
-                <ContactComp />
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </div>
+
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button className="py-6 px-6">Contact</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle className="text-center">Contact now</DrawerTitle>
+            </DrawerHeader>
+            <div className="flex flex-col gap-2 p-4">
+              <ContactComp />
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
 
       <Footer categories={categories} />

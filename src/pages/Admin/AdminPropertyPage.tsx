@@ -56,6 +56,7 @@ interface Property {
   views?: number;
   propertyType?: "buy" | "rent" | "lease";
   propertyTypeCategory?: PropertyType | string; // Can be populated object or just ID
+  vacancyCount?: number;
 }
 
 interface PropertyFormData extends Partial<Property> {
@@ -82,6 +83,7 @@ const INITIAL_FORM_STATE: PropertyFormData = {
   propertyType: "buy",
   status: "active",
   propertyTypeCategory: "",
+  vacancyCount: 0,
 };
 
 // Property Form Component
@@ -268,6 +270,20 @@ const PropertyForm = ({
     </div>
 
     <div>
+      <label className="block text-sm font-medium mb-2">Vacancy Count</label>
+      <Input
+        name="vacancyCount"
+        type="number"
+        min="0"
+        value={formData.vacancyCount ?? 0}
+        onChange={onChange}
+        placeholder="Number of available vacancies"
+        className="rounded-xl"
+      />
+      <p className="text-xs text-gray-500 mt-1">Enter the number of available vacancies (0 if none available)</p>
+    </div>
+
+    <div>
       <label className="block text-sm font-medium mb-2">Property Type *</label>
       <select
         name="propertyType"
@@ -410,6 +426,7 @@ const PropertyCard = ({
                 {property.status}
               </span>
             )}
+
           </div>
 
           <div className="text-xs sm:text-sm text-muted-foreground mb-2">
@@ -431,8 +448,22 @@ const PropertyCard = ({
                   </span>
                 </div>
               )}
+              {/* Vacancy Count Badge */}
+              {property.vacancyCount !== undefined && (
+                <div className="flex items-center">
+                  <span
+                    className={`px-2 py-0.5 rounded-md text-xs font-medium ${property.vacancyCount > 0
+                      ? "bg-green-50 text-green-700 border border-green-200"
+                      : "bg-gray-100 text-gray-600 border border-gray-200"
+                      }`}
+                  >
+                    {property.vacancyCount > 0 ? `${property.vacancyCount} Vacancies` : "No Vacancies"}
+                  </span>
+                </div>
+              )}
               {property.propertyCode && <span className="text-xs text-gray-500 font-mono">Code: {property.propertyCode}</span>}
             </div>
+
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
@@ -446,6 +477,7 @@ const PropertyCard = ({
               <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary fill-primary" />
               <span>{property.rating || 0}</span>
             </div>
+
 
             {/* Display prices */}
             {property.price && property.price.length > 0 && (
@@ -461,6 +493,7 @@ const PropertyCard = ({
           </div>
         </div>
       </div>
+
       <div className="flex gap-2">
         <Button
           size="sm"

@@ -24,6 +24,7 @@ export interface Property {
   priceOptions?: { price: number; description: string }[];
   rating?: number;
   contactNumber?: string;
+  vacancyCount?: number;
 }
 // const getInitials = (name: string) => {
 //   return name
@@ -74,6 +75,21 @@ export default function PropertyCard(data: Property) {
               {data?.location?.description && <p className="text-xs text-gray-400 line-clamp-1">{data?.location?.description}</p>}
             </div>
           )}
+
+          {/* Vacancy Count Badge */}
+          {data?.vacancyCount !== undefined && (
+            <div className="flex items-center absolute top-2 right-2">
+              <span
+                className={`px-2 py-1 rounded-md text-xs font-medium ${data.vacancyCount > 0
+                  ? "bg-green-100 text-green-700 border border-green-200"
+                  : "bg-gray-100 text-gray-600 border border-gray-200"
+                  }`}
+              >
+                {data.vacancyCount > 0 ? `${data.vacancyCount} Vacancies Available` : "No Vacancies"}
+              </span>
+            </div>
+          )}
+
           <p className="text-sm text-gray-500 sm:flex gap-1 hidden">
             {data?.amenity
               ?.split(",")
