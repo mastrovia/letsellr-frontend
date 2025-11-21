@@ -78,14 +78,14 @@ export default function PropertyCard(data: Property) {
 
           {/* Vacancy Count Badge */}
           {data?.vacancyCount !== undefined && (
-            <div className="flex items-center absolute top-2 right-2">
+            <div className="flex items-center absolute left-2 md:left-auto top-2 md:right-2">
               <span
                 className={`px-2 py-1 rounded-md text-xs font-medium ${data.vacancyCount > 0
                   ? "bg-green-100 text-green-700 border border-green-200"
                   : "bg-gray-100 text-gray-600 border border-gray-200"
                   }`}
               >
-                {data.vacancyCount > 0 ? `${data.vacancyCount} Vacancies Available` : "No Vacancies"}
+                {data.vacancyCount > 0 ? `${data.vacancyCount} Slot Available` : "No Slot Available"}
               </span>
             </div>
           )}
