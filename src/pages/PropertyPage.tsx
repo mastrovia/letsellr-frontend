@@ -534,6 +534,16 @@ I would like to know more details. Please contact me.`;
                 {typeof product.propertyTypeCategory === "string" ? product.propertyTypeCategory : product.propertyTypeCategory.name}
               </span>
             )}
+            <div className="flex items-center">
+              <span
+                className={`px-3 py-2 rounded-lg text-sm font-medium w-full text-center ${product.vacancyCount > 0
+                  ? "bg-green-50 text-green-700 border border-green-200"
+                  : "bg-gray-100 text-gray-600 border border-gray-200"
+                  }`}
+              >
+                {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies Available` : "No Vacancies Available"}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -887,20 +897,6 @@ I would like to know more details. Please contact me.`;
               </Dialog>
             )}
           </div>
-
-          {/* Vacancy Count Badge - Mobile */}
-          {product?.vacancyCount !== undefined && (
-            <div className="mt-2">
-              <span
-                className={`inline-block px-2 py-1 rounded-md text-xs font-medium ${product.vacancyCount > 0
-                    ? "bg-green-50 text-green-700 border border-green-200"
-                    : "bg-gray-100 text-gray-600 border border-gray-200"
-                  }`}
-              >
-                {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies` : "No Vacancies"}
-              </span>
-            </div>
-          )}
         </div>
 
         <Drawer>
