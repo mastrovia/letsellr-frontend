@@ -761,6 +761,15 @@ const AdminPropertiesPage = () => {
   const contactRef = useRef<HTMLInputElement>(null);
   const imagesRef = useRef<HTMLInputElement>(null);
 
+  // Simple in-memory cache for search results (cleared on page refresh)
+  const searchCacheRef = useState(
+    () =>
+      new Map<
+        string,
+        { properties: Property[]; totalPages: number; totalProperties: number }
+      >()
+  )[0];
+
   // Fetch properties, locations, and property types
   useEffect(() => {
     fetchLocations();
@@ -777,12 +786,26 @@ const AdminPropertiesPage = () => {
   }, [currentPage, searchQuery]);
 
   const fetchProperties = async () => {
-    setIsLoading(true);
     try {
       const params = new URLSearchParams();
       params.append("page", currentPage.toString());
       params.append("limit", itemsPerPage.toString());
       if (searchQuery) params.append("query", searchQuery);
+
+      // Create cache key from search parameters
+      const cacheKey = params.toString();
+
+      // Check cache first
+      const cached = searchCacheRef.get(cacheKey);
+      if (cached) {
+        // Use cached results for instant display
+        setProperties(cached.properties);
+        setTotalPages(cached.totalPages);
+        setTotalProperties(cached.totalProperties);
+        return;
+      }
+
+      setIsLoading(true);
 
       const res = await instance.get(`/property?${params.toString()}`, {
         withCredentials: true,
@@ -790,9 +813,20 @@ const AdminPropertiesPage = () => {
       const data = Array.isArray(res.data.properties)
         ? res.data.properties
         : [];
+      const fetchedTotalPages = res.data.totalpages || 1;
+      const fetchedTotalProperties = res.data.totalproperty || 0;
+
+      // Update state
       setProperties(data);
-      setTotalPages(res.data.totalpages || 1);
-      setTotalProperties(res.data.totalproperty || 0);
+      setTotalPages(fetchedTotalPages);
+      setTotalProperties(fetchedTotalProperties);
+
+      // Save to cache
+      searchCacheRef.set(cacheKey, {
+        properties: data,
+        totalPages: fetchedTotalPages,
+        totalProperties: fetchedTotalProperties,
+      });
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch properties");

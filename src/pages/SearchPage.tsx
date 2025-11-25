@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories } from "@/db";
 import instance from "@/lib/axios";
-import { Search, MapPin, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Filter,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -69,19 +76,26 @@ export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // State - Initialize with locationId if available
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("query") || ""
+  );
   const [selectedLocation, setSelectedLocation] = useState(
     searchParams.get("locationId") || searchParams.get("location") || ""
   );
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
   const [selectedPropertyType, setSelectedPropertyType] = useState(
     searchParams.get("propertyType") || searchParams.get("property_type") || ""
   );
-  const [selectedPropertyTypeCategory, setSelectedPropertyTypeCategory] = useState(
-    searchParams.get("propertyTypeCategory") || ""
+  const [selectedPropertyTypeCategory, setSelectedPropertyTypeCategory] =
+    useState(searchParams.get("propertyTypeCategory") || "");
+  const [minPrice, setMinPrice] = useState<string>(
+    searchParams.get("minPrice") || ""
   );
-  const [minPrice, setMinPrice] = useState<string>(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = useState<string>(searchParams.get("maxPrice") || "");
+  const [maxPrice, setMaxPrice] = useState<string>(
+    searchParams.get("maxPrice") || ""
+  );
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [properties, setProperties] = useState([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -90,9 +104,16 @@ export default function SearchPage() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Pagination State
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page") || "1", 10)
+  );
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 12;
+
+  // Simple in-memory cache for search results (cleared on page refresh)
+  const searchCacheRef = useState(
+    () => new Map<string, { properties: any[]; totalPages: number }>()
+  )[0];
 
   // Fetch locations from API
   const fetchLocations = async () => {
@@ -112,8 +133,13 @@ export default function SearchPage() {
       const allTypes = res.data.data || [];
 
       // Filter to only show Male and Female by their IDs
-      const allowedIds = ['691af1bfaf170e0a594e3ebe', '691af1c3af170e0a594e3ec1'];
-      const filteredTypes = allTypes.filter((type: PropertyType) => allowedIds.includes(type._id));
+      const allowedIds = [
+        "691af1bfaf170e0a594e3ebe",
+        "691af1c3af170e0a594e3ec1",
+      ];
+      const filteredTypes = allTypes.filter((type: PropertyType) =>
+        allowedIds.includes(type._id)
+      );
 
       setPropertyTypes(filteredTypes);
     } catch (error) {
@@ -124,8 +150,6 @@ export default function SearchPage() {
 
   // Fetch properties from API
   const fetchProperties = async () => {
-    setIsLoading(true);
-
     try {
       // Build query params for API
       const params = new URLSearchParams();
@@ -137,7 +161,8 @@ export default function SearchPage() {
         // Backward compatibility with existing links
         params.append("property_type", selectedPropertyType);
       }
-      if (selectedPropertyTypeCategory) params.append("propertyTypeCategory", selectedPropertyTypeCategory);
+      if (selectedPropertyTypeCategory)
+        params.append("propertyTypeCategory", selectedPropertyTypeCategory);
       // Normalize price filters
       const minV = Number(minPrice);
       const maxV = Number(maxPrice);
@@ -158,10 +183,34 @@ export default function SearchPage() {
       params.append("page", currentPage.toString());
       params.append("limit", itemsPerPage.toString());
 
+      // Create cache key from all search parameters
+      const cacheKey = params.toString();
+
+      // Check cache first
+      const cached = searchCacheRef.get(cacheKey);
+      if (cached) {
+        // Use cached results for instant display
+        setProperties(cached.properties);
+        setTotalPages(cached.totalPages);
+        return;
+      }
+
+      setIsLoading(true);
+
       const response = await instance.get(`/property?${params.toString()}`);
-      // const data = await response.json();
-      setProperties(response.data.properties);
-      setTotalPages(response.data.totalpages || 1);
+      const fetchedProperties = response.data.properties;
+      const fetchedTotalPages = response.data.totalpages || 1;
+
+      // Update state
+      setProperties(fetchedProperties);
+      setTotalPages(fetchedTotalPages);
+
+      // Save to cache
+      searchCacheRef.set(cacheKey, {
+        properties: fetchedProperties,
+        totalPages: fetchedTotalPages,
+      });
+
       console.log(response.data.properties);
 
       // Simulating API call with timeout
@@ -189,7 +238,9 @@ export default function SearchPage() {
       }
       // If only location name is provided, try to find matching location ID
       else if (locationName) {
-        const matchedLocation = locations.find((loc) => loc.title.toLowerCase() === locationName.toLowerCase());
+        const matchedLocation = locations.find(
+          (loc) => loc.title.toLowerCase() === locationName.toLowerCase()
+        );
         if (matchedLocation) {
           setSelectedLocation(matchedLocation._id);
         }
@@ -211,7 +262,8 @@ export default function SearchPage() {
       params.set("propertyType", selectedPropertyType);
       params.set("property_type", selectedPropertyType);
     }
-    if (selectedPropertyTypeCategory) params.set("propertyTypeCategory", selectedPropertyTypeCategory);
+    if (selectedPropertyTypeCategory)
+      params.set("propertyTypeCategory", selectedPropertyTypeCategory);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
 
@@ -225,22 +277,49 @@ export default function SearchPage() {
     if (next !== current) {
       setSearchParams(params, { replace: true });
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice, currentPage]);
+  }, [
+    isInitialized,
+    searchQuery,
+    selectedLocation,
+    selectedCategory,
+    selectedPropertyType,
+    selectedPropertyTypeCategory,
+    minPrice,
+    maxPrice,
+    currentPage,
+  ]);
 
   // Fetch properties when filters change
   useEffect(() => {
     if (isInitialized) {
       fetchProperties();
     }
-  }, [isInitialized, searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice, currentPage]);
+  }, [
+    isInitialized,
+    searchQuery,
+    selectedLocation,
+    selectedCategory,
+    selectedPropertyType,
+    selectedPropertyTypeCategory,
+    minPrice,
+    maxPrice,
+    currentPage,
+  ]);
 
   // Reset page when filters change (except page itself)
   useEffect(() => {
     if (isInitialized) {
       setCurrentPage(1);
     }
-  }, [searchQuery, selectedLocation, selectedCategory, selectedPropertyType, selectedPropertyTypeCategory, minPrice, maxPrice]);
-
+  }, [
+    searchQuery,
+    selectedLocation,
+    selectedCategory,
+    selectedPropertyType,
+    selectedPropertyTypeCategory,
+    minPrice,
+    maxPrice,
+  ]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -261,7 +340,13 @@ export default function SearchPage() {
   };
 
   const hasActiveFilters = Boolean(
-    searchQuery || selectedLocation || selectedCategory || selectedPropertyType || selectedPropertyTypeCategory || minPrice || maxPrice
+    searchQuery ||
+      selectedLocation ||
+      selectedCategory ||
+      selectedPropertyType ||
+      selectedPropertyTypeCategory ||
+      minPrice ||
+      maxPrice
   );
   const activeFilterCount = [
     searchQuery,
@@ -303,7 +388,7 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 rounded-2xl border-gray-200"
-                // disabled={isLoading}
+                  // disabled={isLoading}
                 />
               </div>
 
@@ -350,9 +435,19 @@ export default function SearchPage() {
                   <Button
                     key={type._id}
                     type="button"
-                    variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+                    variant={
+                      selectedPropertyTypeCategory === type._id
+                        ? "default"
+                        : "outline"
+                    }
                     disabled={isLoading}
-                    onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+                    onClick={() =>
+                      setSelectedPropertyTypeCategory(
+                        selectedPropertyTypeCategory === type._id
+                          ? ""
+                          : type._id
+                      )
+                    }
                     className="h-10 rounded-full"
                   >
                     {type.name}
@@ -429,7 +524,7 @@ export default function SearchPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 rounded-2xl border-gray-200"
-              // disabled={isLoading}
+                // disabled={isLoading}
               />
             </div>
 
@@ -440,7 +535,11 @@ export default function SearchPage() {
               className="flex items-center justify-center gap-2 h-12 border border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <Filter className="w-5 h-5" />
-              <span className="font-medium">{hasActiveFilters ? `Filters (${activeFilterCount})` : "Show Filters"}</span>
+              <span className="font-medium">
+                {hasActiveFilters
+                  ? `Filters (${activeFilterCount})`
+                  : "Show Filters"}
+              </span>
             </button>
 
             {/* Mobile Filter Panel */}
@@ -448,7 +547,9 @@ export default function SearchPage() {
               <div className="flex flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
                 {/* Location */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Location</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Location
+                  </label>
                   <div className="relative">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
                     <select
@@ -469,7 +570,9 @@ export default function SearchPage() {
 
                 {/* Category */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Category</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Category
+                  </label>
                   <div className="relative">
                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
                     <select
@@ -490,7 +593,9 @@ export default function SearchPage() {
 
                 {/* Property Type */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Property Type</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Property Type
+                  </label>
                   <div className="relative">
                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
                     <select
@@ -509,15 +614,27 @@ export default function SearchPage() {
 
                 {/* Property Type Category */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Property Type Category</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Property Type Category
+                  </label>
                   <div className="flex items-center gap-2 flex-wrap">
                     {propertyTypes.map((type) => (
                       <Button
                         key={type._id}
                         type="button"
-                        variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+                        variant={
+                          selectedPropertyTypeCategory === type._id
+                            ? "default"
+                            : "outline"
+                        }
                         disabled={isLoading}
-                        onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+                        onClick={() =>
+                          setSelectedPropertyTypeCategory(
+                            selectedPropertyTypeCategory === type._id
+                              ? ""
+                              : type._id
+                          )
+                        }
                         className="h-9 rounded-full"
                       >
                         {type.name}
@@ -528,7 +645,9 @@ export default function SearchPage() {
 
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Price Range</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Price Range
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     <Input
                       type="number"
@@ -573,9 +692,17 @@ export default function SearchPage() {
             <Button
               key={type._id}
               type="button"
-              variant={selectedPropertyTypeCategory === type._id ? "default" : "outline"}
+              variant={
+                selectedPropertyTypeCategory === type._id
+                  ? "default"
+                  : "outline"
+              }
               disabled={isLoading}
-              onClick={() => setSelectedPropertyTypeCategory(selectedPropertyTypeCategory === type._id ? "" : type._id)}
+              onClick={() =>
+                setSelectedPropertyTypeCategory(
+                  selectedPropertyTypeCategory === type._id ? "" : type._id
+                )
+              }
               className="h-10 rounded-full"
             >
               {type.name}
@@ -599,7 +726,10 @@ export default function SearchPage() {
           <>
             {/* Results Count */}
             <p className="text-gray-600">
-              Found <span className="font-semibold text-gray-900">{properties.length}</span>{" "}
+              Found{" "}
+              <span className="font-semibold text-gray-900">
+                {properties.length}
+              </span>{" "}
               {properties.length === 1 ? "property" : "properties"}
             </p>
 
@@ -628,17 +758,21 @@ export default function SearchPage() {
                     </Button>
 
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "ghost"}
-                          size="sm"
-                          onClick={() => handlePageChange(page)}
-                          className={`h-10 w-10 rounded-full ${currentPage === page ? "pointer-events-none" : ""}`}
-                        >
-                          {page}
-                        </Button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (page) => (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "ghost"}
+                            size="sm"
+                            onClick={() => handlePageChange(page)}
+                            className={`h-10 w-10 rounded-full ${
+                              currentPage === page ? "pointer-events-none" : ""
+                            }`}
+                          >
+                            {page}
+                          </Button>
+                        )
+                      )}
                     </div>
 
                     <Button
@@ -658,8 +792,12 @@ export default function SearchPage() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <Search className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
-                <p className="text-gray-600 mb-4">Try adjusting your search or filters</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No properties found
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your search or filters
+                </p>
                 {hasActiveFilters && (
                   <Button onClick={clearFilters} className="rounded-2xl">
                     Clear all filters
