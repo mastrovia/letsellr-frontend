@@ -4,8 +4,20 @@ import ImageGrid from "@/components/ImageGrid";
 import Navbar from "@/components/Navbar";
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { categories, letsellr, sampleProperties } from "@/db";
 import { cn } from "@/lib/utils";
 import {
@@ -121,7 +133,10 @@ function AmenitiesSkeleton() {
       <div className="h-7 bg-gray-200 rounded w-56" />
       <div className="grid md:grid-cols-2 gap-3">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200">
+          <div
+            key={i}
+            className="flex items-center gap-3 p-2 md:p-3 bg-primary/5 rounded-xl border border-gray-200"
+          >
             <div className="p-1.5 bg-gray-200 rounded-md h-8 w-8" />
             <div className="h-4 bg-gray-200 rounded w-24" />
           </div>
@@ -144,7 +159,10 @@ function ReviewsSkeleton() {
       </div>
       <div className="flex flex-col gap-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="p-4 md:p-5 bg-white border border-gray-200 rounded-xl">
+          <div
+            key={i}
+            className="p-4 md:p-5 bg-white border border-gray-200 rounded-xl"
+          >
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200" />
@@ -187,7 +205,10 @@ function SidebarSkeleton() {
       <hr />
       <div className="flex flex-col gap-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200">
+          <div
+            key={i}
+            className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200"
+          >
             <div className="h-6 w-6 bg-gray-200 rounded-md" />
             <div className="flex items-center justify-between w-full">
               <div className="h-4 bg-gray-200 rounded w-24" />
@@ -314,7 +335,9 @@ export default function PropertyPage() {
   //     .join("");
   // };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setReviewForm((prev) => ({
       ...prev,
@@ -390,16 +413,23 @@ export default function PropertyPage() {
     const getWhatsAppMessage = () => {
       const propertyName = product?.title || "Property";
       const propertyCode = product?.propertyCode || "";
-      const location = typeof product?.location === "string" ? product?.location : product?.location?.title || "Location";
+      const location =
+        typeof product?.location === "string"
+          ? product?.location
+          : product?.location?.title || "Location";
       const price = product?.price?.[0]?.amount || "N/A";
       const propertyTypeCategory =
-        typeof product?.propertyTypeCategory === "string" ? product?.propertyTypeCategory : product?.propertyTypeCategory?.name || "";
+        typeof product?.propertyTypeCategory === "string"
+          ? product?.propertyTypeCategory
+          : product?.propertyTypeCategory?.name || "";
 
       const message = `Hi, I'm interested in this property:
 
 *${propertyName}*
 ${propertyCode ? `Property Code: ${propertyCode}\n` : ""}Location: ${location}
-${propertyTypeCategory ? `Type: ${propertyTypeCategory}\n` : ""}Price: ₹${price}/Month
+${
+  propertyTypeCategory ? `Type: ${propertyTypeCategory}\n` : ""
+}Price: ₹${price}/Month
 
 I would like to know more details. Please contact me.`;
 
@@ -409,7 +439,11 @@ I would like to know more details. Please contact me.`;
     const contactPhone = product?.contactNumber || phoneNumber;
 
     if (!contactPhone) {
-      return <div className="text-center text-muted-foreground">Contact information not available</div>;
+      return (
+        <div className="text-center text-muted-foreground">
+          Contact information not available
+        </div>
+      );
     }
 
     return (
@@ -499,9 +533,16 @@ I would like to know more details. Please contact me.`;
         <Navbar />
         <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col items-center justify-center gap-5 z-10 min-h-[60vh]">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Property Not Found</h1>
-            <p className="text-gray-600 mb-6">The property you're looking for doesn't exist or has been removed.</p>
-            <Button onClick={() => window.history.back()} className="rounded-2xl">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Property Not Found
+            </h1>
+            <p className="text-gray-600 mb-6">
+              The property you're looking for doesn't exist or has been removed.
+            </p>
+            <Button
+              onClick={() => window.history.back()}
+              className="rounded-2xl"
+            >
               Go Back
             </Button>
           </div>
@@ -520,7 +561,9 @@ I would like to know more details. Please contact me.`;
       <Navbar />
       <div className="relative p-3 md:p-5 md:py-10 mx-auto max-w-7xl flex flex-col gap-5">
         <div className="flex flex-col gap-3">
-          <h1 className="text-2xl md:text-4xl font-semibold">{product?.title}</h1>
+          <h1 className="text-2xl md:text-4xl font-semibold">
+            {product?.title}
+          </h1>
           <div className="flex items-center gap-2 flex-wrap">
             {/* Property Code Badge */}
             {product?.propertyCode && (
@@ -531,17 +574,22 @@ I would like to know more details. Please contact me.`;
             {/* Property Type Category Badge */}
             {product?.propertyTypeCategory && (
               <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                {typeof product.propertyTypeCategory === "string" ? product.propertyTypeCategory : product.propertyTypeCategory.name}
+                {typeof product.propertyTypeCategory === "string"
+                  ? product.propertyTypeCategory
+                  : product.propertyTypeCategory.name}
               </span>
             )}
             <div className="flex items-center">
               <span
-                className={`px-3 py-2 rounded-lg text-sm font-medium w-full text-center ${product.vacancyCount > 0
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-gray-100 text-gray-600 border border-gray-200"
-                  }`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium w-full text-center ${
+                  product.vacancyCount > 0
+                    ? "bg-green-50 text-green-700 border border-green-200"
+                    : "bg-gray-100 text-gray-600 border border-gray-200"
+                }`}
               >
-                {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies Available` : "No Vacancies Available"}
+                {product.vacancyCount > 0
+                  ? `${product.vacancyCount} Vacancies Available`
+                  : "No Vacancies Available"}
               </span>
             </div>
           </div>
@@ -558,7 +606,13 @@ I would like to know more details. Please contact me.`;
                 Rating :
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn("h-3 w-3 text-accent", i < product?.rating ? "fill-accent" : "")} />
+                    <Star
+                      key={i}
+                      className={cn(
+                        "h-3 w-3 text-accent",
+                        i < product?.rating ? "fill-accent" : ""
+                      )}
+                    />
                   ))}
                 </div>
               </p>
@@ -567,7 +621,9 @@ I would like to know more details. Please contact me.`;
 
             {/* Amenities */}
             <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
-              <h1 className="text-xl md:text-3xl flex items-center gap-1">What this place offers</h1>
+              <h1 className="text-xl md:text-3xl flex items-center gap-1">
+                What this place offers
+              </h1>
               <div className="grid md:grid-cols-2 gap-3">
                 {product.amenity
                   ?.split(",")
@@ -596,13 +652,18 @@ I would like to know more details. Please contact me.`;
             {/* Maps */}
             {product?.location?.googleMapUrl && (
               <div className="overflow-hidden rounded-sm w-full border p-4 md:p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-2 md:gap-3">
-                <h1 className="text-xl md:text-3xl flex items-center gap-1">Location</h1>
+                <h1 className="text-xl md:text-3xl flex items-center gap-1">
+                  Location
+                </h1>
                 <div>
                   <p className="flex items-center gap-1 font-medium">
-                    <MapPin className="h-4 w-4 text-muted-foreground" /> {product?.location?.title}
+                    <MapPin className="h-4 w-4 text-muted-foreground" />{" "}
+                    {product?.location?.title}
                   </p>
                   {product?.location?.description && (
-                    <p className="text-sm text-muted-foreground mt-1 ml-5">{product?.location?.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1 ml-5">
+                      {product?.location?.description}
+                    </p>
                   )}
                 </div>
                 <iframe
@@ -622,8 +683,12 @@ I would like to know more details. Please contact me.`;
                 <h1 className="text-xl md:text-3xl">Guest Reviews</h1>
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-accent fill-accent" />
-                  <span className="text-lg font-semibold">{calculateAverageRating(allReviews)}</span>
-                  <span className="text-sm text-gray-600">({allReviews.length} reviews)</span>
+                  <span className="text-lg font-semibold">
+                    {calculateAverageRating(allReviews)}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    ({allReviews.length} reviews)
+                  </span>
                 </div>
               </div>
 
@@ -637,24 +702,38 @@ I would like to know more details. Please contact me.`;
                       {/* Left side: Avatar and reviewer info */}
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary font-semibold text-sm md:text-base">{review.email?.charAt(0).toUpperCase()}</span>
+                          <span className="text-primary font-semibold text-sm md:text-base">
+                            {review.email?.charAt(0).toUpperCase()}
+                          </span>
                         </div>
                         <div className="flex flex-col">
-                          <h3 className="font-semibold text-green-700 text-sm md:text-base">{review.email}</h3>
-                          <span className="text-xs md:text-sm text-gray-500">{formatReviewDate(review.createdAt)}</span>
+                          <h3 className="font-semibold text-green-700 text-sm md:text-base">
+                            {review.email}
+                          </h3>
+                          <span className="text-xs md:text-sm text-gray-500">
+                            {formatReviewDate(review.timestamp)}
+                          </span>
                         </div>
                       </div>
 
                       {/* Right side: Rating stars */}
                       <div className="flex gap-0.5 mt-2 md:mt-0">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={cn("h-3 w-3 md:h-4 md:w-4 text-accent", i < review.rating ? "fill-accent" : "")} />
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-3 w-3 md:h-4 md:w-4 text-accent",
+                              i < review.rating ? "fill-accent" : ""
+                            )}
+                          />
                         ))}
                       </div>
                     </div>
 
                     {/* Review comment */}
-                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">{review.comment}</p>
+                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+                      {review.comment}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -665,7 +744,9 @@ I would like to know more details. Please contact me.`;
                   onClick={handleToggleReviews}
                   className="w-full md:w-auto py-6 hover:bg-primary/10 hover:text-black"
                 >
-                  {showAllReviews ? "Show Less Reviews" : `Show All ${allReviews.length} Reviews`}
+                  {showAllReviews
+                    ? "Show Less Reviews"
+                    : `Show All ${allReviews.length} Reviews`}
                 </Button>
               )}
             </section>
@@ -687,7 +768,10 @@ I would like to know more details. Please contact me.`;
                 </div>
               )}
 
-              <form onSubmit={handleSubmitReview} className="flex flex-col gap-4">
+              <form
+                onSubmit={handleSubmitReview}
+                className="flex flex-col gap-4"
+              >
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-gray-700">
                     Your Rating <span className="text-red-500">*</span>
@@ -705,7 +789,9 @@ I would like to know more details. Please contact me.`;
                         <Star
                           className={cn(
                             "h-8 w-8 text-accent cursor-pointer transition-all",
-                            (hoverRating || selectedRating) >= star ? "fill-accent" : ""
+                            (hoverRating || selectedRating) >= star
+                              ? "fill-accent"
+                              : ""
                           )}
                         />
                       </button>
@@ -713,13 +799,17 @@ I would like to know more details. Please contact me.`;
                   </div>
                   {selectedRating > 0 && (
                     <span className="text-xs text-gray-600">
-                      You selected {selectedRating} star{selectedRating > 1 ? "s" : ""}
+                      You selected {selectedRating} star
+                      {selectedRating > 1 ? "s" : ""}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="name" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -735,7 +825,10 @@ I would like to know more details. Please contact me.`;
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -751,7 +844,10 @@ I would like to know more details. Please contact me.`;
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="description" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="description"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Review <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -766,7 +862,11 @@ I would like to know more details. Please contact me.`;
                   />
                 </div>
 
-                <Button type="submit" className="w-full md:w-auto py-6" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full md:w-auto py-6"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Submitting..." : "Submit Review"}
                 </Button>
               </form>
@@ -777,9 +877,14 @@ I would like to know more details. Please contact me.`;
             <div className="sticky top-24 overflow-hidden rounded-sm w-full border p-6 bg-white/5 backdrop-blur-sm flex flex-col gap-3">
               <p className="flex items-center gap-1">Starting Price</p>
               <h1 className="text-3xl flex items-end gap-1">
-                {/* Access the first price option's amount */}₹{product?.price?.[0]?.amount || 0}
+                {/* Access the first price option's amount */}₹
+                {product?.price?.[0]?.amount || 0}
                 <span className="text-sm text-black/50">/ Month</span>{" "}
-                {product?.price?.length > 1 && <span className="text-xs text-primary">(+Others price options)</span>}
+                {product?.price?.length > 1 && (
+                  <span className="text-xs text-primary">
+                    (+Others price options)
+                  </span>
+                )}
               </h1>
 
               {/* Fixed: Changed p to div to avoid nesting issues */}
@@ -787,7 +892,13 @@ I would like to know more details. Please contact me.`;
                 Rating :
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn("h-3 w-3 text-accent", i < product?.rating ? "fill-accent" : "")} />
+                    <Star
+                      key={i}
+                      className={cn(
+                        "h-3 w-3 text-accent",
+                        i < product?.rating ? "fill-accent" : ""
+                      )}
+                    />
                   ))}
                 </div>
               </div>
@@ -797,17 +908,63 @@ I would like to know more details. Please contact me.`;
                 <>
                   <hr />
                   <div className="flex flex-col gap-2">
-                    <p className="text-sm font-medium text-gray-600">Availability</p>
-                    <div className="flex items-center">
-                      <span
-                        className={`px-3 py-2 rounded-lg text-sm font-medium w-full text-center ${product.vacancyCount > 0
-                          ? "bg-green-50 text-green-700 border border-green-200"
-                          : "bg-gray-100 text-gray-600 border border-gray-200"
-                          }`}
+                    <p className="text-sm font-medium text-gray-600">
+                      Availability
+                    </p>
+
+                    {/* Detailed Vacancies */}
+                    {product.vacancies && product.vacancies.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {product.vacancies.map((v, idx) => (
+                          <div
+                            key={idx}
+                            className="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-100"
+                          >
+                            <span className="text-sm font-medium text-gray-700">
+                              {v.type}
+                            </span>
+                            <span
+                              className={`text-xs font-bold px-2 py-1 rounded-md ${
+                                v.count > 0
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-red-100 text-red-700"
+                              }`}
+                            >
+                              {v.count > 0 ? `${v.count} left` : "Full"}
+                            </span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between items-center mt-1 pt-2 border-t border-dashed">
+                          <span className="text-sm font-bold text-gray-900">
+                            Total Vacancies
+                          </span>
+                          <span className="text-sm font-bold text-green-600">
+                            {product.vacancyCount}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Fallback to simple count if no details */
+                      <div
+                        className={`p-3 rounded-xl border ${
+                          product.vacancyCount > 0
+                            ? "bg-green-50 border-green-200"
+                            : "bg-red-50 border-red-200"
+                        }`}
                       >
-                        {product.vacancyCount > 0 ? `${product.vacancyCount} Vacancies Available` : "No Vacancies Available"}
-                      </span>
-                    </div>
+                        <p
+                          className={`text-center font-bold ${
+                            product.vacancyCount > 0
+                              ? "text-green-700"
+                              : "text-red-700"
+                          }`}
+                        >
+                          {product.vacancyCount > 0
+                            ? `${product.vacancyCount} Vacancies Available`
+                            : "No Vacancies Available"}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -829,7 +986,9 @@ I would like to know more details. Please contact me.`;
                               {/* Use type instead of description */}
                               {priceOption?.type}
                             </div>
-                            <div className="font-bold text-md">₹{priceOption?.amount}</div>
+                            <div className="font-bold text-md">
+                              ₹{priceOption?.amount}
+                            </div>
                           </div>
                         </div>
                       );
@@ -845,12 +1004,16 @@ I would like to know more details. Please contact me.`;
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px] flex flex-col gap-5">
                     <AlertDialogHeader>
-                      <DialogTitle className="text-center">Contact now</DialogTitle>
+                      <DialogTitle className="text-center">
+                        Contact now
+                      </DialogTitle>
                     </AlertDialogHeader>
                     <div className="flex flex-col gap-2">
                       <ContactComp />
                     </div>
-                    <DialogDescription className="text-center">Contact the host and book your slot now</DialogDescription>
+                    <DialogDescription className="text-center">
+                      Contact the host and book your slot now
+                    </DialogDescription>
                   </DialogContent>
                 </Dialog>
               </div>
@@ -885,8 +1048,12 @@ I would like to know more details. Please contact me.`;
                         key={priceOption._id || i}
                         className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-gray-200"
                       >
-                        <div className="font-medium text-gray-700 text-sm capitalize">{priceOption?.type}</div>
-                        <div className="font-bold text-lg">₹{priceOption?.amount}</div>
+                        <div className="font-medium text-gray-700 text-sm capitalize">
+                          {priceOption?.type}
+                        </div>
+                        <div className="font-bold text-lg">
+                          ₹{priceOption?.amount}
+                        </div>
                       </div>
                     ))}
                   </div>
