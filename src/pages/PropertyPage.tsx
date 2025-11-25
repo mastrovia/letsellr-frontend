@@ -240,6 +240,13 @@ export default function PropertyPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const { setCurrentProduct } = useProperty();
 
+  // State for selected vacancy and price options
+  const [selectedVacancy, setSelectedVacancy] = useState<string>("");
+  const [selectedPrice, setSelectedPrice] = useState<{
+    type: string;
+    amount: number;
+  } | null>(null);
+
   const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 5);
 
   const handleToggleReviews = () => {
@@ -423,15 +430,25 @@ export default function PropertyPage() {
           ? product?.propertyTypeCategory
           : product?.propertyTypeCategory?.name || "";
 
-      const message = `Hi, I'm interested in this property:
+      let message = `Hi, I'm interested in this property:
 
 *${propertyName}*
 ${propertyCode ? `Property Code: ${propertyCode}\n` : ""}Location: ${location}
-${
-  propertyTypeCategory ? `Type: ${propertyTypeCategory}\n` : ""
-}Price: ₹${price}/Month
+${propertyTypeCategory ? `Type: ${propertyTypeCategory}\n` : ""}`;
 
-I would like to know more details. Please contact me.`;
+      // Add selected price option or default price
+      if (selectedPrice) {
+        message += `Price Option: ${selectedPrice.type} - ₹${selectedPrice.amount}/Month\n`;
+      } else {
+        message += `Price: ₹${price}/Month\n`;
+      }
+
+      // Add selected vacancy option if any
+      if (selectedVacancy) {
+        message += `Interested in: ${selectedVacancy}\n`;
+      }
+
+      message += `\nI would like to know more details. Please contact me.`;
 
       return encodeURIComponent(message);
     };
@@ -617,6 +634,127 @@ I would like to know more details. Please contact me.`;
                 </div>
               </p>
               <p>{product?.description}</p>
+            </div>
+
+            {/* Pricing & Availability Card - Mobile Only */}
+            <div className="md:hidden overflow-hidden rounded-sm w-full border p-4 bg-white/5 backdrop-blur-sm flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">Pricing & Availability</h2>
+
+              {/* Price Options */}
+              {product?.price?.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm font-medium text-gray-600">
+                    Price Options
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {product.price.map((priceOption, i) => {
+                      const isSelected =
+                        selectedPrice?.type === priceOption.type &&
+                        selectedPrice?.amount === priceOption.amount;
+                      return (
+                        <button
+                          key={priceOption._id || i}
+                          type="button"
+                          onClick={() =>
+                            setSelectedPrice({
+                              type: priceOption.type,
+                              amount: priceOption.amount,
+                            })
+                          }
+                          className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? "bg-primary/10 border-primary shadow-md"
+                              : "bg-primary/5 border-gray-200"
+                          }`}
+                        >
+                          <div
+                            className={`font-medium text-sm capitalize ${
+                              isSelected
+                                ? "text-primary font-bold"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {isSelected && "✓ "}
+                            {priceOption?.type}
+                          </div>
+                          <div
+                            className={`font-bold text-lg ${
+                              isSelected ? "text-primary" : ""
+                            }`}
+                          >
+                            ₹{priceOption?.amount}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Vacancies */}
+              {product?.vacancies && product.vacancies.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm font-medium text-gray-600">
+                    Available Vacancies
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {product.vacancies.map((v, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() =>
+                          setSelectedVacancy(v.count > 0 ? v.type : "")
+                        }
+                        disabled={v.count === 0}
+                        className={`flex justify-between items-center p-3 rounded-lg border-2 transition-all duration-200 ${
+                          v.count === 0
+                            ? "bg-gray-100 border-gray-200 cursor-not-allowed opacity-60"
+                            : selectedVacancy === v.type
+                            ? "bg-primary/10 border-primary shadow-md"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        <span
+                          className={`text-sm font-medium ${
+                            selectedVacancy === v.type
+                              ? "text-primary font-bold"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          {selectedVacancy === v.type && "✓ "}
+                          {v.type}
+                        </span>
+                        <span
+                          className={`text-xs font-bold px-2 py-1 rounded-md ${
+                            v.count > 0
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {v.count > 0 ? `${v.count} left` : "Full"}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Selection Summary */}
+              {(selectedPrice || selectedVacancy) && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800 mb-1">
+                    Your Selection:
+                  </p>
+                  <div className="text-sm text-green-700">
+                    {selectedPrice && (
+                      <p>
+                        • {selectedPrice.type} - ₹{selectedPrice.amount}/Month
+                      </p>
+                    )}
+                    {selectedVacancy && <p>• {selectedVacancy}</p>}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Amenities */}
@@ -916,11 +1054,29 @@ I would like to know more details. Please contact me.`;
                     {product.vacancies && product.vacancies.length > 0 ? (
                       <div className="flex flex-col gap-2">
                         {product.vacancies.map((v, idx) => (
-                          <div
+                          <button
                             key={idx}
-                            className="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-100"
+                            type="button"
+                            onClick={() =>
+                              setSelectedVacancy(v.count > 0 ? v.type : "")
+                            }
+                            disabled={v.count === 0}
+                            className={`flex justify-between items-center p-3 rounded-lg border-2 transition-all duration-200 ${
+                              v.count === 0
+                                ? "bg-gray-100 border-gray-200 cursor-not-allowed opacity-60"
+                                : selectedVacancy === v.type
+                                ? "bg-primary/10 border-primary shadow-md"
+                                : "bg-gray-50 border-gray-200 hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                            }`}
                           >
-                            <span className="text-sm font-medium text-gray-700">
+                            <span
+                              className={`text-sm font-medium ${
+                                selectedVacancy === v.type
+                                  ? "text-primary"
+                                  : "text-gray-700"
+                              }`}
+                            >
+                              {selectedVacancy === v.type && "✓ "}
                               {v.type}
                             </span>
                             <span
@@ -932,7 +1088,7 @@ I would like to know more details. Please contact me.`;
                             >
                               {v.count > 0 ? `${v.count} left` : "Full"}
                             </span>
-                          </div>
+                          </button>
                         ))}
                         <div className="flex justify-between items-center mt-1 pt-2 border-t border-dashed">
                           <span className="text-sm font-bold text-gray-900">
@@ -975,22 +1131,58 @@ I would like to know more details. Please contact me.`;
                   <hr />
                   <div className="flex flex-col gap-3 mt-1">
                     {product.price.map((priceOption, i) => {
+                      const isSelected =
+                        selectedPrice?.type === priceOption.type &&
+                        selectedPrice?.amount === priceOption.amount;
                       return (
-                        <div
+                        <button
                           key={priceOption._id || i}
-                          className="group flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300"
+                          type="button"
+                          onClick={() =>
+                            setSelectedPrice({
+                              type: priceOption.type,
+                              amount: priceOption.amount,
+                            })
+                          }
+                          className={`group flex items-center gap-3 p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? "bg-primary/10 border-primary shadow-md"
+                              : "bg-primary/5 border-gray-200 hover:border-primary/50 hover:bg-primary/10"
+                          }`}
                         >
-                          <div className="p-1.5 bg-gray-800/70 rounded-md group-hover:bg-gray-900 transition-all duration-300"></div>
+                          <div
+                            className={`p-1.5 rounded-md transition-all duration-300 ${
+                              isSelected
+                                ? "relative flex items-center justify-center "
+                                : "bg-gray-800/70 group-hover:bg-gray-900"
+                            }`}
+                          >
+                            {isSelected && (
+                              <span className="text-primary absolute text-xs">
+                                ✓
+                              </span>
+                            )}
+                          </div>
                           <div className="flex items-center justify-between w-full">
-                            <div className="font-medium text-gray-700 text-sm group-hover:text-gray-900 transition-colors duration-300 capitalize">
+                            <div
+                              className={`font-medium text-sm transition-colors duration-300 capitalize ${
+                                isSelected
+                                  ? "text-primary font-bold"
+                                  : "text-gray-700 group-hover:text-gray-900"
+                              }`}
+                            >
                               {/* Use type instead of description */}
                               {priceOption?.type}
                             </div>
-                            <div className="font-bold text-md">
+                            <div
+                              className={`font-bold text-md ${
+                                isSelected ? "text-primary" : ""
+                              }`}
+                            >
                               ₹{priceOption?.amount}
                             </div>
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -1022,48 +1214,36 @@ I would like to know more details. Please contact me.`;
         </div>
       </div>
 
-      {/* Mobile Bottom Bar */}
-      <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center">
+      {/* Mobile Bottom Bar - Shows selection summary */}
+      <div className="fixed bottom-0 z-10 md:hidden p-4 px-6 bg-white/70 backdrop-blur-md border-t w-full flex justify-between items-center gap-3">
         <div className="flex-1">
-          <p className="flex items-center gap-1 text-sm">Starting Price</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-2xl flex items-end gap-1">
-              ₹{product?.price?.[0]?.amount || 0}
-              <span className="text-sm text-black/50">/ Month</span>
-            </h1>
-            {product?.price?.length > 1 && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="text-xs text-primary underline font-medium hover:text-primary/80">
-                    +{product.price.length - 1} more
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <AlertDialogHeader>
-                    <DialogTitle>All Price Options</DialogTitle>
-                  </AlertDialogHeader>
-                  <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
-                    {product.price.map((priceOption, i) => (
-                      <div
-                        key={priceOption._id || i}
-                        className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-gray-200"
-                      >
-                        <div className="font-medium text-gray-700 text-sm capitalize">
-                          {priceOption?.type}
-                        </div>
-                        <div className="font-bold text-lg">
-                          ₹{priceOption?.amount}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <DialogDescription className="text-center text-sm text-gray-600">
-                    Choose the option that fits your budget
-                  </DialogDescription>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+          {selectedPrice || selectedVacancy ? (
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-gray-600">Your Selection:</p>
+              <div className="text-sm font-semibold text-primary">
+                {selectedPrice && (
+                  <p className="truncate">
+                    {selectedPrice.type} - ₹{selectedPrice.amount}
+                  </p>
+                )}
+                {selectedVacancy && (
+                  <p className="text-xs text-gray-700 truncate">
+                    {selectedVacancy}
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p className="text-xs text-gray-600">Starting Price</p>
+              <h1 className="text-xl font-bold">
+                ₹{product?.price?.[0]?.amount || 0}
+                <span className="text-xs text-gray-500 font-normal">
+                  / Month
+                </span>
+              </h1>
+            </div>
+          )}
         </div>
 
         <Drawer>
