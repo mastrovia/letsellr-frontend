@@ -1,16 +1,61 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation, Link } from "react-router-dom";
-import { Building2, Users, MessageSquare, Settings, LogOut, Menu, X, Bell, Search, MapPin, Tag } from "lucide-react";
+import {
+  Building2,
+  Users,
+  MessageSquare,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Bell,
+  Search,
+  MapPin,
+  Tag,
+  BarChart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const menuItems = [
   // { id: "overview", path: "/admin", icon: Home, label: "Overview" },
-  { id: "properties", path: "/admin/properties", icon: Building2, label: "Properties" },
-  { id: "locations", path: "/admin/locations", icon: MapPin, label: "Locations" },
-  { id: "property-types", path: "/admin/property-types", icon: Tag, label: "Property Types" },
-  { id: "reviews", path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
+  {
+    id: "properties",
+    path: "/admin/properties",
+    icon: Building2,
+    label: "Properties",
+  },
+  {
+    id: "locations",
+    path: "/admin/locations",
+    icon: MapPin,
+    label: "Locations",
+  },
+  {
+    id: "property-types",
+    path: "/admin/property-types",
+    icon: Tag,
+    label: "Property Types",
+  },
+  {
+    id: "reviews",
+    path: "/admin/reviews",
+    icon: MessageSquare,
+    label: "Reviews",
+  },
   { id: "setup", path: "/admin/setup", icon: Settings, label: "Setup" },
+  {
+    id: "statistics",
+    path: "/admin/statistics",
+    icon: BarChart,
+    label: "Statistics",
+  },
+  {
+    id: "testimonials",
+    path: "/admin/testimonials",
+    icon: Users,
+    label: "Testimonials",
+  },
   // { id: "users", path: "/admin/users", icon: Users, label: "Users" },
 ];
 
@@ -33,14 +78,25 @@ const AdminLayout = () => {
   };
 
   // Get current active menu item based on path
-  const currentMenuItem = menuItems.find((item) => location.pathname === item.path);
+  const currentMenuItem = menuItems.find(
+    (item) => location.pathname === item.path
+  );
 
   return (
     <div className="min-h-screen bg-background">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button variant="outline" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="rounded-xl shadow-lg bg-card">
-          {isSidebarOpen ? <X className="h-5 w-5 text-primary" /> : <Menu className="h-5 w-5 text-primary" />}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="rounded-xl shadow-lg bg-card"
+        >
+          {isSidebarOpen ? (
+            <X className="h-5 w-5 text-primary" />
+          ) : (
+            <Menu className="h-5 w-5 text-primary" />
+          )}
         </Button>
       </div>
 
@@ -55,7 +111,10 @@ const AdminLayout = () => {
           {/* <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(menuItems?.[0]?.path)}> */}
           <Link to={menuItems?.[0]?.path}>
             <div className="flex items-center">
-              <img src={"/favicon.ico"} className="w-10 h-10 object-scale-down" />
+              <img
+                src={"/favicon.ico"}
+                className="w-10 h-10 object-scale-down"
+              />
               <h1 className="text-2xl font-bold text-primary">Letsellr</h1>
             </div>
           </Link>
@@ -75,7 +134,9 @@ const AdminLayout = () => {
                   setIsSidebarOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  isActive ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-primary/5 text-muted-foreground hover:text-primary"
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "hover:bg-primary/5 text-muted-foreground hover:text-primary"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -99,14 +160,21 @@ const AdminLayout = () => {
       </aside>
 
       {/* Mobile Overlay */}
-      {isSidebarOpen && <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* Main Content */}
       <main className="lg:ml-64 min-h-screen">
         {/* Header */}
         <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
           <div className="flex items-center gap-4 flex-1">
-            <h2 className="text-xl font-semibold text-foreground hidden md:block">{currentMenuItem?.label || "Dashboard"}</h2>
+            <h2 className="text-xl font-semibold text-foreground hidden md:block">
+              {currentMenuItem?.label || "Dashboard"}
+            </h2>
             {/* Search Bar */}
             {/* <div className="relative max-w-md flex-1 ml-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
